@@ -1,0 +1,177 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------
+// User & Auth Management (Foundation for SaaS)
+// ---------------------------------------------------------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations (For single-tenant we can assume 1 user for now,
+  // but this is prepared for multi-tenant SaaS)
+  ingredients   Ingredient[]
+  baseRecipes   BaseRecipe[]
+  superRecipes  SuperRecipe[]
+  budgets       Budget[]
+}
+
+// ---------------------------------------------------------
+// Core Business Data
+// ---------------------------------------------------------
+
+model Ingredient {
+  id              String   @id @default(uuid())
+  name            String
+  globalCost      Float    // Always in base currency (e.g. USD)
+  measurementUnit String   // e.g. "gr", "ml", "unit"
+  brand           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relations
+  usedInBaseRecipes   BaseRecipeIngredient[]
+  usedInSuperRecipes  SuperRecipeDirectIngredient[]
+}
+
+model BaseRecipe {
+  id              String   @id @default(uuid())
+  name            String
+  baseYield       Float    // e.g. 1000
+  yieldUnit       String   // e.g. "gr", "portions"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Ingredients that make up this base recipe
+  ingredients     BaseRecipeIngredient[]
+
+  // Super recipes that use this base recipe
+  usedInSuperRecipes SuperRecipeBaseRecipe[]
+}
+
+// Junction table: Ingredients inside a Base Recipe
+model BaseRecipeIngredient {
+  id            String     @id @default(uuid())
+  quantity      Float      // Amount of the ingredient used
+
+  baseRecipeId  String
+  baseRecipe    BaseRecipe @relation(fields: [baseRecipeId], references: [id], onDelete: Cascade)
+
+  ingredientId  String
+  ingredient    Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([baseRecipeId, ingredientId])
+}
+
+// The Final Product (e.g. a complete Cake)
+model SuperRecipe {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Components of the Super Recipe
+  baseRecipes        SuperRecipeBaseRecipe[]
+  directIngredients  SuperRecipeDirectIngredient[]
+
+  // Budgets that include this Super Recipe
+  budgets            Budget[]
+}
+
+// Junction table: Base Recipes inside a Super Recipe (e.g. Sponge cake, Filling)
+model SuperRecipeBaseRecipe {
+  id             String      @id @default(uuid())
+  quantityNeeded Float       // E.g. 2000 (if we need 2000gr of sponge cake)
+
+  superRecipeId  String
+  superRecipe    SuperRecipe @relation(fields: [superRecipeId], references: [id], onDelete: Cascade)
+
+  baseRecipeId   String
+  baseRecipe     BaseRecipe  @relation(fields: [baseRecipeId], references: [id], onDelete: Restrict)
+
+  @@unique([superRecipeId, baseRecipeId])
+}
+
+// Junction table: Direct Ingredients inside a Super Recipe (e.g. Box, Cake board, Topper)
+model SuperRecipeDirectIngredient {
+  id             String      @id @default(uuid())
+  quantityNeeded Float       // E.g. 1 (1 Box)
+
+  superRecipeId  String
+  superRecipe    SuperRecipe @relation(fields: [superRecipeId], references: [id], onDelete: Cascade)
+
+  ingredientId   String
+  ingredient     Ingredient  @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([superRecipeId, ingredientId])
+}
+
+// ---------------------------------------------------------
+// Sales & Budgets
+// ---------------------------------------------------------
+
+model Budget {
+  id            String   @id @default(uuid())
+  customerName  String?
+  scaleQuantity Float    // e.g. "I want 3 of this cake" (multiplier)
+  profitMargin  Float    // e.g. 0.30 for 30% margin
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  superRecipeId String
+  superRecipe   SuperRecipe @relation(fields: [superRecipeId], references: [id], onDelete: Restrict)
+}
+
+// ---------------------------------------------------------
+// Multi-Currency / Bimoneda Support
+// ---------------------------------------------------------
+
+model Currency {
+  id           String         @id @default(uuid())
+  code         String         @unique // e.g. "USD", "VES"
+  symbol       String         // e.g. "$", "Bs"
+  isBase       Boolean        @default(false) // Only one currency should be base (e.g. USD)
+
+  exchangeRates ExchangeRate[] @relation("TargetCurrency")
+}
+
+model ExchangeRate {
+  id               String   @id @default(uuid())
+  rate             Float    // Rate from base currency to target
+  effectiveDate    DateTime @default(now())
+
+  targetCurrencyId String
+  targetCurrency   Currency @relation("TargetCurrency", fields: [targetCurrencyId], references: [id], onDelete: Cascade)
+}

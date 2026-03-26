@@ -1,0 +1,15 @@
+{
+  "name": "bocadoapp",
+  "version": "1.0.0",
+  "description": "BocadoApp - SaaS Platform for Professional Bakers",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "start:frontend": "npm start --workspace=apps/frontend",
+    "start:backend": "npm start --workspace=apps/backend",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev:backend": "npm run dev --workspace=apps/backend"
+  }
+}
