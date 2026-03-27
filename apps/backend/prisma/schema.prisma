@@ -167,11 +167,22 @@ model Currency {
   exchangeRates ExchangeRate[] @relation("TargetCurrency")
 }
 
+enum ExchangeRateSource {
+  MANUAL
+  CRIPTOYA_BCV
+  CRIPTOYA_PARALELO
+}
+
 model ExchangeRate {
-  id               String   @id @default(uuid())
-  rate             Float    // Rate from base currency to target
-  effectiveDate    DateTime @default(now())
+  id               String             @id @default(uuid())
+  rate             Float              // Rate from base currency to target
+  effectiveDate    DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  source           ExchangeRateSource @default(MANUAL)
 
   targetCurrencyId String
   targetCurrency   Currency @relation("TargetCurrency", fields: [targetCurrencyId], references: [id], onDelete: Cascade)
+
+  // Ensure only one rate per date and currency combination
+  @@unique([effectiveDate, targetCurrencyId])
 }
