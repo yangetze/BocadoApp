@@ -33,7 +33,7 @@ export function DraggableItem({ id, item, isOverlay = false }) {
       </div>
       <div>
         <p className="font-medium text-slate-gray">{item.name}</p>
-        <p className="text-xs text-gray-400">{item.type === 'baseRecipe' ? 'Receta Base' : 'Súper Receta'}</p>
+        <p className="text-xs text-gray-400">{item.globalCost !== undefined ? `Ingrediente (${item.measurementUnit})` : item.type === 'baseRecipe' ? 'Receta Base' : 'Súper Receta'}</p>
       </div>
     </div>
   );
@@ -43,7 +43,9 @@ DraggableItem.propTypes = {
   id: PropTypes.string.isRequired,
   item: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    globalCost: PropTypes.number,
+    measurementUnit: PropTypes.string,
   }).isRequired,
   isOverlay: PropTypes.bool,
 };

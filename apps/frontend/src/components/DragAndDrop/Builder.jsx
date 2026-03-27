@@ -17,7 +17,7 @@ import { Palette } from './Palette';
 import { Canvas } from './Canvas';
 import { DraggableItem } from './DraggableItem';
 import { SortableItem } from './SortableItem';
-import { budgetApi, superRecipeApi } from '../../api';
+import { budgetApi, superRecipeApi, baseRecipeApi } from '../../api';
 import toast from 'react-hot-toast';
 
 import PropTypes from 'prop-types';
@@ -48,6 +48,12 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     else setSuggestedMargin(30);
   }, []);
 
+  const [baseRecipeMetadata, setBaseRecipeMetadata] = useState({
+    name: '',
+    baseYield: '',
+    yieldUnit: 'g'
+  });
+
   const handleSave = async () => {
     if (canvasItems.length === 0) {
       toast.error('El lienzo está vacío. Agrega algunos elementos primero.');
@@ -68,7 +74,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
         };
         await budgetApi.createBudget(payload);
         toast.success('Presupuesto guardado exitosamente');
-      } else {
+      } else if (mode === 'superRecipe') {
         const payload = {
           name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
           items: canvasItems.map(item => ({
@@ -78,6 +84,26 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
         };
         await superRecipeApi.createSuperRecipe(payload);
         toast.success('Súper Receta guardada exitosamente');
+      } else if (mode === 'baseRecipe') {
+        if (!baseRecipeMetadata.name || !baseRecipeMetadata.baseYield) {
+          toast.error('Debes colocar nombre y rendimiento de la receta');
+          setIsSaving(false);
+          return;
+        }
+
+        const payload = {
+          name: baseRecipeMetadata.name,
+          baseYield: parseFloat(baseRecipeMetadata.baseYield),
+          yieldUnit: baseRecipeMetadata.yieldUnit,
+          items: canvasItems.map(item => ({
+            ingredientId: item.id.replace('canvas-', '').split('-')[1] || item.id,
+            quantity: item.quantity || 1
+          }))
+        };
+        await baseRecipeApi.createBaseRecipe(payload);
+        toast.success('Receta Base guardada exitosamente');
+        setBaseRecipeMetadata({ name: '', baseYield: '', yieldUnit: 'g' });
+        setCanvasItems([]);
       }
       // Opcional: limpiar lienzo después de guardar
       // setCanvasItems([]);
@@ -200,8 +226,8 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
         <div className="lg:col-span-1">
           <Palette
             items={availableItems}
-            title={mode === 'superRecipe' ? 'Recetas Base' : 'Súper Recetas'}
-            description={mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : 'Arrastra para armar tu Presupuesto'}
+            title={mode === 'superRecipe' ? 'Recetas Base' : mode === 'baseRecipe' ? 'Ingredientes' : 'Súper Recetas'}
+            description={mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : mode === 'baseRecipe' ? 'Arrastra ingredientes a la receta' : 'Arrastra para armar tu Presupuesto'}
           />
         </div>
 
@@ -211,10 +237,10 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
             <div className="flex justify-between items-start mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-slate-gray mb-2">
-                  {mode === 'superRecipe' ? 'Nueva Súper Receta' : 'Nuevo Presupuesto'}
+                  {mode === 'superRecipe' ? 'Nueva Súper Receta' : mode === 'baseRecipe' ? 'Nueva Receta Base' : 'Nuevo Presupuesto'}
                 </h1>
                 <p className="text-gray-500">
-                  {mode === 'superRecipe' ? 'Construye tu producto final apilando recetas base.' : 'Arma un pedido combinando múltiples súper recetas.'}
+                  {mode === 'superRecipe' ? 'Construye tu producto final apilando recetas base.' : mode === 'baseRecipe' ? 'Crea una receta combinando ingredientes y definiendo su rendimiento final.' : 'Arma un pedido combinando múltiples súper recetas.'}
                 </p>
               </div>
 
@@ -260,6 +286,47 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
               </div>
             )}
 
+            {mode === 'baseRecipe' && (
+              <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                <div>
+                  <label className="block text-sm font-medium text-slate-gray mb-1">Nombre de la Receta Base</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Ganache de Chocolate"
+                    className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
+                    value={baseRecipeMetadata.name}
+                    onChange={(e) => setBaseRecipeMetadata({ ...baseRecipeMetadata, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-gray mb-1">Rendimiento (Cantidad)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ej. 1000"
+                    className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
+                    value={baseRecipeMetadata.baseYield}
+                    onChange={(e) => setBaseRecipeMetadata({ ...baseRecipeMetadata, baseYield: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-gray mb-1">Unidad de Rendimiento</label>
+                  <select
+                    className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all bg-white"
+                    value={baseRecipeMetadata.yieldUnit}
+                    onChange={(e) => setBaseRecipeMetadata({ ...baseRecipeMetadata, yieldUnit: e.target.value })}
+                  >
+                    <option value="g">Gramos (g)</option>
+                    <option value="ml">Mililitros (ml)</option>
+                    <option value="kg">Kilogramos (kg)</option>
+                    <option value="l">Litros (l)</option>
+                    <option value="u">Unidades (u)</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
             {/* The Canvas Area */}
             <div className="flex-1 flex flex-col">
               <Canvas
@@ -287,6 +354,6 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 }
 
 Builder.propTypes = {
-  mode: PropTypes.oneOf(['superRecipe', 'budget']),
+  mode: PropTypes.oneOf(['superRecipe', 'baseRecipe', 'budget']),
   availableItems: PropTypes.array,
 };
