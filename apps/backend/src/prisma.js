@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/client';
 let prisma;
 
 if (process.env.NODE_ENV === 'test') {
-  // Use mock object in test environment directly without import mocks via jest
-  const { jest } = require('@jest/globals');
+  const { jest } = await import('@jest/globals');
+  
   prisma = {
     currency: {
       findUnique: jest.fn(),
