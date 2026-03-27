@@ -1,4 +1,6 @@
-import prisma from '../prisma.js';
+// Ensure we use the exact exported module which might be mocked in tests
+import prismaClient from '../prisma.js';
+const prisma = prismaClient.default || prismaClient;
 
 // Carga Manual: Recibe targetCurrencyId, rate, y optionally effectiveDate
 export const createOrUpdateManualRate = async (req, res) => {
