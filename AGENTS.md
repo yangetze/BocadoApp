@@ -32,4 +32,5 @@ Para conocer las directrices de diseño, el tono de voz de la aplicación, el "S
 - **Consultar Reglas de Negocio:** Antes de iniciar cualquier tarea, revisa `ROADMAP.md` y `frontend-styleguide.md`.
 - **Read before writing:** Always read `schema.prisma` before writing any backend query. The relationships are deeply nested.
 - **Verification:** Always write or run tests/scripts to verify that the math in `costController.js` remains perfectly accurate when modifying it. Cost calculation is the core value of this app.
+- **Testing Requirements:** Siempre se deben agregar y ejecutar tests en Jest para cada API creada o modificada. El código debe compilar sin errores y todos los tests deben pasar exitosamente. Se deben usar mocks (ej. para Prisma) de manera que los tests sean reproducibles y rápidos.
 - **Frontend Styling:** Use Tailwind utility classes basándote en la guía de estilos. For animations, default to Framer Motion using subtle, professional easing (`ease: "easeInOut", duration: 0.3`).
