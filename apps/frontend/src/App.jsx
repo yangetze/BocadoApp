@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import ExchangeRateManager from './components/ExchangeRateManager';
 import Builder from './components/DragAndDrop/Builder';
+import IngredientManager from './components/Ingredients/IngredientManager';
+import BaseRecipeBuilderWrapper from './components/BaseRecipes/BaseRecipeBuilderWrapper';
 import { sampleBaseRecipes, sampleSuperRecipes } from './data/mockData';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('superRecipe');
+  const [activeTab, setActiveTab] = useState('ingredient');
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
       <Toaster
@@ -35,10 +37,30 @@ function App() {
             <span className="font-bold text-xl tracking-tight text-slate-gray">BocadoApp</span>
           </div>
 
-          <nav className="flex items-center gap-1 bg-gray-50/80 p-1.5 rounded-xl border border-gray-100">
+          <nav className="flex items-center gap-1 bg-gray-50/80 p-1.5 rounded-xl border border-gray-100 overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('ingredient')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
+                activeTab === 'ingredient'
+                  ? 'bg-white text-slate-gray shadow-sm border border-gray-200/50'
+                  : 'text-gray-500 hover:text-slate-gray hover:bg-white/50'
+              }`}
+            >
+              Ingredientes
+            </button>
+            <button
+              onClick={() => setActiveTab('baseRecipe')}
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
+                activeTab === 'baseRecipe'
+                  ? 'bg-white text-slate-gray shadow-sm border border-gray-200/50'
+                  : 'text-gray-500 hover:text-slate-gray hover:bg-white/50'
+              }`}
+            >
+              Recetas Base
+            </button>
             <button
               onClick={() => setActiveTab('superRecipe')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
                 activeTab === 'superRecipe'
                   ? 'bg-white text-slate-gray shadow-sm border border-gray-200/50'
                   : 'text-gray-500 hover:text-slate-gray hover:bg-white/50'
@@ -48,7 +70,7 @@ function App() {
             </button>
             <button
               onClick={() => setActiveTab('budget')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
                 activeTab === 'budget'
                   ? 'bg-white text-slate-gray shadow-sm border border-gray-200/50'
                   : 'text-gray-500 hover:text-slate-gray hover:bg-white/50'
@@ -58,7 +80,7 @@ function App() {
             </button>
             <button
               onClick={() => setActiveTab('settings')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
                 activeTab === 'settings'
                   ? 'bg-white text-slate-gray shadow-sm border border-gray-200/50'
                   : 'text-gray-500 hover:text-slate-gray hover:bg-white/50'
@@ -71,6 +93,8 @@ function App() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6">
+        {activeTab === 'ingredient' && <IngredientManager />}
+        {activeTab === 'baseRecipe' && <BaseRecipeBuilderWrapper />}
         {activeTab === 'settings' && <ExchangeRateManager />}
         {activeTab === 'superRecipe' && (
           <Builder mode="superRecipe" availableItems={sampleBaseRecipes} />

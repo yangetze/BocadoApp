@@ -1,0 +1,83 @@
+import request from 'supertest';
+import express from 'express';
+import { jest } from '@jest/globals';
+import baseRecipeRoutes from '../src/routes/baseRecipeRoutes.js';
+import prisma from '../src/prisma.js';
+
+const app = express();
+app.use(express.json());
+app.use('/api/base-recipes', baseRecipeRoutes);
+
+describe('Base Recipe Routes', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('GET /api/base-recipes', () => {
+    it('should return a list of base recipes', async () => {
+      const mockBaseRecipes = [
+        { id: '1', name: 'Dough', baseYield: 1000, yieldUnit: 'g' },
+        { id: '2', name: 'Sauce', baseYield: 500, yieldUnit: 'ml' }
+      ];
+      prisma.baseRecipe.findMany.mockResolvedValue(mockBaseRecipes);
+
+      const res = await request(app).get('/api/base-recipes');
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(mockBaseRecipes);
+      expect(prisma.baseRecipe.findMany).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('POST /api/base-recipes', () => {
+    it('should create a new base recipe', async () => {
+      const newBaseRecipe = {
+        name: 'Ganache',
+        baseYield: 500,
+        yieldUnit: 'g',
+        items: [{ ingredientId: 'ing1', quantity: 250 }, { ingredientId: 'ing2', quantity: 250 }]
+      };
+
+      const createdBaseRecipe = {
+        id: '1',
+        name: 'Ganache',
+        baseYield: 500,
+        yieldUnit: 'g',
+        ingredients: [{ id: 'link1' }, { id: 'link2' }]
+      };
+
+      prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
+      prisma.baseRecipe.create.mockResolvedValue(createdBaseRecipe);
+
+      const res = await request(app)
+        .post('/api/base-recipes')
+        .send(newBaseRecipe);
+
+      expect(res.statusCode).toBe(201);
+      expect(res.body).toEqual(createdBaseRecipe);
+      expect(prisma.baseRecipe.create).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('DELETE /api/base-recipes/:id', () => {
+    it('should delete a base recipe if not used', async () => {
+      prisma.superRecipeBaseRecipe.findFirst.mockResolvedValue(null);
+      prisma.baseRecipe.delete.mockResolvedValue({ id: '1' });
+
+      const res = await request(app).delete('/api/base-recipes/1');
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({ message: 'Receta base eliminada exitosamente' });
+      expect(prisma.baseRecipe.delete).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not delete a base recipe if it is used', async () => {
+      prisma.superRecipeBaseRecipe.findFirst.mockResolvedValue({ id: 'use1' });
+
+      const res = await request(app).delete('/api/base-recipes/1');
+
+      expect(res.statusCode).toBe(400);
+      expect(prisma.baseRecipe.delete).not.toHaveBeenCalled();
+    });
+  });
+});

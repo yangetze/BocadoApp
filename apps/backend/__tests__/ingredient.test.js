@@ -1,0 +1,90 @@
+import request from 'supertest';
+import express from 'express';
+import { jest } from '@jest/globals';
+import ingredientRoutes from '../src/routes/ingredientRoutes.js';
+import prisma from '../src/prisma.js';
+
+const app = express();
+app.use(express.json());
+app.use('/api/ingredients', ingredientRoutes);
+
+describe('Ingredient Routes', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('GET /api/ingredients', () => {
+    it('should return a list of ingredients', async () => {
+      const mockIngredients = [
+        { id: '1', name: 'Flour', globalCost: 1.5, measurementUnit: 'kg' },
+        { id: '2', name: 'Sugar', globalCost: 2.0, measurementUnit: 'kg' }
+      ];
+      prisma.ingredient.findMany.mockResolvedValue(mockIngredients);
+
+      const res = await request(app).get('/api/ingredients');
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(mockIngredients);
+      expect(prisma.ingredient.findMany).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('POST /api/ingredients', () => {
+    it('should create a new ingredient', async () => {
+      const newIngredient = { name: 'Eggs', globalCost: 3.0, measurementUnit: 'dozen', brand: 'Farm', userId: 'user-default-1' };
+      const createdIngredient = { id: '3', ...newIngredient };
+
+      prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
+      prisma.ingredient.create.mockResolvedValue(createdIngredient);
+
+      const res = await request(app)
+        .post('/api/ingredients')
+        .send(newIngredient);
+
+      expect(res.statusCode).toBe(201);
+      expect(res.body).toEqual(createdIngredient);
+      expect(prisma.ingredient.create).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('PUT /api/ingredients/:id', () => {
+    it('should update an existing ingredient', async () => {
+      const updatedData = { name: 'Brown Sugar', globalCost: 2.5 };
+      const expectedUpdatedIngredient = { id: '2', name: 'Brown Sugar', globalCost: 2.5, measurementUnit: 'kg' };
+
+      prisma.ingredient.update.mockResolvedValue(expectedUpdatedIngredient);
+
+      const res = await request(app)
+        .put('/api/ingredients/2')
+        .send(updatedData);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(expectedUpdatedIngredient);
+      expect(prisma.ingredient.update).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('DELETE /api/ingredients/:id', () => {
+    it('should delete an ingredient if not used', async () => {
+      prisma.baseRecipeIngredient.findFirst.mockResolvedValue(null);
+      prisma.superRecipeDirectIngredient.findFirst.mockResolvedValue(null);
+      prisma.ingredient.delete.mockResolvedValue({ id: '1' });
+
+      const res = await request(app).delete('/api/ingredients/1');
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({ message: 'Ingrediente eliminado exitosamente' });
+      expect(prisma.ingredient.delete).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not delete an ingredient if it is used', async () => {
+      prisma.baseRecipeIngredient.findFirst.mockResolvedValue({ id: 'use1' });
+      prisma.superRecipeDirectIngredient.findFirst.mockResolvedValue(null);
+
+      const res = await request(app).delete('/api/ingredients/1');
+
+      expect(res.statusCode).toBe(400);
+      expect(prisma.ingredient.delete).not.toHaveBeenCalled();
+    });
+  });
+});
