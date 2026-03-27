@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import costRoutes from './routes/costRoutes.js';
+import exchangeRateRoutes from './routes/exchangeRateRoutes.js';
+import { setupCronJobs } from './cronJobs.js';
 
 dotenv.config();
 
@@ -13,6 +15,10 @@ app.use(express.json());
 
 // Main API routes
 app.use('/api', costRoutes);
+app.use('/api/exchange-rates', exchangeRateRoutes);
+
+// Setup Cron Jobs
+setupCronJobs();
 
 // Health check endpoint
 app.get('/health', (req, res) => {

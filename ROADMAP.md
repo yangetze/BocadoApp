@@ -24,7 +24,7 @@ A continuación se define el alcance funcional separado por etapas de Minimum Vi
   - Base de Datos Relacional de Ingredientes (precio base, unidad de medida).
   - Creación de "Recetas Base" (ej. Ganache de Chocolate).
   - Creación de "Súper Recetas" (ej. Pastel Completo).
-  - Sistema Bimonetario Base (Tasas de cambio ingresadas manualmente).
+  - Sistema Bimonetario Base y Automatización (API CriptoYa - Tasas manuales y automáticas con cron-job para USD -> VES).
 - **Diseño UI/UX (En Curso):**
   - Implementación del "Minimalismo Sensorial" definido en `frontend-styleguide.md` (Colores Peach Soft `#F7C5B2` y Slate Gray `#3E4A59`).
   - Dark Mode y Empty States amigables.
@@ -34,9 +34,7 @@ A continuación se define el alcance funcional separado por etapas de Minimum Vi
 
 - **Skill 1: Constructor Visual Drag-and-Drop (Frontend)**
   - Interfaz interactiva donde los usuarios arrastran "Recetas Base" hacia un lienzo para armar visualmente una "Súper Receta" o Presupuesto.
-- **Skill 2: Automatización Bimonetaria (Backend)**
-  - Cron-job o Webhook para actualizar diariamente las tasas de cambio (ej. USD a Moneda Local) desde una API externa, manteniendo un histórico de los presupuestos antiguos.
-- **Skill 3: Recomendador Inteligente de Margen de Ganancia (Backend/IA)**
+- **Skill 2: Recomendador Inteligente de Margen de Ganancia (Backend/IA)**
   - Lógica que sugiere márgenes (30% al 50%+) basados en la complejidad de ensamblaje de la Súper Receta y los estándares de la industria pastelera.
 
 ### Fase SaaS (Visión a Largo Plazo)
@@ -57,8 +55,8 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | **MVP 1** | Definición de Guía Visual (Minimalismo Sensorial) | 🟢 Completado | Alta | Equipo Diseño/UI |
 | **MVP 1** | Motor Relacional (Ingredientes -> Súper Recetas) | 🔵 En Curso | Crítica | Equipo Backend |
 | **MVP 1** | Implementación de `frontend-styleguide.md` en código | 🟡 Por Hacer | Alta | Equipo Frontend |
+| **MVP 1** | Automatización API Bimonetaria (Manual + CriptoYa) | 🔵 En Curso | Alta | Equipo Backend / Frontend |
 | **MVP 2** | Constructor Visual Drag-and-Drop | ⚪ Pendiente | Media | Equipo Frontend |
-| **MVP 2** | Automatización API Bimonetaria | ⚪ Pendiente | Alta | Equipo Backend |
 | **MVP 2** | Recomendador Margen Ganancia | ⚪ Pendiente | Baja | Equipo Backend / IA |
 | **Fase SaaS**| Migración a Multi-tenant (`tenantId`) | ⚪ Futuro | Crítica | Arquitectura |
 
@@ -68,6 +66,7 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 
 ## 📝 4. Notas para Desarrolladores / Agentes
 
+- **Reglas de Negocio - Sistema Bimonetario:** La moneda base es siempre USD. El destino por defecto en UI es VES. El registro de tasas debe indicar fecha de efectividad, fecha de actualización, y fuente (Manual o API CriptoYa). Se permite actualizar una tasa existente si coincide en fecha.
 - Antes de proponer nuevas funcionalidades complejas (Skills), asegúrate de que encajen dentro de uno de los MVPs descritos aquí.
 - Cualquier decisión sobre el aspecto visual de las nuevas "Skills" del MVP 2 debe regirse estrictamente por las normas descritas en `frontend-styleguide.md`.
 - El lenguaje de la interfaz, incluso en las nuevas etapas del MVP 2, será siempre **en Español** y con un tono amigable, como se detalla en la guía de estilos.
