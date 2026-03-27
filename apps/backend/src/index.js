@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import costRoutes from './routes/costRoutes.js';
 import exchangeRateRoutes from './routes/exchangeRateRoutes.js';
+import marginRoutes from './routes/marginRoutes.js';
+import budgetRoutes from './routes/budgetRoutes.js';
 import { setupCronJobs } from './cronJobs.js';
 
 dotenv.config();
@@ -16,6 +18,8 @@ app.use(express.json());
 // Main API routes
 app.use('/api', costRoutes);
 app.use('/api/exchange-rates', exchangeRateRoutes);
+app.use('/api/margins', marginRoutes);
+app.use('/api/budgets', budgetRoutes);
 
 // Setup Cron Jobs
 setupCronJobs();

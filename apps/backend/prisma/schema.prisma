@@ -104,7 +104,7 @@ model SuperRecipe {
   directIngredients  SuperRecipeDirectIngredient[]
 
   // Budgets that include this Super Recipe
-  budgets            Budget[]
+  budgetItems        BudgetSuperRecipe[]
 }
 
 // Junction table: Base Recipes inside a Super Recipe (e.g. Sponge cake, Filling)
@@ -142,16 +142,28 @@ model SuperRecipeDirectIngredient {
 model Budget {
   id            String   @id @default(uuid())
   customerName  String?
-  scaleQuantity Float    // e.g. "I want 3 of this cake" (multiplier)
-  profitMargin  Float    // e.g. 0.30 for 30% margin
+  profitMargin  Float    // Global profit margin for the whole budget
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   userId        String
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  superRecipeId String
-  superRecipe   SuperRecipe @relation(fields: [superRecipeId], references: [id], onDelete: Restrict)
+  superRecipes  BudgetSuperRecipe[]
+}
+
+// Junction table: Super Recipes inside a Budget
+model BudgetSuperRecipe {
+  id             String      @id @default(uuid())
+  scaleQuantity  Float       // e.g. "I want 3 of this cake" (multiplier)
+
+  budgetId       String
+  budget         Budget      @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+
+  superRecipeId  String
+  superRecipe    SuperRecipe @relation(fields: [superRecipeId], references: [id], onDelete: Restrict)
+
+  @@unique([budgetId, superRecipeId])
 }
 
 // ---------------------------------------------------------
