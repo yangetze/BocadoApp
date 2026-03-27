@@ -22,26 +22,14 @@ Welcome to the BocadoApp monorepo! This document serves as a guide for AI assist
    - Keep `.env` out of version control.
    - Use `.env.example` to document required variables.
 
-## 🏗️ Future Skills / Roadmap (To Be Developed)
-When instructed to "develop a new skill", refer to this list for context:
+## 🗺️ Reglas de Negocio, Estilos Visuales y Roadmap
+Para conocer las directrices de diseño, el tono de voz de la aplicación, el "Sensory Minimalism" (2026), los MVPs y las nuevas funcionalidades ("Skills"), debes consultar **estrictamente** los siguientes documentos en la raíz del proyecto:
 
-### Skill 1: Dynamic Drag-and-Drop Builder (Frontend)
-- **Goal:** Create an interactive UI where users can drag "Base Recipes" and "Direct Ingredients" into a visual canvas to construct a "Super Recipe".
-- **Tech:** React, Framer Motion, potentially a dnd library (e.g., `@dnd-kit/core`).
-- **Rules:** Ensure state is synced locally before sending the final composite object to the backend.
-
-### Skill 2: Bimonetary System Expansion
-- **Goal:** Create a cron-job or webhook listener in the backend to automatically update `ExchangeRate` from an external API (e.g., updating the USD to local currency rate daily).
-- **Rules:** Preserve historical budgets with the rate they were created at (Snapshot pattern), only apply live exchange rates to future or draft calculations.
-
-### Skill 3: Automated Profit Margin Recommendations
-- **Goal:** Analyze the cost of a `SuperRecipe` and suggest a `profitMargin` in the `Budget` based on standard baking industry margins (e.g., 30% for simple items, 50% for complex wedding cakes).
-
-### Skill 4: Tenant Management (SaaS Transition)
-- **Goal:** Shift from the current single-tenant proof-of-concept to a full multi-tenant architecture.
-- **Rules:** Every database query MUST filter by `userId` or `tenantId` to ensure data isolation. Implement middleware to inject the `tenantId` from the JWT token.
+1. **`ROADMAP.md`**: Aquí encontrarás las reglas de negocio, la definición de las etapas del producto (MVP 1, MVP 2) y la tabla de estado de las tareas (Skills). **Toda nueva funcionalidad debe enmarcarse en este documento.**
+2. **`frontend-styleguide.md`**: Aquí encontrarás la paleta de colores oficial, directrices para Dark/Light mode, texturas, y reglas de diseño UI/UX. Todo el código frontend que generes **debe obedecer** estas reglas visuales. El tono de voz siempre es amigable y en español.
 
 ## 🤖 AI Workflow Instructions
+- **Consultar Reglas de Negocio:** Antes de iniciar cualquier tarea, revisa `ROADMAP.md` y `frontend-styleguide.md`.
 - **Read before writing:** Always read `schema.prisma` before writing any backend query. The relationships are deeply nested.
 - **Verification:** Always write or run tests/scripts to verify that the math in `costController.js` remains perfectly accurate when modifying it. Cost calculation is the core value of this app.
-- **Frontend Styling:** Use Tailwind utility classes. For animations, default to Framer Motion using subtle, professional easing (`ease: "easeInOut", duration: 0.3`).
+- **Frontend Styling:** Use Tailwind utility classes basándote en la guía de estilos. For animations, default to Framer Motion using subtle, professional easing (`ease: "easeInOut", duration: 0.3`).
