@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { RefreshCw, Plus, Calendar, Coins, History } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { exchangeRateApi } from '../api';
@@ -74,7 +74,7 @@ export default function ExchangeRateManager() {
       setManualRate('');
       setManualDate('');
       await loadData();
-    } catch (error) {
+    } catch {
       toast.error('Ocurrió un error al guardar tu tasa manual.');
     } finally {
       setSavingManual(false);

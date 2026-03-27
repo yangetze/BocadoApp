@@ -17,6 +17,10 @@ if (process.env.NODE_ENV === 'test') {
     },
     superRecipe: {
       findUnique: jest.fn(),
+    },
+    budget: {
+      create: jest.fn(),
+      findMany: jest.fn(),
     }
   };
 } else {
