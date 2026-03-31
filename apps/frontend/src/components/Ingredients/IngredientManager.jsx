@@ -24,7 +24,7 @@ export default function IngredientManager() {
       setLoading(true);
       const data = await ingredientApi.getIngredients();
       setIngredients(data);
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar los ingredientes');
     } finally {
       setLoading(false);
@@ -41,7 +41,7 @@ export default function IngredientManager() {
       setIngredients([added, ...ingredients]);
       setNewItem({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'g' });
       toast.success('Ingrediente agregado');
-    } catch (error) {
+    } catch {
       toast.error('Error al agregar el ingrediente');
     }
   };
@@ -66,7 +66,7 @@ export default function IngredientManager() {
       setIngredients(ingredients.map(ing => ing.id === updated.id ? updated : ing));
       setEditingId(null);
       toast.success('Ingrediente actualizado');
-    } catch (error) {
+    } catch {
       toast.error('Error al actualizar el ingrediente');
     }
   };
@@ -77,8 +77,8 @@ export default function IngredientManager() {
       await ingredientApi.deleteIngredient(id);
       setIngredients(ingredients.filter(ing => ing.id !== id));
       toast.success('Ingrediente eliminado');
-    } catch (error) {
-      toast.error(error.message || 'Error al eliminar el ingrediente');
+    } catch {
+      toast.error('Error al eliminar el ingrediente');
     }
   };
 
