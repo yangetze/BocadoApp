@@ -38,77 +38,80 @@ export const exchangeRateApi = {
   }
 };
 
+
+let mockIngredients = [
+  { id: 'ing-1', name: 'Harina de Trigo', globalCost: 1.5, unitQuantity: 1000, measurementUnit: 'g', brand: 'Robin Hood' },
+  { id: 'ing-2', name: 'Azúcar Blanca', globalCost: 1.2, unitQuantity: 1000, measurementUnit: 'g', brand: 'Montalbán' },
+  { id: 'ing-3', name: 'Huevos', globalCost: 4.5, unitQuantity: 30, measurementUnit: 'u', brand: 'Granja' },
+  { id: 'ing-4', name: 'Mantequilla', globalCost: 6.0, unitQuantity: 500, measurementUnit: 'g', brand: 'Mavesa' }
+];
+
 export const ingredientApi = {
   getIngredients: async () => {
-    const res = await fetch(`${API_URL}/ingredients`);
-    if (!res.ok) throw new Error('Error al obtener los ingredientes');
-    return res.json();
+    return new Promise((resolve) => setTimeout(() => resolve([...mockIngredients]), 500));
   },
   createIngredient: async (data) => {
-    const res = await fetch(`${API_URL}/ingredients`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+    return new Promise((resolve) => {
+      const newIng = { id: `ing-${Date.now()}`, ...data };
+      mockIngredients = [newIng, ...mockIngredients];
+      setTimeout(() => resolve(newIng), 500);
     });
-    if (!res.ok) throw new Error('Error al crear el ingrediente');
-    return res.json();
   },
   updateIngredient: async (id, data) => {
-    const res = await fetch(`${API_URL}/ingredients/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+    return new Promise((resolve, reject) => {
+      const index = mockIngredients.findIndex(i => i.id === id);
+      if (index !== -1) {
+        mockIngredients[index] = { ...mockIngredients[index], ...data };
+        setTimeout(() => resolve(mockIngredients[index]), 500);
+      } else {
+        setTimeout(() => reject(new Error('Ingrediente no encontrado')), 500);
+      }
     });
-    if (!res.ok) throw new Error('Error al actualizar el ingrediente');
-    return res.json();
   },
   deleteIngredient: async (id) => {
-    const res = await fetch(`${API_URL}/ingredients/${id}`, {
-      method: 'DELETE',
+    return new Promise((resolve) => {
+      mockIngredients = mockIngredients.filter(i => i.id !== id);
+      setTimeout(() => resolve({ message: 'Eliminado' }), 500);
     });
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => null);
-        throw new Error(errorData?.error || 'Error al eliminar el ingrediente');
-    }
-    return res.json();
   }
 };
 
+
+
+let mockBaseRecipes = [
+  { id: 'br-1', name: 'Bizcocho Vainilla', baseYield: 1000, yieldUnit: 'g', ingredients: [{ ingredient: { name: 'Harina de Trigo', globalCost: 1.5, unitQuantity: 1000, measurementUnit: 'g' }, quantity: 500 }] }
+];
+
 export const baseRecipeApi = {
   getBaseRecipes: async () => {
-    const res = await fetch(`${API_URL}/base-recipes`);
-    if (!res.ok) throw new Error('Error al obtener las recetas base');
-    return res.json();
+    return new Promise((resolve) => setTimeout(() => resolve([...mockBaseRecipes]), 500));
   },
   createBaseRecipe: async (data) => {
-    const res = await fetch(`${API_URL}/base-recipes`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+    return new Promise((resolve) => {
+      const newBr = { id: `br-${Date.now()}`, ...data, ingredients: data.items?.map(i => ({ ingredient: { id: i.ingredientId, name: 'Ingrediente Mock', globalCost: 1, unitQuantity: 1, measurementUnit: 'g' }, quantity: i.quantity })) || [] };
+      mockBaseRecipes = [newBr, ...mockBaseRecipes];
+      setTimeout(() => resolve(newBr), 500);
     });
-    if (!res.ok) throw new Error('Error al crear la receta base');
-    return res.json();
   },
   updateBaseRecipe: async (id, data) => {
-    const res = await fetch(`${API_URL}/base-recipes/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+    return new Promise((resolve, reject) => {
+      const index = mockBaseRecipes.findIndex(i => i.id === id);
+      if (index !== -1) {
+        mockBaseRecipes[index] = { ...mockBaseRecipes[index], ...data };
+        setTimeout(() => resolve(mockBaseRecipes[index]), 500);
+      } else {
+        setTimeout(() => reject(new Error('Receta base no encontrada')), 500);
+      }
     });
-    if (!res.ok) throw new Error('Error al actualizar la receta base');
-    return res.json();
   },
   deleteBaseRecipe: async (id) => {
-    const res = await fetch(`${API_URL}/base-recipes/${id}`, {
-      method: 'DELETE',
+    return new Promise((resolve) => {
+      mockBaseRecipes = mockBaseRecipes.filter(i => i.id !== id);
+      setTimeout(() => resolve({ message: 'Eliminado' }), 500);
     });
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => null);
-        throw new Error(errorData?.error || 'Error al eliminar la receta base');
-    }
-    return res.json();
   }
 };
+
 
 export const budgetApi = {
   createBudget: async (data) => {
