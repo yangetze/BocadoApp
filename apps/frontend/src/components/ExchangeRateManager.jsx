@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, Plus, Calendar, Coins, History } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { exchangeRateApi } from '../api';
@@ -19,20 +19,36 @@ export default function ExchangeRateManager() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [ratesData, currenciesData] = await Promise.all([
-        exchangeRateApi.getRates(),
-        exchangeRateApi.getCurrencies()
-      ]);
-      setRates(ratesData);
-      setCurrencies(currenciesData);
 
-      // Default to VES if available
-      const ves = currenciesData.find(c => c.code === 'VES');
-      if (ves) setSelectedCurrency(ves.id);
-      else if (currenciesData.length > 0) setSelectedCurrency(currenciesData[0].id);
+      let ratesData = [];
+      let currenciesData = [];
+
+      try {
+        ratesData = await exchangeRateApi.getRates();
+      } catch (err) {
+        console.error("Error fetching rates:", err);
+        toast.error('Error al cargar las tasas de cambio: ' + (err.message || ''));
+      }
+
+      try {
+        currenciesData = await exchangeRateApi.getCurrencies();
+      } catch (err) {
+        console.error("Error fetching currencies:", err);
+        toast.error('Error al cargar las monedas: ' + (err.message || ''));
+      }
+
+      setRates(ratesData || []);
+      setCurrencies(currenciesData || []);
+
+      if (currenciesData && currenciesData.length > 0) {
+        // Default to VES if available
+        const ves = currenciesData.find(c => c.code === 'VES');
+        if (ves) setSelectedCurrency(ves.id);
+        else setSelectedCurrency(currenciesData[0].id);
+      }
 
     } catch (error) {
-      toast.error('¡Ups! No pudimos cargar las tasas de cambio.');
+      toast.error('¡Ups! Ocurrió un error inesperado.');
       console.error(error);
     } finally {
       setLoading(false);
