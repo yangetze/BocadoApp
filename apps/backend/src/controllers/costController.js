@@ -1,4 +1,5 @@
 import prisma from '../prisma.js';
+import { isTestMode, mockData } from '../mockData.js';
 
 export const calculateSuperRecipeCost = async (req, res) => {
   try {
@@ -12,30 +13,48 @@ export const calculateSuperRecipeCost = async (req, res) => {
       return res.status(400).json({ error: 'Invalid yield parameter' });
     }
 
-    // Fetch SuperRecipe with deeply nested base recipes and ingredients
-    const superRecipe = await prisma.superRecipe.findUnique({
-      where: { id: superRecipeId },
-      include: {
-        baseRecipes: {
-          include: {
-            baseRecipe: {
-              include: {
-                ingredients: {
-                  include: {
-                    ingredient: true
+    let superRecipe;
+    let exchangeRates;
+
+    if (isTestMode()) {
+      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId);
+
+      // Filter exchange rates to get the latest distinct ones per currency
+      const sortedRates = [...mockData.exchangeRates].sort((a, b) => b.effectiveDate - a.effectiveDate);
+      exchangeRates = [];
+      const seenCurrencies = new Set();
+      for (const rate of sortedRates) {
+        if (!seenCurrencies.has(rate.targetCurrencyId)) {
+          exchangeRates.push(rate);
+          seenCurrencies.add(rate.targetCurrencyId);
+        }
+      }
+    } else {
+      // Fetch SuperRecipe with deeply nested base recipes and ingredients
+      superRecipe = await prisma.superRecipe.findUnique({
+        where: { id: superRecipeId },
+        include: {
+          baseRecipes: {
+            include: {
+              baseRecipe: {
+                include: {
+                  ingredients: {
+                    include: {
+                      ingredient: true
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        directIngredients: {
-          include: {
-            ingredient: true
+          },
+          directIngredients: {
+            include: {
+              ingredient: true
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     if (!superRecipe) {
       return res.status(404).json({ error: 'SuperRecipe not found' });
@@ -95,12 +114,14 @@ export const calculateSuperRecipeCost = async (req, res) => {
       });
     }
 
-    // Fetch exchange rates (USD to local currencies, assuming base currency is USD)
-    const exchangeRates = await prisma.exchangeRate.findMany({
-      include: { targetCurrency: true },
-      orderBy: { effectiveDate: 'desc' },
-      distinct: ['targetCurrencyId'] // Get latest rate per currency
-    });
+    if (!isTestMode()) {
+      // Fetch exchange rates (USD to local currencies, assuming base currency is USD)
+      exchangeRates = await prisma.exchangeRate.findMany({
+        include: { targetCurrency: true },
+        orderBy: { effectiveDate: 'desc' },
+        distinct: ['targetCurrencyId'] // Get latest rate per currency
+      });
+    }
 
     const costsInOtherCurrencies = exchangeRates.map(rate => ({
       currency: rate.targetCurrency.code,

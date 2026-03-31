@@ -1,4 +1,5 @@
 import prisma from '../prisma.js';
+import { isTestMode, mockData } from '../mockData.js';
 
 export const createBudget = async (req, res) => {
   try {
@@ -6,6 +7,26 @@ export const createBudget = async (req, res) => {
 
     if (!userId || !superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
       return res.status(400).json({ error: 'Missing required fields or invalid superRecipes array' });
+    }
+
+    if (isTestMode()) {
+      const newBudget = {
+        id: `bud-${Date.now()}`,
+        customerName: customerName || null,
+        profitMargin: parseFloat(profitMargin),
+        userId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        superRecipes: superRecipes.map(sr => ({
+          id: `bsr-${Date.now()}-${Math.random()}`,
+          budgetId: `bud-${Date.now()}`,
+          superRecipeId: sr.superRecipeId,
+          scaleQuantity: sr.scaleQuantity || 1,
+          superRecipe: mockData.superRecipes.find(s => s.id === sr.superRecipeId)
+        }))
+      };
+      mockData.budgets.push(newBudget);
+      return res.status(201).json(newBudget);
     }
 
     const budget = await prisma.budget.create({
@@ -35,6 +56,14 @@ export const createBudget = async (req, res) => {
 export const getBudgets = async (req, res) => {
   try {
     const { userId } = req.query;
+
+    if (isTestMode()) {
+      let result = mockData.budgets;
+      if (userId) {
+        result = result.filter(b => b.userId === userId);
+      }
+      return res.status(200).json(result.sort((a, b) => b.createdAt - a.createdAt));
+    }
 
     const whereClause = userId ? { userId } : {};
 

@@ -1,0 +1,49 @@
+
+> @bocadoapp/backend@1.0.0 test
+> node --experimental-vm-modules ../../node_modules/jest/bin/jest.js
+
+(node:5394) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/cost.test.js
+PASS __tests__/ingredient.test.js
+PASS __tests__/baseRecipe.test.js
+PASS tests/exchangeRate.test.js
+  ● Console
+
+    console.error
+      Error in getExchangeRates: Error: DB Error
+          at Object.<anonymous> (/app/apps/backend/tests/exchangeRate.test.js:31:54)
+          at Promise.finally.completed (/app/node_modules/jest-circus/build/jestAdapterInit.js:1557:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn (/app/node_modules/jest-circus/build/jestAdapterInit.js:1497:10)
+          at _callCircusTest (/app/node_modules/jest-circus/build/jestAdapterInit.js:1007:40)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+          at _runTest (/app/node_modules/jest-circus/build/jestAdapterInit.js:947:3)
+          at /app/node_modules/jest-circus/build/jestAdapterInit.js:849:7
+          at _runTestsForDescribeBlock (/app/node_modules/jest-circus/build/jestAdapterInit.js:862:11)
+          at _runTestsForDescribeBlock (/app/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at _runTestsForDescribeBlock (/app/node_modules/jest-circus/build/jestAdapterInit.js:857:11)
+          at run (/app/node_modules/jest-circus/build/jestAdapterInit.js:761:3)
+          at runAndTransformResultsToJestFormat (/app/node_modules/jest-circus/build/jestAdapterInit.js:1918:21)
+          at jestAdapter (/app/node_modules/jest-circus/build/runner.js:101:19)
+          at runTestInternal (/app/node_modules/jest-runner/build/index.js:275:16)
+          at runTest (/app/node_modules/jest-runner/build/index.js:343:7)
+
+      242 |     return res.status(200).json(rates);
+      243 |   } catch (error) {
+    > 244 |     console.error('Error in getExchangeRates:', error);
+          |             ^
+      245 |     return res.status(500).json({ error: 'Internal server error' });
+      246 |   }
+      247 | };
+
+      at error (src/controllers/exchangeRateController.js:244:13)
+
+PASS src/__tests__/budgetController.test.js
+PASS src/__tests__/marginController.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       24 passed, 24 total
+Snapshots:   0 total
+Time:        2.086 s
+Ran all test suites.

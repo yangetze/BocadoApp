@@ -1,6 +1,10 @@
 import prisma from '../prisma.js';
+import { isTestMode, mockData } from '../mockData.js';
 
 export const getBaseRecipes = async (req, res) => {
+  if (isTestMode()) {
+    return res.status(200).json(mockData.baseRecipes.sort((a, b) => b.createdAt - a.createdAt));
+  }
   try {
     const baseRecipes = await prisma.baseRecipe.findMany({
       include: {
@@ -23,10 +27,29 @@ export const createBaseRecipe = async (req, res) => {
   try {
     const { name, baseYield, yieldUnit, userId, items } = req.body;
 
-    // Fallback to a default user if not provided
     const uid = userId || 'user-default-1';
 
-    // Verify user exists or create default
+    if (isTestMode()) {
+      const newBaseRecipe = {
+        id: `br-${Date.now()}`,
+        name,
+        baseYield: parseFloat(baseYield),
+        yieldUnit,
+        userId: uid,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ingredients: items.map(item => ({
+          id: `bri-${Date.now()}-${Math.random()}`,
+          baseRecipeId: `br-${Date.now()}`,
+          ingredientId: item.ingredientId,
+          quantity: parseFloat(item.quantity),
+          ingredient: mockData.ingredients.find(i => i.id === item.ingredientId)
+        }))
+      };
+      mockData.baseRecipes.push(newBaseRecipe);
+      return res.status(201).json(newBaseRecipe);
+    }
+
     let user = await prisma.user.findUnique({ where: { id: uid } });
     if (!user) {
       user = await prisma.user.create({
@@ -72,7 +95,31 @@ export const updateBaseRecipe = async (req, res) => {
     const { id } = req.params;
     const { name, baseYield, yieldUnit, items } = req.body;
 
-    // We can update the simple fields, but for ingredients it's easier to delete and recreate the links
+    if (isTestMode()) {
+      const recipeIndex = mockData.baseRecipes.findIndex(br => br.id === id);
+      if (recipeIndex === -1) return res.status(404).json({ error: 'Receta base no encontrada' });
+
+      const updated = {
+        ...mockData.baseRecipes[recipeIndex],
+        ...(name && { name }),
+        ...(baseYield !== undefined && { baseYield: parseFloat(baseYield) }),
+        ...(yieldUnit && { yieldUnit })
+      };
+
+      if (items) {
+        updated.ingredients = items.map(item => ({
+          id: `bri-${Date.now()}-${Math.random()}`,
+          baseRecipeId: id,
+          ingredientId: item.ingredientId,
+          quantity: parseFloat(item.quantity),
+          ingredient: mockData.ingredients.find(i => i.id === item.ingredientId)
+        }));
+      }
+
+      mockData.baseRecipes[recipeIndex] = updated;
+      return res.status(200).json(updated);
+    }
+
     const updateData = {};
     if (name) updateData.name = name;
     if (baseYield !== undefined) updateData.baseYield = parseFloat(baseYield);
@@ -128,7 +175,17 @@ export const deleteBaseRecipe = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if base recipe is used in any SuperRecipe
+    if (isTestMode()) {
+      const usedInSuper = mockData.superRecipes.some(sr => sr.baseRecipes.some(br => br.baseRecipeId === id));
+
+      if (usedInSuper) {
+        return res.status(400).json({ error: 'No se puede eliminar la receta base porque está en uso en una Súper Receta.' });
+      }
+
+      mockData.baseRecipes = mockData.baseRecipes.filter(br => br.id !== id);
+      return res.status(200).json({ message: 'Receta base eliminada exitosamente' });
+    }
+
     const usedInSuper = await prisma.superRecipeBaseRecipe.findFirst({ where: { baseRecipeId: id } });
 
     if (usedInSuper) {

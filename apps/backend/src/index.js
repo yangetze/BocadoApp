@@ -8,6 +8,7 @@ import budgetRoutes from './routes/budgetRoutes.js';
 import ingredientRoutes from './routes/ingredientRoutes.js';
 import baseRecipeRoutes from './routes/baseRecipeRoutes.js';
 import { setupCronJobs } from './cronJobs.js';
+import { isTestMode } from './mockData.js';
 
 dotenv.config();
 
@@ -25,12 +26,20 @@ app.use('/api/budgets', budgetRoutes);
 app.use('/api/ingredients', ingredientRoutes);
 app.use('/api/base-recipes', baseRecipeRoutes);
 
-// Setup Cron Jobs
-setupCronJobs();
+// Setup Cron Jobs (only if not in test mode, or handle gracefully)
+if (!isTestMode()) {
+  setupCronJobs();
+} else {
+  console.log('Test Mode is ON - Cron jobs disabled');
+}
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'BocadoApp Backend Running' });
+  res.status(200).json({
+    status: 'ok',
+    message: 'BocadoApp Backend Running',
+    testMode: isTestMode()
+  });
 });
 
 app.listen(port, () => {
