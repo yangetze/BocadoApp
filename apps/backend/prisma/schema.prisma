@@ -43,6 +43,7 @@ model Ingredient {
   id              String   @id @default(uuid())
   name            String
   globalCost      Float    // Always in base currency (e.g. USD)
+  unitQuantity    Float    @default(1) // Quantity of the unit (e.g. 30 units, 900g)
   measurementUnit String   // e.g. "gr", "ml", "unit"
   brand           String?
   createdAt       DateTime @default(now())
