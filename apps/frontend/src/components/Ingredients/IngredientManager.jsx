@@ -10,7 +10,7 @@ export default function IngredientManager() {
   const [editingId, setEditingId] = useState(null);
 
   // State for the new inline item
-  const [newItem, setNewItem] = useState({ name: '', brand: '', globalCost: '', measurementUnit: 'g' });
+  const [newItem, setNewItem] = useState({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'g' });
 
   // State for editing existing item
   const [editItem, setEditItem] = useState({});
@@ -32,14 +32,14 @@ export default function IngredientManager() {
   };
 
   const handleAdd = async () => {
-    if (!newItem.name || !newItem.globalCost || !newItem.measurementUnit) {
-      toast.error('Nombre, costo y unidad son obligatorios');
+    if (!newItem.name || !newItem.globalCost || !newItem.measurementUnit || !newItem.unitQuantity) {
+      toast.error('Nombre, costo, cantidad y unidad son obligatorios');
       return;
     }
     try {
       const added = await ingredientApi.createIngredient(newItem);
       setIngredients([added, ...ingredients]);
-      setNewItem({ name: '', brand: '', globalCost: '', measurementUnit: 'g' });
+      setNewItem({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'g' });
       toast.success('Ingrediente agregado');
     } catch (error) {
       toast.error('Error al agregar el ingrediente');
@@ -57,8 +57,8 @@ export default function IngredientManager() {
   };
 
   const handleEditSave = async () => {
-    if (!editItem.name || !editItem.globalCost || !editItem.measurementUnit) {
-      toast.error('Nombre, costo y unidad son obligatorios');
+    if (!editItem.name || !editItem.globalCost || !editItem.measurementUnit || !editItem.unitQuantity) {
+      toast.error('Nombre, costo, cantidad y unidad son obligatorios');
       return;
     }
     try {
@@ -96,6 +96,7 @@ export default function IngredientManager() {
               <th className="py-3 px-4 font-semibold">Nombre</th>
               <th className="py-3 px-4 font-semibold">Marca <span className="text-sm text-gray-400 font-normal">(Opcional)</span></th>
               <th className="py-3 px-4 font-semibold">Costo (USD)</th>
+              <th className="py-3 px-4 font-semibold">Cantidad</th>
               <th className="py-3 px-4 font-semibold">Unidad</th>
               <th className="py-3 px-4 font-semibold text-right">Acciones</th>
             </tr>
@@ -136,6 +137,17 @@ export default function IngredientManager() {
                 </div>
               </td>
               <td className="py-3 px-4">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="Ej. 900"
+                  className="w-full border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
+                  value={newItem.unitQuantity}
+                  onChange={(e) => setNewItem({ ...newItem, unitQuantity: e.target.value })}
+                />
+              </td>
+              <td className="py-3 px-4">
                 <select
                   className="w-full border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all bg-white"
                   value={newItem.measurementUnit}
@@ -157,11 +169,11 @@ export default function IngredientManager() {
             {/* DATA ROWS */}
             {loading ? (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-gray-500">Cargando ingredientes...</td>
+                <td colSpan="6" className="py-8 text-center text-gray-500">Cargando ingredientes...</td>
               </tr>
             ) : ingredients.length === 0 ? (
               <tr>
-                <td colSpan="5" className="py-12 text-center">
+                <td colSpan="6" className="py-12 text-center">
                   <div className="flex flex-col items-center justify-center opacity-60">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-2xl">🥚</div>
                     <p className="text-slate-gray font-medium">Aún no tienes ingredientes</p>
@@ -203,6 +215,16 @@ export default function IngredientManager() {
                         </div>
                       </td>
                       <td className="py-3 px-4">
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          className="w-full border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
+                          value={editItem.unitQuantity}
+                          onChange={(e) => setEditItem({ ...editItem, unitQuantity: e.target.value })}
+                        />
+                      </td>
+                      <td className="py-3 px-4">
                         <select
                           className="w-full border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all bg-white"
                           value={editItem.measurementUnit}
@@ -221,6 +243,7 @@ export default function IngredientManager() {
                       <td className="py-4 px-4 font-medium text-slate-gray">{ing.name}</td>
                       <td className="py-4 px-4 text-gray-500">{ing.brand || '-'}</td>
                       <td className="py-4 px-4 text-slate-gray font-medium">${Number(ing.globalCost).toFixed(2)}</td>
+                      <td className="py-4 px-4 text-slate-gray">{ing.unitQuantity}</td>
                       <td className="py-4 px-4 text-gray-500">
                          <span className="bg-gray-100 px-2 py-1 rounded-md text-xs font-semibold">{ing.measurementUnit}</span>
                       </td>

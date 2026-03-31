@@ -14,7 +14,7 @@ export const getIngredients = async (req, res) => {
 
 export const createIngredient = async (req, res) => {
   try {
-    const { name, globalCost, measurementUnit, brand, userId } = req.body;
+    const { name, globalCost, unitQuantity, measurementUnit, brand, userId } = req.body;
 
     // Fallback to a default user if not provided, for MVP purposes
     const uid = userId || 'user-default-1';
@@ -35,6 +35,7 @@ export const createIngredient = async (req, res) => {
       data: {
         name,
         globalCost: parseFloat(globalCost),
+        unitQuantity: unitQuantity !== undefined ? parseFloat(unitQuantity) : 1,
         measurementUnit,
         brand,
         userId: user.id
@@ -51,13 +52,14 @@ export const createIngredient = async (req, res) => {
 export const updateIngredient = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, globalCost, measurementUnit, brand } = req.body;
+    const { name, globalCost, unitQuantity, measurementUnit, brand } = req.body;
 
     const updatedIngredient = await prisma.ingredient.update({
       where: { id },
       data: {
         name,
         ...(globalCost !== undefined && { globalCost: parseFloat(globalCost) }),
+        ...(unitQuantity !== undefined && { unitQuantity: parseFloat(unitQuantity) }),
         measurementUnit,
         brand
       }
