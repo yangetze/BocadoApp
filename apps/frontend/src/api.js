@@ -2,9 +2,17 @@ const API_URL = 'http://localhost:3000/api';
 
 export const exchangeRateApi = {
   getRates: async () => {
-    const res = await fetch(`${API_URL}/exchange-rates`);
-    if (!res.ok) throw new Error('Error al obtener las tasas de cambio');
-    return res.json();
+    try {
+      const res = await fetch(`${API_URL}/exchange-rates`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.error || 'Error al obtener las tasas de cambio');
+      }
+      return res.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   },
 
   createOrUpdateManualRate: async (data) => {
@@ -32,9 +40,17 @@ export const exchangeRateApi = {
 
   getCurrencies: async () => {
     // If getting currencies fails initially (e.g., none exist), ensure it doesn't break UI
-    const res = await fetch(`${API_URL}/exchange-rates/currencies`);
-    if (!res.ok) throw new Error('Error al obtener las monedas');
-    return res.json();
+    try {
+      const res = await fetch(`${API_URL}/exchange-rates/currencies`);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.error || 'Error al obtener las monedas');
+      }
+      return res.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 };
 
