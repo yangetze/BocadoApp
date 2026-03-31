@@ -56,6 +56,7 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | **MVP 1** | Motor Relacional (Ingredientes -> Súper Recetas) | 🟢 Completado | Crítica | Equipo Backend |
 | **MVP 1** | Implementación de `frontend-styleguide.md` en código | 🟢 Completado | Alta | Equipo Frontend |
 | **MVP 1** | Automatización API Bimonetaria (Manual + CriptoYa) | 🟢 Completado | Alta | Equipo Backend / Frontend |
+| **MVP 1** | Implementación de TestMode (In-Memory) vs PostgreSQL | 🟢 Completado | Alta | Equipo Backend |
 | **MVP 1** | Testing Integral de API Backend (Jest + Supertest) | 🔵 En Curso | Alta | Equipo Backend / QA |
 | **MVP 2** | Constructor Visual Drag-and-Drop | ⚪ Pendiente | Media | Equipo Frontend |
 | **MVP 2** | Recomendador Margen Ganancia | ⚪ Pendiente | Baja | Equipo Backend / IA |
@@ -67,6 +68,7 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 
 ## 📝 4. Notas para Desarrolladores / Agentes
 
+- **TestMode:** La aplicación soporta un modo de prueba en memoria para facilidad de demostración en el frontend sin requerir conexión a la base de datos local. Para activar este modo, asegúrate de establecer `TEST_MODE=true` en tu archivo `.env` del backend. Si está en `false` o no está definido, utilizará Prisma junto con una base de datos de PostgreSQL real.
 - **Reglas de Negocio - Sistema Bimonetario:** La moneda base es siempre USD. El destino por defecto en UI es VES. El registro de tasas debe indicar fecha de efectividad, fecha de actualización, y fuente (Manual o API CriptoYa). Se permite actualizar una tasa existente si coincide en fecha.
 - Antes de proponer nuevas funcionalidades complejas (Skills), asegúrate de que encajen dentro de uno de los MVPs descritos aquí.
 - Cualquier decisión sobre el aspecto visual de las nuevas "Skills" del MVP 2 debe regirse estrictamente por las normas descritas en `frontend-styleguide.md`.

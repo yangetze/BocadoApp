@@ -1,24 +1,31 @@
 import prisma from '../prisma.js';
+import { isTestMode, mockData } from '../mockData.js';
 
 export const recommendMargin = async (req, res) => {
   try {
     const { superRecipeId } = req.params;
 
-    const superRecipe = await prisma.superRecipe.findUnique({
-      where: { id: superRecipeId },
-      include: {
-        baseRecipes: {
-          include: {
-            baseRecipe: {
-              include: {
-                ingredients: true
+    let superRecipe;
+
+    if (isTestMode()) {
+      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId);
+    } else {
+      superRecipe = await prisma.superRecipe.findUnique({
+        where: { id: superRecipeId },
+        include: {
+          baseRecipes: {
+            include: {
+              baseRecipe: {
+                include: {
+                  ingredients: true
+                }
               }
             }
-          }
-        },
-        directIngredients: true
-      }
-    });
+          },
+          directIngredients: true
+        }
+      });
+    }
 
     if (!superRecipe) {
       return res.status(404).json({ error: 'SuperRecipe not found' });

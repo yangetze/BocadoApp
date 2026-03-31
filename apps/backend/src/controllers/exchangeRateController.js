@@ -1,5 +1,6 @@
 // Ensure we use the exact exported module which might be mocked in tests
 import prismaClient from '../prisma.js';
+import { isTestMode, mockData } from '../mockData.js';
 const prisma = prismaClient.default || prismaClient;
 
 // Carga Manual: Recibe targetCurrencyId, rate, y optionally effectiveDate
@@ -30,6 +31,34 @@ export const createOrUpdateManualRate = async (req, res) => {
     const dateToUse = effectiveDate ? new Date(effectiveDate) : new Date();
     // Normalize to start of day in UTC for consistency
     const normalizedDate = new Date(Date.UTC(dateToUse.getUTCFullYear(), dateToUse.getUTCMonth(), dateToUse.getUTCDate()));
+
+    if (isTestMode()) {
+      const existingRateIndex = mockData.exchangeRates.findIndex(
+        r => r.targetCurrencyId === targetCurrencyId &&
+             new Date(r.effectiveDate).getTime() === normalizedDate.getTime()
+      );
+
+      const targetCurrency = mockData.currencies.find(c => c.id === targetCurrencyId);
+
+      let newOrUpdatedRate;
+      if (existingRateIndex >= 0) {
+        mockData.exchangeRates[existingRateIndex].rate = parseFloat(rate);
+        mockData.exchangeRates[existingRateIndex].source = 'MANUAL';
+        newOrUpdatedRate = mockData.exchangeRates[existingRateIndex];
+      } else {
+        newOrUpdatedRate = {
+          id: `er-${Date.now()}`,
+          rate: parseFloat(rate),
+          effectiveDate: normalizedDate,
+          source: 'MANUAL',
+          targetCurrencyId,
+          targetCurrency
+        };
+        mockData.exchangeRates.push(newOrUpdatedRate);
+      }
+
+      return res.status(200).json(newOrUpdatedRate);
+    }
 
     // Use Prisma's upsert to automatically create or update based on the unique constraint
     const exchangeRate = await prisma.exchangeRate.upsert({
@@ -118,6 +147,36 @@ export const fetchAndStoreApiRate = async (req, res) => {
     const today = new Date();
     const normalizedDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
 
+    if (isTestMode()) {
+      const vesCur = mockData.currencies.find(c => c.code === 'VES');
+      const targetCurId = vesCur ? vesCur.id : 'cur-2'; // Defaulting from mockData
+
+      const existingRateIndex = mockData.exchangeRates.findIndex(
+        r => r.targetCurrencyId === targetCurId &&
+             new Date(r.effectiveDate).getTime() === normalizedDate.getTime()
+      );
+
+      let newOrUpdatedRate;
+      if (existingRateIndex >= 0) {
+        mockData.exchangeRates[existingRateIndex].rate = parseFloat(rate);
+        mockData.exchangeRates[existingRateIndex].source = sourceEnum;
+        newOrUpdatedRate = mockData.exchangeRates[existingRateIndex];
+      } else {
+        newOrUpdatedRate = {
+          id: `er-${Date.now()}`,
+          rate: parseFloat(rate),
+          effectiveDate: normalizedDate,
+          source: sourceEnum,
+          targetCurrencyId: targetCurId,
+          targetCurrency: vesCur
+        };
+        mockData.exchangeRates.push(newOrUpdatedRate);
+      }
+
+      if (res) return res.status(200).json(newOrUpdatedRate);
+      return newOrUpdatedRate;
+    }
+
     // 3. Upsert the rate
     const exchangeRate = await prisma.exchangeRate.upsert({
       where: {
@@ -160,6 +219,14 @@ export const getExchangeRates = async (req, res) => {
   try {
     const { targetCurrencyId } = req.query;
 
+    if (isTestMode()) {
+      let result = mockData.exchangeRates;
+      if (targetCurrencyId) {
+        result = result.filter(r => r.targetCurrencyId === targetCurrencyId);
+      }
+      return res.status(200).json(result.sort((a, b) => b.effectiveDate - a.effectiveDate));
+    }
+
     const whereClause = targetCurrencyId ? { targetCurrencyId } : {};
 
     const rates = await prisma.exchangeRate.findMany({
@@ -181,6 +248,10 @@ export const getExchangeRates = async (req, res) => {
 
 export const getCurrencies = async (req, res) => {
     try {
+        if (isTestMode()) {
+          return res.status(200).json(mockData.currencies);
+        }
+
         // Automatically ensure default currencies exist when querying them to improve UX
         let baseCurrency = await prisma.currency.findUnique({ where: { code: 'USD' } });
         if(!baseCurrency) {
