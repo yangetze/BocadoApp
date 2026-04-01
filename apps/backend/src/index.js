@@ -7,6 +7,8 @@ import marginRoutes from './routes/marginRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
 import ingredientRoutes from './routes/ingredientRoutes.js';
 import baseRecipeRoutes from './routes/baseRecipeRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import { setupCronJobs } from './cronJobs.js';
 import { isTestMode } from './mockData.js';
 
@@ -19,6 +21,8 @@ app.use(cors());
 app.use(express.json());
 
 // Main API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api', costRoutes);
 app.use('/api/exchange-rates', exchangeRateRoutes);
 app.use('/api/margins', marginRoutes);

@@ -1,164 +1,208 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
+const fetchWithAuth = async (url, options = {}) => {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_URL}${url}`, {
+    ...options,
+    headers,
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+    const errData = await res.json().catch(() => null);
+    throw { response: { data: errData, status: res.status } };
+  }
+
+  return { data: await res.json() };
+};
+
+export const api = {
+  get: (url) => fetchWithAuth(url),
+  post: (url, data) => fetchWithAuth(url, { method: 'POST', body: JSON.stringify(data) }),
+  put: (url, data) => fetchWithAuth(url, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (url) => fetchWithAuth(url, { method: 'DELETE' }),
+};
+
+export const authApi = {
+  login: (data) => api.post('/auth/login', data),
+  register: (data) => api.post('/auth/register', data),
+};
+
+export const userApi = {
+  getAll: () => api.get('/users'),
+  updateStatus: (id, data) => api.put(`/users/${id}`, data),
+};
+
 export const exchangeRateApi = {
   getRates: async () => {
     try {
-      const res = await fetch(`${API_URL}/exchange-rates`);
-      if (!res.ok) {
-        const errData = await res.json().catch(() => null);
-        throw new Error(errData?.error || 'Error al obtener las tasas de cambio');
-      }
-      return res.json();
+      const res = await api.get('/exchange-rates');
+      return res.data;
     } catch (error) {
       console.error(error);
-      throw error;
+      throw error.response?.data?.error || 'Error al obtener las tasas de cambio';
     }
   },
 
   createOrUpdateManualRate: async (data) => {
-    const res = await fetch(`${API_URL}/exchange-rates/manual`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('Error al guardar la tasa manual');
-    return res.json();
-  },
-
-  syncApiRate: async (type = 'bcv') => {
-    const res = await fetch(`${API_URL}/exchange-rates/sync-api`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type }),
-    });
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => null);
-        throw new Error(errorData?.error || 'Error al sincronizar con la API');
-    }
-    return res.json();
-  },
-
-  getCurrencies: async () => {
-    // If getting currencies fails initially (e.g., none exist), ensure it doesn't break UI
     try {
-      const res = await fetch(`${API_URL}/exchange-rates/currencies`);
-      if (!res.ok) {
-        const errData = await res.json().catch(() => null);
-        throw new Error(errData?.error || 'Error al obtener las monedas');
-      }
-      return res.json();
+       const res = await api.post('/exchange-rates/manual', data);
+       return res.data;
     } catch (error) {
-      console.error(error);
-      throw error;
+        throw new Error(error.response?.data?.error || 'Error al crear/actualizar tasa manual');
+    }
+  },
+
+  syncAutomaticRate: async () => {
+    try {
+      const res = await api.post('/exchange-rates/sync');
+      return res.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.error || 'Error al sincronizar tasa');
     }
   }
 };
-
-
-let mockIngredients = [
-  { id: 'ing-1', name: 'Harina de Trigo', globalCost: 1.5, unitQuantity: 1000, measurementUnit: 'g', brand: 'Robin Hood' },
-  { id: 'ing-2', name: 'Azúcar Blanca', globalCost: 1.2, unitQuantity: 1000, measurementUnit: 'g', brand: 'Montalbán' },
-  { id: 'ing-3', name: 'Huevos', globalCost: 4.5, unitQuantity: 30, measurementUnit: 'u', brand: 'Granja' },
-  { id: 'ing-4', name: 'Mantequilla', globalCost: 6.0, unitQuantity: 500, measurementUnit: 'g', brand: 'Mavesa' }
-];
 
 export const ingredientApi = {
-  getIngredients: async () => {
-    return new Promise((resolve) => setTimeout(() => resolve([...mockIngredients]), 500));
+  getAll: async () => {
+    try {
+      const res = await api.get('/ingredients');
+      return res.data;
+    } catch (error) {
+       console.error(error);
+       throw error.response?.data?.error || 'Error al obtener ingredientes';
+    }
   },
-  createIngredient: async (data) => {
-    return new Promise((resolve) => {
-      const newIng = { id: `ing-${Date.now()}`, ...data };
-      mockIngredients = [newIng, ...mockIngredients];
-      setTimeout(() => resolve(newIng), 500);
-    });
-  },
-  updateIngredient: async (id, data) => {
-    return new Promise((resolve, reject) => {
-      const index = mockIngredients.findIndex(i => i.id === id);
-      if (index !== -1) {
-        mockIngredients[index] = { ...mockIngredients[index], ...data };
-        setTimeout(() => resolve(mockIngredients[index]), 500);
-      } else {
-        setTimeout(() => reject(new Error('Ingrediente no encontrado')), 500);
+
+  create: async (data) => {
+      try {
+          const res = await api.post('/ingredients', data);
+          return res.data;
+      } catch (error) {
+           throw new Error(error.response?.data?.error || 'Error al crear el ingrediente');
       }
-    });
   },
-  deleteIngredient: async (id) => {
-    return new Promise((resolve) => {
-      mockIngredients = mockIngredients.filter(i => i.id !== id);
-      setTimeout(() => resolve({ message: 'Eliminado' }), 500);
-    });
+
+  update: async (id, data) => {
+      try {
+           const res = await api.put(`/ingredients/${id}`, data);
+           return res.data;
+      } catch (error) {
+          throw new Error(error.response?.data?.error || 'Error al actualizar el ingrediente');
+      }
+  },
+
+  delete: async (id) => {
+       try {
+           const res = await api.delete(`/ingredients/${id}`);
+           return res.data;
+       } catch (error) {
+           throw new Error(error.response?.data?.error || 'Error al eliminar el ingrediente');
+       }
   }
 };
-
-
-
-let mockBaseRecipes = [
-  { id: 'br-1', name: 'Bizcocho Vainilla', baseYield: 1000, yieldUnit: 'g', ingredients: [{ ingredient: { name: 'Harina de Trigo', globalCost: 1.5, unitQuantity: 1000, measurementUnit: 'g' }, quantity: 500 }] }
-];
 
 export const baseRecipeApi = {
-  getBaseRecipes: async () => {
-    return new Promise((resolve) => setTimeout(() => resolve([...mockBaseRecipes]), 500));
+  getAll: async () => {
+       try {
+           const res = await api.get('/base-recipes');
+           return res.data;
+       } catch (error) {
+            console.error(error);
+            throw error.response?.data?.error || 'Error al obtener recetas base';
+       }
   },
-  createBaseRecipe: async (data) => {
-    return new Promise((resolve) => {
-      const newBr = { id: `br-${Date.now()}`, ...data, ingredients: data.items?.map(i => ({ ingredient: { id: i.ingredientId, name: 'Ingrediente Mock', globalCost: 1, unitQuantity: 1, measurementUnit: 'g' }, quantity: i.quantity })) || [] };
-      mockBaseRecipes = [newBr, ...mockBaseRecipes];
-      setTimeout(() => resolve(newBr), 500);
-    });
+
+  getById: async (id) => {
+       try {
+           const res = await api.get(`/base-recipes/${id}`);
+           return res.data;
+       } catch (error) {
+           throw new Error(error.response?.data?.error || 'Error al obtener receta base');
+       }
   },
-  updateBaseRecipe: async (id, data) => {
-    return new Promise((resolve, reject) => {
-      const index = mockBaseRecipes.findIndex(i => i.id === id);
-      if (index !== -1) {
-        mockBaseRecipes[index] = { ...mockBaseRecipes[index], ...data };
-        setTimeout(() => resolve(mockBaseRecipes[index]), 500);
-      } else {
-        setTimeout(() => reject(new Error('Receta base no encontrada')), 500);
+
+  create: async (data) => {
+      try {
+           const res = await api.post('/base-recipes', data);
+           return res.data;
+      } catch (error) {
+            throw new Error(error.response?.data?.error || 'Error al crear la receta base');
       }
-    });
   },
-  deleteBaseRecipe: async (id) => {
-    return new Promise((resolve) => {
-      mockBaseRecipes = mockBaseRecipes.filter(i => i.id !== id);
-      setTimeout(() => resolve({ message: 'Eliminado' }), 500);
-    });
+
+  update: async (id, data) => {
+      try {
+           const res = await api.put(`/base-recipes/${id}`, data);
+           return res.data;
+      } catch (error) {
+          throw new Error(error.response?.data?.error || 'Error al actualizar la receta base');
+      }
+  },
+
+  delete: async (id) => {
+      try {
+          const res = await api.delete(`/base-recipes/${id}`);
+          return res.data;
+      } catch (error) {
+           throw new Error(error.response?.data?.error || 'Error al eliminar la receta base');
+      }
   }
-};
-
-
-export const budgetApi = {
-  createBudget: async (data) => {
-    const res = await fetch(`${API_URL}/budgets`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error('Error al crear el presupuesto');
-    return res.json();
-  },
 };
 
 export const superRecipeApi = {
-  // En un entorno completo, aquí habría un endpoint para guardar Súper Recetas.
-  // Por ahora lo simularemos para el MVP si no existe.
-  createSuperRecipe: async (data) => {
-    // Si tuvieramos el endpoint real:
-    // const res = await fetch(`${API_URL}/super-recipes`, { ... });
-    // if (!res.ok) throw new Error('Error al crear la súper receta');
-    // return res.json();
+  getAll: async () => {
+    try {
+      const res = await api.get('/super-recipes');
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error.response?.data?.error || 'Error al obtener súper recetas';
+    }
+  },
 
-    // Simulación de éxito por ahora:
-    return new Promise((resolve) => setTimeout(() => resolve({ id: 'new-sr-id', ...data }), 500));
+  create: async (data) => {
+    try {
+      const res = await api.post('/super-recipes', data);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al crear súper receta');
+    }
   }
 };
 
-export const marginApi = {
-  getRecommendation: async (superRecipeId) => {
-    const res = await fetch(`${API_URL}/margins/recommend/${superRecipeId}`);
-    if (!res.ok) throw new Error('Error al obtener recomendación de margen');
-    return res.json();
+export const budgetApi = {
+  getAll: async () => {
+    try {
+      const res = await api.get('/budgets');
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error.response?.data?.error || 'Error al obtener presupuestos';
+    }
+  },
+
+  create: async (data) => {
+    try {
+      const res = await api.post('/budgets', data);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al crear presupuesto');
+    }
   }
 };
+
+export default api;
