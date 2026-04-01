@@ -1,27 +1,16 @@
 import express from 'express';
 import request from 'supertest';
 import { jest } from '@jest/globals';
-import * as marginController from '../controllers/marginController.js';
-import prisma from '../prisma.js';
+import * as marginController from '../src/controllers/marginController.js';
+import prisma from '../src/prisma.js';
 
 describe('Margin Controller', () => {
-  let app;
-  let originalFindUnique;
-
-  beforeAll(() => {
-    app = express();
-    app.use(express.json());
-    app.get('/api/margins/recommend/:superRecipeId', marginController.recommendMargin);
-
-    originalFindUnique = prisma.superRecipe.findUnique;
-  });
-
-  afterAll(() => {
-    prisma.superRecipe.findUnique = originalFindUnique;
-  });
+  const app = express();
+  app.use(express.json());
+  app.get('/api/margins/recommend/:superRecipeId', marginController.recommendMargin);
 
   beforeEach(() => {
-    prisma.superRecipe.findUnique = jest.fn();
+    jest.clearAllMocks();
   });
 
   it('should return 404 if SuperRecipe is not found', async () => {

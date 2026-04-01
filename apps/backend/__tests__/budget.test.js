@@ -1,35 +1,17 @@
 import express from 'express';
 import request from 'supertest';
 import { jest } from '@jest/globals';
-import * as budgetController from '../controllers/budgetController.js';
-import prisma from '../prisma.js';
+import * as budgetController from '../src/controllers/budgetController.js';
+import prisma from '../src/prisma.js';
 
 describe('Budget Controller', () => {
-  let app;
-  let originalCreate;
-  let originalFindMany;
-
-  beforeAll(() => {
-    app = express();
-    app.use(express.json());
-    app.post('/api/budgets', budgetController.createBudget);
-    app.get('/api/budgets', budgetController.getBudgets);
-
-    // Save original to restore later
-    originalCreate = prisma.budget.create;
-    originalFindMany = prisma.budget.findMany;
-  });
-
-  afterAll(() => {
-    // Restore original
-    prisma.budget.create = originalCreate;
-    prisma.budget.findMany = originalFindMany;
-  });
+  const app = express();
+  app.use(express.json());
+  app.post('/api/budgets', budgetController.createBudget);
+  app.get('/api/budgets', budgetController.getBudgets);
 
   beforeEach(() => {
-    // Replace with a fresh mock each time
-    prisma.budget.create = jest.fn();
-    prisma.budget.findMany = jest.fn();
+    jest.clearAllMocks();
   });
 
   it('should create a budget successfully', async () => {

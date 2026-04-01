@@ -7,6 +7,7 @@ import marginRoutes from './routes/marginRoutes.js';
 import budgetRoutes from './routes/budgetRoutes.js';
 import ingredientRoutes from './routes/ingredientRoutes.js';
 import baseRecipeRoutes from './routes/baseRecipeRoutes.js';
+import superRecipeRoutes from './routes/superRecipeRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { setupCronJobs } from './cronJobs.js';
@@ -29,6 +30,7 @@ app.use('/api/margins', marginRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/ingredients', ingredientRoutes);
 app.use('/api/base-recipes', baseRecipeRoutes);
+app.use('/api/super-recipes', superRecipeRoutes);
 
 // Setup Cron Jobs (only if not in test mode, or handle gracefully)
 if (!isTestMode()) {

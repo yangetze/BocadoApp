@@ -10,6 +10,8 @@
     "start:frontend": "npm start --workspace=apps/frontend",
     "start:backend": "npm start --workspace=apps/backend",
     "dev:frontend": "npm run dev --workspace=apps/frontend",
-    "dev:backend": "npm run dev --workspace=apps/backend"
+    "dev:backend": "npm run dev --workspace=apps/backend",
+    "test:backend": "npm test --workspace=apps/backend",
+    "test:frontend": "npm test --workspace=apps/frontend"
   }
 }
