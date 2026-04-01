@@ -1,3 +1,7 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import Landing from './pages/Landing';
+import AdminDashboard from './pages/AdminDashboard';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import ExchangeRateManager from './components/ExchangeRateManager';
@@ -6,31 +10,29 @@ import IngredientManager from './components/Ingredients/IngredientManager';
 import BaseRecipeBuilderWrapper from './components/BaseRecipes/BaseRecipeBuilderWrapper';
 import { sampleBaseRecipes, sampleSuperRecipes } from './data/mockData';
 
-function App() {
+// Protect App Routes
+const ProtectedRoute = ({ children, requireAdmin = false }) => {
+  const { user, token } = useAuth();
+
+  if (!token) return <Navigate to="/" replace />;
+
+  if (requireAdmin && user?.role !== 'ADMIN') {
+    return <Navigate to="/app" replace />;
+  }
+
+  return children;
+};
+
+function MainApp() {
   const [activeTab, setActiveTab] = useState('ingredient');
+  const { user, logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: '#3E4A59',
-            color: '#fff',
-            borderRadius: '16px',
-          },
-          success: {
-            iconTheme: {
-              primary: '#F7C5B2',
-              secondary: '#3E4A59',
-            },
-          },
-        }}
-      />
-
       {/* Navigation Header */}
       <header className="bg-white border-b border-gray-100 py-4 px-6 mb-8 sticky top-0 z-10 shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('settings')}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('ingredient')}>
             <div className="w-8 h-8 rounded-full bg-peach-soft flex items-center justify-center text-white font-bold shadow-sm shadow-peach-soft/40">
               B
             </div>
@@ -89,6 +91,20 @@ function App() {
               Tasas de Cambio
             </button>
           </nav>
+
+          <div className="flex items-center gap-4">
+            {user?.role === 'ADMIN' && (
+              <a href="/admin" className="text-sm font-medium text-slate-gray hover:text-peach-soft transition-colors">
+                Admin
+              </a>
+            )}
+            <button
+              onClick={logout}
+              className="px-4 py-2 text-sm font-medium text-white bg-slate-gray rounded-lg hover:bg-slate-gray/90 transition-colors"
+            >
+              Salir
+            </button>
+          </div>
         </div>
       </header>
 
@@ -104,6 +120,58 @@ function App() {
         )}
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#3E4A59',
+            color: '#fff',
+            borderRadius: '16px',
+          },
+          success: {
+            iconTheme: {
+              primary: '#F7C5B2',
+              secondary: '#3E4A59',
+            },
+          },
+        }}
+      />
+      <BrowserRouter>
+        <Routes>
+          {/* Public Route */}
+          <Route path="/" element={<Landing />} />
+
+          {/* Protected Main App Route */}
+          <Route
+            path="/app"
+            element={
+              <ProtectedRoute>
+                <MainApp />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Protected Admin Dashboard Route */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Redirect anything else to root */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

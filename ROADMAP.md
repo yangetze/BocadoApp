@@ -58,6 +58,7 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | **MVP 1** | Automatización API Bimonetaria (Manual + CriptoYa) | 🟢 Completado | Alta | Equipo Backend / Frontend |
 | **MVP 1** | Implementación de TestMode (In-Memory) vs PostgreSQL | 🟢 Completado | Alta | Equipo Backend |
 | **MVP 1** | Testing Integral de API Backend (Jest + Supertest) | 🔵 En Curso | Alta | Equipo Backend / QA |
+| **MVP 1.5** | Módulo de Autenticación de Usuarios y Planes | 🟢 Completado | Alta | Fullstack |
 | **MVP 2** | Constructor Visual Drag-and-Drop | ⚪ Pendiente | Media | Equipo Frontend |
 | **MVP 2** | Recomendador Margen Ganancia | ⚪ Pendiente | Baja | Equipo Backend / IA |
 | **Fase SaaS**| Migración a Multi-tenant (`tenantId`) | ⚪ Futuro | Crítica | Arquitectura |
