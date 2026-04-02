@@ -2,7 +2,9 @@ import prisma from '../prisma.js';
 
 export const getSuperRecipes = async (req, res) => {
   try {
+    const userId = req.user.id;
     const superRecipes = await prisma.superRecipe.findMany({
+      where: { userId },
       include: {
         baseRecipes: {
           include: { baseRecipe: true }
@@ -22,22 +24,14 @@ export const getSuperRecipes = async (req, res) => {
 
 export const createSuperRecipe = async (req, res) => {
   try {
-    const { name, description, userId, baseRecipes, directIngredients } = req.body;
-    const uid = userId || 'user-default-1';
-
-    // Verify user
-    let user = await prisma.user.findUnique({ where: { id: uid } });
-    if (!user) {
-      user = await prisma.user.create({
-        data: { id: uid, email: `default-sr-${Date.now()}@bocadoapp.com`, name: 'Default User' }
-      });
-    }
+    const { name, description, baseRecipes, directIngredients } = req.body;
+    const userId = req.user.id;
 
     const newSuperRecipe = await prisma.superRecipe.create({
       data: {
         name,
         description,
-        userId: user.id,
+        userId: userId,
         baseRecipes: {
           create: baseRecipes?.map(br => ({
             quantityNeeded: parseFloat(br.quantityNeeded),
@@ -72,7 +66,10 @@ export const updateSuperRecipe = async (req, res) => {
     const updated = await prisma.$transaction(async (tx) => {
       // Basic update
       await tx.superRecipe.update({
-        where: { id },
+        where: { 
+          id,
+          userId: req.user.id 
+        },
         data: { name, description }
       });
 
@@ -130,7 +127,12 @@ export const deleteSuperRecipe = async (req, res) => {
       return res.status(400).json({ error: 'No se puede eliminar la súper receta porque está en uso en un presupuesto.' });
     }
 
-    await prisma.superRecipe.delete({ where: { id } });
+    await prisma.superRecipe.delete({ 
+      where: { 
+        id,
+        userId: req.user.id
+      } 
+    });
     res.status(200).json({ message: 'Súper receta eliminada exitosamente' });
   } catch (error) {
     console.error('Error deleting super recipe:', error);

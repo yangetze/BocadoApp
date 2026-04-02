@@ -62,7 +62,7 @@ export default function ExchangeRateManager() {
   const handleSyncApi = async (type) => {
     try {
       setSyncing(true);
-      await exchangeRateApi.syncApiRate(type);
+      await exchangeRateApi.syncAutomaticRate(type);
       toast.success(`¡Tasa ${type.toUpperCase()} actualizada con magia! ✨`);
       await loadData();
     } catch (error) {

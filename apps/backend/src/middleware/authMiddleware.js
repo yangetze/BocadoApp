@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'bocado-super-secret-key-2026';
  */
 export const verifyToken = (req, res, next) => {
   try {
-    const authHeader = req.headers['authorization'];
+    const authHeader = req.headers['authorization'] || req.headers['Authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Formato: Bearer <TOKEN>
 
     if (!token) {
@@ -16,7 +16,14 @@ export const verifyToken = (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // Inyecta los datos del usuario en req (id, username, role)
+    
+    // En Supabase el ID puede estar en decoded.sub o decoded.id.
+    // Verificamos si el usuario está activo (si esa info viene en el token o se valida luego)
+    if (decoded.active === false) {
+      return res.status(403).json({ error: 'Usuario inactivo.' });
+    }
+
+    req.user = decoded; // Inyecta los datos del usuario (id, username, role)
     next();
   } catch (error) {
     console.error('Auth Middleware Error:', error.message);
@@ -27,13 +34,18 @@ export const verifyToken = (req, res, next) => {
   }
 };
 
+// Aliases por compatibilidad
+export const authenticateToken = verifyToken;
+
 /**
- * Middleware para restringir acceso solo a Administradores (opcional para el MVP)
+ * Middleware para restringir acceso solo a Administradores
  */
-export const isAdmin = (req, res, next) => {
+export const requireAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'ADMIN') {
     next();
   } else {
     res.status(403).json({ error: 'No tienes los permisos suficientes (ADMIN) para realizar esta acción' });
   }
 };
+
+export const isAdmin = requireAdmin;

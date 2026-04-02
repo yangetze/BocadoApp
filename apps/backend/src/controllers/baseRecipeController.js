@@ -2,16 +2,17 @@ import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 
 export const getBaseRecipes = async (req, res) => {
+  const userId = req.user.id;
+  
   if (isTestMode()) {
-    return res.status(200).json(mockData.baseRecipes.sort((a, b) => b.createdAt - a.createdAt));
+    return res.status(200).json(mockData.baseRecipes.filter(r => r.userId === userId).sort((a, b) => b.createdAt - a.createdAt));
   }
   try {
     const baseRecipes = await prisma.baseRecipe.findMany({
+      where: { userId },
       include: {
         ingredients: {
-          include: {
-            ingredient: true
-          }
+          include: { ingredient: true }
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -25,65 +26,50 @@ export const getBaseRecipes = async (req, res) => {
 
 export const createBaseRecipe = async (req, res) => {
   try {
-    const { name, baseYield, yieldUnit, userId, items } = req.body;
-
-    const uid = userId || 'user-default-1';
+    const { name, baseYield, yieldUnit, ingredients } = req.body;
+    const userId = req.user.id;
 
     if (isTestMode()) {
-      const newBaseRecipe = {
+      const newRecipe = {
         id: `br-${Date.now()}`,
         name,
         baseYield: parseFloat(baseYield),
         yieldUnit,
-        userId: uid,
+        userId: userId,
+        ingredients: ingredients.map(i => ({
+          id: `bri-${Math.random()}`,
+          quantity: parseFloat(i.quantity),
+          ingredientId: i.ingredientId,
+          ingredient: mockData.ingredients.find(ing => ing.id === i.ingredientId)
+        })),
         createdAt: new Date(),
-        updatedAt: new Date(),
-        ingredients: items.map(item => ({
-          id: `bri-${Date.now()}-${Math.random()}`,
-          baseRecipeId: `br-${Date.now()}`,
-          ingredientId: item.ingredientId,
-          quantity: parseFloat(item.quantity),
-          ingredient: mockData.ingredients.find(i => i.id === item.ingredientId)
-        }))
+        updatedAt: new Date()
       };
-      mockData.baseRecipes.push(newBaseRecipe);
-      return res.status(201).json(newBaseRecipe);
+      mockData.baseRecipes.push(newRecipe);
+      return res.status(201).json(newRecipe);
     }
 
-    let user = await prisma.user.findUnique({ where: { id: uid } });
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          id: uid,
-          email: `default-${Date.now()}@bocadoapp.com`,
-          name: 'Default User'
-        }
-      });
-    }
-
-    const newBaseRecipe = await prisma.baseRecipe.create({
+    const newRecipe = await prisma.baseRecipe.create({
       data: {
         name,
         baseYield: parseFloat(baseYield),
         yieldUnit,
-        userId: user.id,
+        userId: userId,
         ingredients: {
-          create: items.map(item => ({
-            quantity: parseFloat(item.quantity),
-            ingredient: { connect: { id: item.ingredientId } }
+          create: ingredients.map(i => ({
+            quantity: parseFloat(i.quantity),
+            ingredientId: i.ingredientId
           }))
         }
       },
       include: {
         ingredients: {
-          include: {
-            ingredient: true
-          }
+          include: { ingredient: true }
         }
       }
     });
 
-    res.status(201).json(newBaseRecipe);
+    res.status(201).json(newRecipe);
   } catch (error) {
     console.error('Error creating base recipe:', error);
     res.status(500).json({ error: 'Error al crear la receta base' });
@@ -192,7 +178,12 @@ export const deleteBaseRecipe = async (req, res) => {
       return res.status(400).json({ error: 'No se puede eliminar la receta base porque está en uso en una Súper Receta.' });
     }
 
-    await prisma.baseRecipe.delete({ where: { id } });
+    await prisma.baseRecipe.delete({ 
+      where: { 
+        id,
+        userId: req.user.id
+      } 
+    });
 
     res.status(200).json({ message: 'Receta base eliminada exitosamente' });
   } catch (error) {

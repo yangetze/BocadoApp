@@ -22,12 +22,15 @@ Welcome to the BocadoApp monorepo! This document serves as a guide for AI assist
 - **STOP ALL DEV**: Buscar y terminar todos los procesos activos de `npm run dev` en el monorepo y liberar puertos 3000/5173.
 
 ## 🤖 AI Workflow Instructions
-- **Creación de Planes**: **Obligatorio.** Cada vez que se cree una rama de trabajo nueva, se debe crear un plan de trabajo detallado en la ruta `docs/plan_nombre_del_issue.md`.
+- **Creación de Planes**: **Obligatorio.** Cada vez que se cree una rama de trabajo nueva, se debe crear un plan de trabajo detallado en la ruta `docs/`.
+  - Usar la nomenclatura: `plan_nombre_del_modulo_nombre_del_issue.md` para tareas específicas de un módulo.
+  - Usar `plan_nombre_del_issue.md` para tareas que afecten a múltiples módulos o sean generales.
+- **Flujo Paso a Paso**: Si el usuario envía una lista de requerimientos o puntos, SIEMPRE se debe trabajar punto por punto (estilo sprint). Abordar el primer punto, confirmar con el usuario que está "ok" y luego proceder al siguiente. NO saturar la memoria intentando hacer todo a la vez.
 - **Consultar Reglas de Negocio:** Antes de iniciar cualquier tarea, revisa `ROADMAP.md` y `frontend-styleguide.md`.
 - **Read before writing:** Always read `schema.prisma` before writing any backend query.
 - **Verification:** Always write/run tests to verify math accuracy in `costController.js`.
 - **Frontend Styling:** Use Tailwind classes basándote en la guía de estilos. Framer Motion para animaciones sutiles.
 - **Manejo de Errores:** Nunca romper la UI; usar try/catch en el frontend y reportar errores amigables.
-
+- **Seguridad de API:** Es OBLIGATORIO usar el middleware `verifyToken` en todas las rutas de API que se desarrollen para proteger los endpoints.
 ## 🗺️ Reglas de Negocio, Estilos Visuales y Roadmap
 Consulta `ROADMAP.md` (Skills y MVP) y `frontend-styleguide.md` (UI/UX) para asegurar consistencia sensorial y técnica.

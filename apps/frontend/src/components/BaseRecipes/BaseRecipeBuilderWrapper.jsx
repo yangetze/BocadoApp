@@ -13,7 +13,7 @@ export default function BaseRecipeBuilderWrapper() {
 
   const fetchIngredients = async () => {
     try {
-      const data = await ingredientApi.getIngredients();
+      const data = await ingredientApi.getAll();
       setIngredients(data);
     } catch {
       toast.error('Error al cargar los ingredientes para la receta base');
