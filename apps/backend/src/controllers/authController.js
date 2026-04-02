@@ -54,7 +54,7 @@ export const login = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error logging in:', error);
+    console.error('❌ ERROR EN LOGIN:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -64,7 +64,18 @@ export const register = async (req, res) => {
     const { username, email, identificationNumber, name } = req.body;
 
     if (!username || !email || !identificationNumber) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+      return res.status(400).json({ error: 'Faltan campos obligatorios (usuario, email o cédula)' });
+    }
+
+    // Validación de formato de email simple
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'El formato del correo electrónico no es válido' });
+    }
+
+    // Validación de longitud mínima
+    if (username.length < 3) {
+      return res.status(400).json({ error: 'El nombre de usuario debe tener al menos 3 caracteres' });
     }
 
     // Default password for users is their identification number
@@ -92,10 +103,36 @@ export const register = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error('❌ ERROR EN REGISTRO:', error);
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
     }
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error interno del servidor', details: error.message });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.json({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        identificationNumber: user.identificationNumber
+      }
+    });
+  } catch (error) {
+    console.error('❌ ERROR EN GETME:', error);
+    res.status(500).json({ error: 'Error al recuperar perfil de usuario' });
   }
 };

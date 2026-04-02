@@ -94,10 +94,10 @@ export default function Landing() {
             <span className="text-2xl font-bold tracking-tight text-slate-gray">BocadoApp</span>
           </div>
           <div className="flex items-center gap-4">
-            <button onClick={() => openAuthModal(true)} className="hidden md:block px-5 py-2.5 text-sm font-medium text-slate-gray hover:text-peach-soft transition-colors">
+            <button onClick={() => navigate('/login')} className="hidden md:block px-5 py-2.5 text-sm font-medium text-slate-gray hover:text-peach-soft transition-colors">
               Iniciar Sesión
             </button>
-            <button onClick={() => openAuthModal(false)} className="px-6 py-2.5 text-sm font-medium bg-slate-gray text-white rounded-xl hover:bg-slate-gray/90 hover:shadow-lg hover:shadow-slate-gray/20 transition-all active:scale-[0.98]">
+            <button onClick={() => navigate('/register')} className="px-6 py-2.5 text-sm font-medium bg-slate-gray text-white rounded-xl hover:bg-slate-gray/90 hover:shadow-lg hover:shadow-slate-gray/20 transition-all active:scale-[0.98]">
               Registrarme Gratis
             </button>
           </div>
@@ -132,7 +132,7 @@ export default function Landing() {
                 El motor relacional diseñado exclusivamente para que no pierdas ni un centavo en el proceso. Construye súper recetas y presupuestos dinámicos en segundos.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={() => openAuthModal(false)} className="px-8 py-4 text-base font-medium bg-slate-gray text-white rounded-2xl hover:bg-slate-gray/90 hover:shadow-xl hover:shadow-slate-gray/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                <button onClick={() => navigate('/register')} className="px-8 py-4 text-base font-medium bg-slate-gray text-white rounded-2xl hover:bg-slate-gray/90 hover:shadow-xl hover:shadow-slate-gray/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
                   Comienza ahora <ArrowRight size={20} />
                 </button>
                 <a href="#solucion" className="px-8 py-4 text-base font-medium bg-white border-2 border-gray-100 text-slate-gray rounded-2xl hover:border-peach-soft hover:text-peach-soft hover:bg-peach-soft/5 transition-all flex items-center justify-center">
@@ -219,7 +219,7 @@ export default function Landing() {
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">¿Lista para tomar el control de tus finanzas pasteleras?</h2>
             <p className="text-xl text-white/80 mb-10">Únete a cientos de reposteros que ya están maximizando sus ganancias con BocadoApp.</p>
-            <button onClick={() => openAuthModal(false)} className="px-10 py-5 text-lg font-bold bg-peach-soft text-slate-gray rounded-2xl hover:bg-white hover:shadow-xl hover:shadow-peach-soft/20 transition-all active:scale-[0.98]">
+            <button onClick={() => navigate('/register')} className="px-10 py-5 text-lg font-bold bg-peach-soft text-slate-gray rounded-2xl hover:bg-white hover:shadow-xl hover:shadow-peach-soft/20 transition-all active:scale-[0.98]">
               Crear mi cuenta gratis ahora
             </button>
           </div>

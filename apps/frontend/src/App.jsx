@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Landing from './pages/Landing';
 import AdminDashboard from './pages/AdminDashboard';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Settings, LogOut, TrendingUp } from 'lucide-react';
@@ -86,13 +88,14 @@ function MainApp() {
             </button>
           </nav>
 
-          <div className="flex items-center gap-2">
-            {user?.role === 'ADMIN' && (
-              <a href="/admin" className="p-2 text-slate-gray hover:bg-gray-100 rounded-full transition-colors" title="Administración">
-                <Settings className="w-5 h-5 text-gray-400" />
-              </a>
-            )}
-            
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col items-end opacity-80 hidden sm:flex">
+              <span className="text-[10px] font-bold text-slate-gray/50 uppercase tracking-wider">
+                {user?.role === 'ADMIN' ? 'Administrador' : 'Pastelero'}
+              </span>
+              <span className="text-sm font-bold text-slate-gray">{user?.name || user?.username}</span>
+            </div>
+
             <div className="relative">
               <button
                 onClick={() => setShowSettings(!showSettings)}
@@ -127,6 +130,15 @@ function MainApp() {
                         <TrendingUp className="w-4 h-4 text-peach-soft" />
                         Tasas de Cambio
                       </button>
+                      {user?.role === 'ADMIN' && (
+                        <a 
+                          href="/admin" 
+                          className="w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-50"
+                        >
+                          <Settings className="w-4 h-4 text-gray-400" />
+                          Master Admin
+                        </a>
+                      )}
                     </motion.div>
                   </>
                 )}
@@ -135,7 +147,7 @@ function MainApp() {
 
             <button
               onClick={logout}
-              className="ml-2 px-4 py-2 text-sm font-medium text-white bg-slate-gray rounded-lg hover:bg-slate-gray/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-sm font-bold text-white bg-slate-gray rounded-xl hover:bg-red-500 transition-all flex items-center gap-2"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Salir</span>
@@ -180,8 +192,10 @@ function App() {
       />
       <BrowserRouter>
         <Routes>
-          {/* Public Route */}
+          {/* Public Routes */}
           <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           {/* Protected Main App Route */}
           <Route

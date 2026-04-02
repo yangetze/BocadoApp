@@ -2,34 +2,50 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'bocado-super-secret-key-2026';
 
+/**
+ * Middleware para verificar si el usuario tiene un JWT válido.
+ * Extrae el usuario y lo inyecta en la petición para uso posterior.
+ */
 export const verifyToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  try {
+    const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Formato: Bearer <TOKEN>
 
-  if (!token) return res.status(401).json({ error: 'Acceso denegado, token no proporcionado.' });
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      console.error('JWT Verification Error:', err.message);
-      return res.status(403).json({ error: 'Token inválido o expirado.' });
+    if (!token) {
+      return res.status(401).json({ error: 'Acceso denegado: No se proporcionó un token de autenticación' });
     }
-    
-    // En Supabase el ID está en user.sub o user.id según la decodificación
-    // Aquí asumimos que nuestro authController lo mete en user.id
-    if (user.active === false) return res.status(403).json({ error: 'Usuario inactivo.' });
 
-    req.user = user;
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // En Supabase el ID puede estar en decoded.sub o decoded.id.
+    // Verificamos si el usuario está activo (si esa info viene en el token o se valida luego)
+    if (decoded.active === false) {
+      return res.status(403).json({ error: 'Usuario inactivo.' });
+    }
+
+    req.user = decoded; // Inyecta los datos del usuario (id, username, role)
     next();
-  });
+  } catch (error) {
+    console.error('Auth Middleware Error:', error.message);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Tu sesión ha expirado, por favor inicia sesión de nuevo' });
+    }
+    res.status(403).json({ error: 'Token no válido o malformado' });
+  }
 };
 
-// Mantenemos este alias por compatibilidad si existiese en otras rutas antiguas
+// Aliases por compatibilidad
 export const authenticateToken = verifyToken;
 
+/**
+ * Middleware para restringir acceso solo a Administradores
+ */
 export const requireAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'ADMIN') {
     next();
   } else {
-    res.status(403).json({ error: 'Se requieren permisos de administrador.' });
+    res.status(403).json({ error: 'No tienes los permisos suficientes (ADMIN) para realizar esta acción' });
   }
 };
+
+export const isAdmin = requireAdmin;

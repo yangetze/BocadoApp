@@ -32,6 +32,5 @@ Welcome to the BocadoApp monorepo! This document serves as a guide for AI assist
 - **Frontend Styling:** Use Tailwind classes basándote en la guía de estilos. Framer Motion para animaciones sutiles.
 - **Manejo de Errores:** Nunca romper la UI; usar try/catch en el frontend y reportar errores amigables.
 - **Seguridad de API:** Es OBLIGATORIO usar el middleware `verifyToken` en todas las rutas de API que se desarrollen para proteger los endpoints.
-
 ## 🗺️ Reglas de Negocio, Estilos Visuales y Roadmap
 Consulta `ROADMAP.md` (Skills y MVP) y `frontend-styleguide.md` (UI/UX) para asegurar consistencia sensorial y técnica.
