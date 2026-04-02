@@ -36,6 +36,10 @@ BocadoApp uses a modern **PERN Stack** encapsulated in a unified **NPM Workspace
 - **Framer Motion:** Smooth, professional animations.
 - **React Hot Toast / Sonner:** Elegant notification systems.
 
+## 🧪 Pruebas con Supabase
+
+Cuando se quieran hacer pruebas conectados a Supabase debe tomar los datos de ese archivo `.env.example`, los cuales son `userTest="juanTest"` y `PasswordTest="V-123"`. Asegúrese de copiar estas variables a su archivo `.env` local para las pruebas.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
