@@ -77,8 +77,8 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
       } else if (mode === 'superRecipe') {
         const payload = {
           name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
-          items: canvasItems.map(item => ({
-            id: item.id.replace('canvas-', '').split('-')[1] || item.id,
+          baseRecipes: canvasItems.map(item => ({
+            baseRecipeId: item.id.replace('canvas-', '').split('-')[1] || item.id,
             quantity: item.quantity || 1
           }))
         };
@@ -95,7 +95,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
           name: baseRecipeMetadata.name,
           baseYield: parseFloat(baseRecipeMetadata.baseYield),
           yieldUnit: baseRecipeMetadata.yieldUnit,
-          items: canvasItems.map(item => ({
+          ingredients: canvasItems.map(item => ({
             ingredientId: item.id.replace('canvas-', '').split('-')[1] || item.id,
             quantity: item.quantity || 1
           }))

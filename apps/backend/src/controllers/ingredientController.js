@@ -2,11 +2,14 @@ import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 
 export const getIngredients = async (req, res) => {
+  const userId = req.user.id;
+  
   if (isTestMode()) {
-    return res.status(200).json(mockData.ingredients.sort((a, b) => b.createdAt - a.createdAt));
+    return res.status(200).json(mockData.ingredients.filter(i => i.userId === userId).sort((a, b) => b.createdAt - a.createdAt));
   }
   try {
     const ingredients = await prisma.ingredient.findMany({
+      where: { userId },
       orderBy: { createdAt: 'desc' }
     });
     res.status(200).json(ingredients);
@@ -18,9 +21,8 @@ export const getIngredients = async (req, res) => {
 
 export const createIngredient = async (req, res) => {
   try {
-    const { name, globalCost, unitQuantity, measurementUnit, brand, userId } = req.body;
-
-    const uid = userId || 'user-default-1';
+    const { name, globalCost, unitQuantity, measurementUnit, brand } = req.body;
+    const userId = req.user.id; // Obtenido del token decodificado
 
     if (isTestMode()) {
       const newIngredient = {
@@ -30,23 +32,12 @@ export const createIngredient = async (req, res) => {
         unitQuantity: unitQuantity !== undefined ? parseFloat(unitQuantity) : 1,
         measurementUnit,
         brand: brand || null,
-        userId: uid,
+        userId: userId,
         createdAt: new Date(),
         updatedAt: new Date()
       };
       mockData.ingredients.push(newIngredient);
       return res.status(201).json(newIngredient);
-    }
-
-    let user = await prisma.user.findUnique({ where: { id: uid } });
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          id: uid,
-          email: `default-${Date.now()}@bocadoapp.com`,
-          name: 'Default User'
-        }
-      });
     }
 
     const newIngredient = await prisma.ingredient.create({
@@ -56,7 +47,7 @@ export const createIngredient = async (req, res) => {
         unitQuantity: unitQuantity !== undefined ? parseFloat(unitQuantity) : 1,
         measurementUnit,
         brand,
-        userId: user.id
+        userId: userId // Vinculamos al usuario real de Supabase
       }
     });
 
@@ -89,7 +80,10 @@ export const updateIngredient = async (req, res) => {
     }
 
     const updatedIngredient = await prisma.ingredient.update({
-      where: { id },
+      where: { 
+        id,
+        userId: req.user.id // Verificamos propiedad
+      },
       data: {
         name,
         ...(globalCost !== undefined && { globalCost: parseFloat(globalCost) }),
@@ -129,7 +123,12 @@ export const deleteIngredient = async (req, res) => {
       return res.status(400).json({ error: 'No se puede eliminar el ingrediente porque está en uso en una o más recetas.' });
     }
 
-    await prisma.ingredient.delete({ where: { id } });
+    await prisma.ingredient.delete({ 
+      where: { 
+        id,
+        userId: req.user.id // Verificamos propiedad 
+      } 
+    });
 
     res.status(200).json({ message: 'Ingrediente eliminado exitosamente' });
   } catch (error) {

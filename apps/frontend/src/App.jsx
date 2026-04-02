@@ -4,11 +4,14 @@ import Landing from './pages/Landing';
 import AdminDashboard from './pages/AdminDashboard';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { Settings, LogOut, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ExchangeRateManager from './components/ExchangeRateManager';
 import Builder from './components/DragAndDrop/Builder';
 import IngredientManager from './components/Ingredients/IngredientManager';
 import BaseRecipeBuilderWrapper from './components/BaseRecipes/BaseRecipeBuilderWrapper';
-import { sampleBaseRecipes, sampleSuperRecipes } from './data/mockData';
+import SuperRecipeBuilderWrapper from './components/SuperRecipes/SuperRecipeBuilderWrapper';
+import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper';
 
 // Protect App Routes
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
@@ -25,6 +28,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
 
 function MainApp() {
   const [activeTab, setActiveTab] = useState('ingredient');
+  const [showSettings, setShowSettings] = useState(false);
   const { user, logout } = useAuth();
 
   return (
@@ -80,29 +84,61 @@ function MainApp() {
             >
               Constructor Presupuestos
             </button>
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
-                activeTab === 'settings'
-                  ? 'bg-white text-slate-gray shadow-sm border border-gray-200/50'
-                  : 'text-gray-500 hover:text-slate-gray hover:bg-white/50'
-              }`}
-            >
-              Tasas de Cambio
-            </button>
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             {user?.role === 'ADMIN' && (
-              <a href="/admin" className="text-sm font-medium text-slate-gray hover:text-peach-soft transition-colors">
-                Admin
+              <a href="/admin" className="p-2 text-slate-gray hover:bg-gray-100 rounded-full transition-colors" title="Administración">
+                <Settings className="w-5 h-5 text-gray-400" />
               </a>
             )}
+            
+            <div className="relative">
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className={`p-2 rounded-full transition-all ${
+                  showSettings ? 'bg-peach-soft/20 text-peach-soft' : 'text-slate-gray hover:bg-gray-100'
+                }`}
+                title="Configuración"
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+
+              <AnimatePresence>
+                {showSettings && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setShowSettings(false)} />
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 z-20 py-2 overflow-hidden"
+                    >
+                      <div className="px-4 py-2 border-b border-gray-50 mb-1">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ajustes de Negocio</p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setActiveTab('settings');
+                          setShowSettings(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-peach-soft/10 flex items-center gap-3 transition-colors"
+                      >
+                        <TrendingUp className="w-4 h-4 text-peach-soft" />
+                        Tasas de Cambio
+                      </button>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
             <button
               onClick={logout}
-              className="px-4 py-2 text-sm font-medium text-white bg-slate-gray rounded-lg hover:bg-slate-gray/90 transition-colors"
+              className="ml-2 px-4 py-2 text-sm font-medium text-white bg-slate-gray rounded-lg hover:bg-slate-gray/90 transition-colors flex items-center gap-2"
             >
-              Salir
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Salir</span>
             </button>
           </div>
         </div>
@@ -113,10 +149,10 @@ function MainApp() {
         {activeTab === 'baseRecipe' && <BaseRecipeBuilderWrapper />}
         {activeTab === 'settings' && <ExchangeRateManager />}
         {activeTab === 'superRecipe' && (
-          <Builder mode="superRecipe" availableItems={sampleBaseRecipes} />
+          <SuperRecipeBuilderWrapper />
         )}
         {activeTab === 'budget' && (
-          <Builder mode="budget" availableItems={sampleSuperRecipes} />
+          <BudgetBuilderWrapper />
         )}
       </main>
     </div>

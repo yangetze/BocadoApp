@@ -66,12 +66,22 @@ export const exchangeRateApi = {
     }
   },
 
-  syncAutomaticRate: async () => {
+  syncAutomaticRate: async (type) => {
     try {
-      const res = await api.post('/exchange-rates/sync');
+      const res = await api.post('/exchange-rates/sync-api', { type });
       return res.data;
     } catch (error) {
         throw new Error(error.response?.data?.error || 'Error al sincronizar tasa');
+    }
+  },
+
+  getCurrencies: async () => {
+    try {
+      const res = await api.get('/exchange-rates/currencies');
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error.response?.data?.error || 'Error al obtener las monedas';
     }
   }
 };

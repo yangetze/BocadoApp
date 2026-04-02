@@ -3,9 +3,10 @@ import { isTestMode, mockData } from '../mockData.js';
 
 export const createBudget = async (req, res) => {
   try {
-    const { customerName, profitMargin, userId, superRecipes } = req.body;
+    const { customerName, profitMargin, superRecipes } = req.body;
+    const userId = req.user.id;
 
-    if (!userId || !superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
+    if (!superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
       return res.status(400).json({ error: 'Missing required fields or invalid superRecipes array' });
     }
 
@@ -55,20 +56,15 @@ export const createBudget = async (req, res) => {
 
 export const getBudgets = async (req, res) => {
   try {
-    const { userId } = req.query;
+    const userId = req.user.id;
 
     if (isTestMode()) {
-      let result = mockData.budgets;
-      if (userId) {
-        result = result.filter(b => b.userId === userId);
-      }
+      let result = mockData.budgets.filter(b => b.userId === userId);
       return res.status(200).json(result.sort((a, b) => b.createdAt - a.createdAt));
     }
 
-    const whereClause = userId ? { userId } : {};
-
     const budgets = await prisma.budget.findMany({
-      where: whereClause,
+      where: { userId },
       include: {
         superRecipes: {
           include: {
