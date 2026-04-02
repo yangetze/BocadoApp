@@ -11,19 +11,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      // In a real app we'd validate the token with the backend here,
-      // but for MVP we'll decode the JWT payload or rely on stored user data.
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      } else {
-        // If there's a token but no user, we might want to clear it or fetch it
-        logout();
+    const fetchUser = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        try {
+          // Si hay un token, preguntamos al backend "¿quién es este pastelero?"
+          const response = await api.get('/auth/me');
+          setUser(response.data.user);
+          setToken(storedToken);
+        } catch (error) {
+          console.error('Error al recuperar sesión:', error.message);
+          logout(); // Si el token falló, borramos rastro
+        }
       }
-    }
-    setLoading(false);
-  }, [token]);
+      setLoading(false);
+    };
+
+    fetchUser();
+  }, []);
 
   const login = (newToken, userData) => {
     setToken(newToken);
