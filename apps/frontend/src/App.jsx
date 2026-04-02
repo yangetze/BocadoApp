@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Landing from './pages/Landing';
 import AdminDashboard from './pages/AdminDashboard';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import ExchangeRateManager from './components/ExchangeRateManager';
@@ -92,15 +94,15 @@ function MainApp() {
             </button>
           </nav>
 
-          <div className="flex items-center gap-4">
-            {user?.role === 'ADMIN' && (
-              <a href="/admin" className="text-sm font-medium text-slate-gray hover:text-peach-soft transition-colors">
-                Admin
-              </a>
-            )}
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-end opacity-80">
+              <span className="text-xs font-semibold text-slate-gray/50 uppercase tracking-wider">{user?.role === 'ADMIN' ? 'Administrador' : 'Pastelero'}</span>
+              <span className="text-sm font-bold text-slate-gray">{user?.name || user?.username}</span>
+            </div>
+            
             <button
               onClick={logout}
-              className="px-4 py-2 text-sm font-medium text-white bg-slate-gray rounded-lg hover:bg-slate-gray/90 transition-colors"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-slate-gray rounded-xl hover:bg-red-500 transition-all hover:shadow-lg hover:shadow-red-200 active:scale-95"
             >
               Salir
             </button>
@@ -144,8 +146,10 @@ function App() {
       />
       <BrowserRouter>
         <Routes>
-          {/* Public Route */}
+          {/* Public Routes */}
           <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           {/* Protected Main App Route */}
           <Route

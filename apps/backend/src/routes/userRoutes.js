@@ -1,11 +1,11 @@
 import express from 'express';
 import { getAllUsers, createUser, updateUser, deleteUser } from '../controllers/userController.js';
-import { authenticateToken, requireAdmin } from '../middleware/authMiddleware.js';
+import { verifyToken, isAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.use(authenticateToken);
-router.use(requireAdmin);
+router.use(verifyToken);
+router.use(isAdmin);
 
 router.get('/', getAllUsers);
 router.post('/', createUser);
