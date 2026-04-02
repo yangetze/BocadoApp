@@ -1,12 +1,21 @@
 import request from 'supertest';
 import express from 'express';
 import { jest } from '@jest/globals';
-import baseRecipeRoutes from '../src/routes/baseRecipeRoutes.js';
+
+jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
+  verifyToken: (req, res, next) => {
+    req.user = { id: 'user-default-1' };
+    next();
+  }
+}));
+
+const { default: baseRecipeRoutes } = await import('../src/routes/baseRecipeRoutes.js');
 import prisma from '../src/prisma.js';
 
 const app = express();
 app.use(express.json());
 app.use('/api/base-recipes', baseRecipeRoutes);
+
 
 describe('Base Recipe Routes', () => {
   beforeEach(() => {
@@ -35,7 +44,7 @@ describe('Base Recipe Routes', () => {
         name: 'Ganache',
         baseYield: 500,
         yieldUnit: 'g',
-        items: [{ ingredientId: 'ing1', quantity: 250 }, { ingredientId: 'ing2', quantity: 250 }]
+        ingredients: [{ ingredientId: 'ing1', quantity: 250 }, { ingredientId: 'ing2', quantity: 250 }]
       };
 
       const createdBaseRecipe = {

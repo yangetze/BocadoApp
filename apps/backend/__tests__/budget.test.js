@@ -1,12 +1,20 @@
 import express from 'express';
 import request from 'supertest';
 import { jest } from '@jest/globals';
+
+// Add a dummy middleware to set req.user
+const mockAuthMiddleware = (req, res, next) => {
+  req.user = { id: 'user-1' };
+  next();
+};
+
 import * as budgetController from '../src/controllers/budgetController.js';
 import prisma from '../src/prisma.js';
 
 describe('Budget Controller', () => {
   const app = express();
   app.use(express.json());
+  app.use(mockAuthMiddleware);
   app.post('/api/budgets', budgetController.createBudget);
   app.get('/api/budgets', budgetController.getBudgets);
 

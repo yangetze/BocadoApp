@@ -87,9 +87,10 @@ export const exchangeRateApi = {
 };
 
 export const ingredientApi = {
-  getAll: async () => {
+  getAll: async (search = '') => {
     try {
-      const res = await api.get('/ingredients');
+      const url = search ? `/ingredients?search=${encodeURIComponent(search)}` : '/ingredients';
+      const res = await api.get(url);
       return res.data;
     } catch (error) {
        console.error(error);
