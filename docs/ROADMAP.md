@@ -60,8 +60,8 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | **MVP 1** | Testing Integral de API Backend (Jest + Supertest) | 🟢 Completado | Alta | Equipo Backend / QA |
 | **MVP 1.5** | Módulo de Autenticación de Usuarios y Planes | 🟢 Completado | Alta | Fullstack |
 | **MVP 1.5** | Nuevo Landing Page (Minimalismo Sensorial) | 🟢 Completado | Media | Equipo Frontend |
-| **MVP 2** | Constructor Visual Drag-and-Drop | ⚪ Pendiente | Media | Equipo Frontend |
-| **MVP 2** | Recomendador Margen Ganancia | ⚪ Pendiente | Baja | Equipo Backend / IA |
+| **MVP 2** | Constructor Visual Drag-and-Drop | 🟢 Completado | Media | Equipo Frontend |
+| **MVP 2** | Recomendador Margen Ganancia | 🟢 Completado | Baja | Equipo Backend / IA |
 | **Fase SaaS**| Migración a Multi-tenant (`tenantId`) | ⚪ Futuro | Crítica | Arquitectura |
 
 *(Leyenda: 🟢 Completado | 🔵 En Curso | 🟡 Por Hacer | ⚪ Pendiente/Futuro)*
