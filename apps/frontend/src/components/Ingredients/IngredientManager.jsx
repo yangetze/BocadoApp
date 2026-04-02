@@ -8,6 +8,7 @@ export default function IngredientManager() {
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // State for the new inline item
   const [newItem, setNewItem] = useState({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'g' });
@@ -15,14 +16,10 @@ export default function IngredientManager() {
   // State for editing existing item
   const [editItem, setEditItem] = useState({});
 
-  useEffect(() => {
-    fetchIngredients();
-  }, []);
-
   const fetchIngredients = async () => {
     try {
       setLoading(true);
-      const data = await ingredientApi.getAll();
+      const data = await ingredientApi.getAll(searchQuery);
       setIngredients(data);
     } catch {
       toast.error('Error al cargar los ingredientes');
@@ -30,6 +27,14 @@ export default function IngredientManager() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchIngredients();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
 
   const handleAdd = async () => {
     if (!newItem.name || !newItem.globalCost || !newItem.measurementUnit || !newItem.unitQuantity) {

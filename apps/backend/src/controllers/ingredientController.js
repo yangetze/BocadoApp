@@ -3,13 +3,31 @@ import { isTestMode, mockData } from '../mockData.js';
 
 export const getIngredients = async (req, res) => {
   const userId = req.user.id;
+  const { search } = req.query;
   
   if (isTestMode()) {
-    return res.status(200).json(mockData.ingredients.filter(i => i.userId === userId).sort((a, b) => b.createdAt - a.createdAt));
+    let result = mockData.ingredients.filter(i => i.userId === userId);
+    if (search) {
+      const lowerSearch = search.toLowerCase();
+      result = result.filter(i =>
+        i.name.toLowerCase().includes(lowerSearch) ||
+        (i.brand && i.brand.toLowerCase().includes(lowerSearch))
+      );
+    }
+    return res.status(200).json(result.sort((a, b) => b.createdAt - a.createdAt));
   }
   try {
+    const whereClause = { userId };
+
+    if (search) {
+      whereClause.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { brand: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+
     const ingredients = await prisma.ingredient.findMany({
-      where: { userId },
+      where: whereClause,
       orderBy: { createdAt: 'desc' }
     });
     res.status(200).json(ingredients);

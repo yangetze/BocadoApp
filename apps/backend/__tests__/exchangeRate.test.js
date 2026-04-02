@@ -1,12 +1,21 @@
 import request from 'supertest';
 import express from 'express';
-import exchangeRateRoutes from '../src/routes/exchangeRateRoutes.js';
-import prisma from '../src/prisma.js';
 import { jest } from '@jest/globals';
+
+jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
+  verifyToken: (req, res, next) => {
+    req.user = { id: 'user-default-1' };
+    next();
+  }
+}));
+
+const { default: exchangeRateRoutes } = await import('../src/routes/exchangeRateRoutes.js');
+import prisma from '../src/prisma.js';
 
 const app = express();
 app.use(express.json());
 app.use('/api/exchange-rates', exchangeRateRoutes);
+
 
 describe('Exchange Rate API', () => {
   beforeEach(() => {

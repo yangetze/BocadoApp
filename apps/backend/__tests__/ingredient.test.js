@@ -1,12 +1,21 @@
 import request from 'supertest';
 import express from 'express';
 import { jest } from '@jest/globals';
-import ingredientRoutes from '../src/routes/ingredientRoutes.js';
+
+jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
+  verifyToken: (req, res, next) => {
+    req.user = { id: 'user-default-1' };
+    next();
+  }
+}));
+
+const { default: ingredientRoutes } = await import('../src/routes/ingredientRoutes.js');
 import prisma from '../src/prisma.js';
 
 const app = express();
 app.use(express.json());
 app.use('/api/ingredients', ingredientRoutes);
+
 
 describe('Ingredient Routes', () => {
   beforeEach(() => {
@@ -26,6 +35,29 @@ describe('Ingredient Routes', () => {
       expect(res.statusCode).toBe(200);
       expect(res.body).toEqual(mockIngredients);
       expect(prisma.ingredient.findMany).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return a filtered list of ingredients when search query is provided', async () => {
+      const mockIngredients = [
+        { id: '1', name: 'Flour', globalCost: 1.5, measurementUnit: 'kg' }
+      ];
+      prisma.ingredient.findMany.mockResolvedValue(mockIngredients);
+
+      const res = await request(app).get('/api/ingredients?search=flour');
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(mockIngredients);
+      expect(prisma.ingredient.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.ingredient.findMany).toHaveBeenCalledWith({
+        where: {
+          userId: 'user-default-1',
+          OR: [
+            { name: { contains: 'flour', mode: 'insensitive' } },
+            { brand: { contains: 'flour', mode: 'insensitive' } }
+          ]
+        },
+        orderBy: { createdAt: 'desc' }
+      });
     });
   });
 
