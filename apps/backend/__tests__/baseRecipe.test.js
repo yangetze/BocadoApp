@@ -25,7 +25,7 @@ describe('Base Recipe Routes', () => {
   describe('GET /api/base-recipes', () => {
     it('should return a list of base recipes', async () => {
       const mockBaseRecipes = [
-        { id: '1', name: 'Dough', baseYield: 1000, yieldUnit: 'g' },
+        { id: '1', name: 'Dough', baseYield: 1000, yieldUnit: 'gr' },
         { id: '2', name: 'Sauce', baseYield: 500, yieldUnit: 'ml' }
       ];
       prisma.baseRecipe.findMany.mockResolvedValue(mockBaseRecipes);
@@ -43,7 +43,7 @@ describe('Base Recipe Routes', () => {
       const newBaseRecipe = {
         name: 'Ganache',
         baseYield: 500,
-        yieldUnit: 'g',
+        yieldUnit: 'gr',
         ingredients: [{ ingredientId: 'ing1', quantity: 250 }, { ingredientId: 'ing2', quantity: 250 }]
       };
 
@@ -51,7 +51,7 @@ describe('Base Recipe Routes', () => {
         id: '1',
         name: 'Ganache',
         baseYield: 500,
-        yieldUnit: 'g',
+        yieldUnit: 'gr',
         ingredients: [{ id: 'link1' }, { id: 'link2' }]
       };
 
