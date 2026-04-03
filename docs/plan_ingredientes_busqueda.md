@@ -7,7 +7,7 @@ Implementar una barra de búsqueda en el módulo de Ingredientes que permita fil
 
 ## 📋 Tareas
 
-- [ ] Backend: Ajustar el controlador/servicio de ingredientes para permitir filtrado por `name` y `brand` usando Prisma (`mode: 'insensitive'`).
-- [ ] Frontend: Implementar el input de búsqueda en la cabecera de la lista de ingredientes.
-- [ ] Frontend: Sincronizar el estado de búsqueda con las peticiones al backend.
-- [ ] Verificación: Probar con diferentes combinaciones de mayúsculas y minúsculas.
+- [x] Backend: Ajustar el controlador/servicio de ingredientes para permitir filtrado por `name` y `brand` usando Prisma (`mode: 'insensitive'`).
+- [x] Frontend: Implementar el input de búsqueda en la cabecera de la lista de ingredientes.
+- [x] Frontend: Sincronizar el estado de búsqueda con las peticiones al backend.
+- [x] Verificación: Probar con diferentes combinaciones de mayúsculas y minúsculas.
