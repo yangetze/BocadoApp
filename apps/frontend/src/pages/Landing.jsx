@@ -1,6 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { Cake, PieChart, Layers, DollarSign, ArrowRight, Mail, Phone } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
+
+/* eslint-disable no-unused-vars */
+import React from 'react';
 
 
 
