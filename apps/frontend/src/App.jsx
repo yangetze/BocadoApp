@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ExchangeRateManager from './components/ExchangeRateManager';
 import Builder from './components/DragAndDrop/Builder';
 import IngredientManager from './components/Ingredients/IngredientManager';
-import BaseRecipeBuilderWrapper from './components/BaseRecipes/BaseRecipeBuilderWrapper';
+import BaseRecipeManager from './components/BaseRecipes/BaseRecipeManager';
 import SuperRecipeBuilderWrapper from './components/SuperRecipes/SuperRecipeBuilderWrapper';
 import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper';
 
@@ -158,7 +158,7 @@ function MainApp() {
 
       <main className="max-w-6xl mx-auto px-6">
         {activeTab === 'ingredient' && <IngredientManager />}
-        {activeTab === 'baseRecipe' && <BaseRecipeBuilderWrapper />}
+        {activeTab === 'baseRecipe' && <BaseRecipeManager />}
         {activeTab === 'settings' && <ExchangeRateManager />}
         {activeTab === 'superRecipe' && (
           <SuperRecipeBuilderWrapper />
