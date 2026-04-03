@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import logger from './utils/logger.js';
 import costRoutes from './routes/costRoutes.js';
 import exchangeRateRoutes from './routes/exchangeRateRoutes.js';
 import marginRoutes from './routes/marginRoutes.js';
@@ -36,7 +37,7 @@ app.use('/api/super-recipes', superRecipeRoutes);
 if (!isTestMode()) {
   setupCronJobs();
 } else {
-  console.log('Test Mode is ON - Cron jobs disabled');
+  logger.info('Test Mode is ON - Cron jobs disabled');
 }
 
 // Health check endpoint
@@ -49,5 +50,5 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  logger.info(`Server running on port ${port}`);
 });
