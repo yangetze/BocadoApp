@@ -14,8 +14,20 @@ describe('Cost API', () => {
   });
 
   describe('GET /api/calculate-cost/:superRecipeId', () => {
-    it('should return 400 for invalid yield parameter', async () => {
+    it('should return 400 for invalid yield parameter (negative number)', async () => {
       const response = await request(app).get('/api/calculate-cost/1?yield=-5');
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Invalid yield parameter' });
+    });
+
+    it('should return 400 for invalid yield parameter (zero)', async () => {
+      const response = await request(app).get('/api/calculate-cost/1?yield=0');
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'Invalid yield parameter' });
+    });
+
+    it('should return 400 for invalid yield parameter (not a number)', async () => {
+      const response = await request(app).get('/api/calculate-cost/1?yield=invalid');
       expect(response.status).toBe(400);
       expect(response.body).toEqual({ error: 'Invalid yield parameter' });
     });
