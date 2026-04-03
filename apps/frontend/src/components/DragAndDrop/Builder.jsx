@@ -59,7 +59,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
   const [baseRecipeMetadata, setBaseRecipeMetadata] = useState({
     name: '',
     baseYield: '',
-    yieldUnit: 'g'
+    yieldUnit: 'gr'
   });
 
   const handleSave = async () => {
@@ -110,7 +110,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
         };
         await baseRecipeApi.createBaseRecipe(payload);
         toast.success('Receta Base guardada exitosamente');
-        setBaseRecipeMetadata({ name: '', baseYield: '', yieldUnit: 'g' });
+        setBaseRecipeMetadata({ name: '', baseYield: '', yieldUnit: 'gr' });
         setCanvasItems([]);
       }
       // Opcional: limpiar lienzo después de guardar

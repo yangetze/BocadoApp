@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { ingredientApi } from '../../api';
 
-const UNITS = ['g', 'kg', 'ml', 'l', 'u'];
+const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
 export default function IngredientManager() {
   const [ingredients, setIngredients] = useState([]);
@@ -11,7 +11,7 @@ export default function IngredientManager() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // State for the new inline item
-  const [newItem, setNewItem] = useState({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'g' });
+  const [newItem, setNewItem] = useState({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'gr' });
 
   // State for editing existing item
   const [editItem, setEditItem] = useState({});
@@ -44,7 +44,7 @@ export default function IngredientManager() {
     try {
       const added = await ingredientApi.create(newItem);
       setIngredients([added, ...ingredients]);
-      setNewItem({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'g' });
+      setNewItem({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'gr' });
       toast.success('Ingrediente agregado');
     } catch {
       toast.error('Error al agregar el ingrediente');

@@ -63,7 +63,7 @@ describe('Ingredient Routes', () => {
 
   describe('POST /api/ingredients', () => {
     it('should create a new ingredient', async () => {
-      const newIngredient = { name: 'Eggs', globalCost: 3.0, measurementUnit: 'dozen', brand: 'Farm', userId: 'user-default-1' };
+      const newIngredient = { name: 'Eggs', globalCost: 3.0, measurementUnit: 'u', brand: 'Farm', userId: 'user-default-1' };
       const createdIngredient = { id: '3', ...newIngredient };
 
       prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
