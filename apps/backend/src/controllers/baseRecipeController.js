@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 
@@ -31,13 +32,13 @@ export const createBaseRecipe = async (req, res) => {
 
     if (isTestMode()) {
       const newRecipe = {
-        id: `br-${Date.now()}`,
+        id: `br-${crypto.randomUUID()}`,
         name,
         baseYield: parseFloat(baseYield),
         yieldUnit,
         userId: userId,
         ingredients: ingredients.map(i => ({
-          id: `bri-${Math.random()}`,
+          id: `bri-${crypto.randomUUID()}`,
           quantity: parseFloat(i.quantity),
           ingredientId: i.ingredientId,
           ingredient: mockData.ingredients.find(ing => ing.id === i.ingredientId)
@@ -94,7 +95,7 @@ export const updateBaseRecipe = async (req, res) => {
 
       if (items) {
         updated.ingredients = items.map(item => ({
-          id: `bri-${Date.now()}-${Math.random()}`,
+          id: `bri-${crypto.randomUUID()}`,
           baseRecipeId: id,
           ingredientId: item.ingredientId,
           quantity: parseFloat(item.quantity),

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 // Ensure we use the exact exported module which might be mocked in tests
 import prismaClient from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
@@ -48,7 +49,7 @@ export const createOrUpdateManualRate = async (req, res) => {
         newOrUpdatedRate = mockData.exchangeRates[existingRateIndex];
       } else {
         newOrUpdatedRate = {
-          id: `er-${Date.now()}`,
+          id: `er-${crypto.randomUUID()}`,
           rate: parseFloat(rate),
           effectiveDate: normalizedDate,
           source: source,
@@ -166,7 +167,7 @@ export const fetchAndStoreApiRate = async (req, res) => {
         newOrUpdatedRate = mockData.exchangeRates[existingRateIndex];
       } else {
         newOrUpdatedRate = {
-          id: `er-${Date.now()}`,
+          id: `er-${crypto.randomUUID()}`,
           rate: parseFloat(rate),
           effectiveDate: normalizedDate,
           source: sourceEnum,
