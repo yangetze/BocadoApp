@@ -6,7 +6,7 @@ const prisma = prismaClient.default || prismaClient;
 // Carga Manual: Recibe targetCurrencyId, rate, y optionally effectiveDate
 export const createOrUpdateManualRate = async (req, res) => {
   try {
-    const { targetCurrencyId, rate, effectiveDate } = req.body;
+    const { targetCurrencyId, rate, effectiveDate, source = 'MANUAL' } = req.body;
 
     if (!targetCurrencyId || !rate) {
       return res.status(400).json({ error: 'targetCurrencyId and rate are required' });
@@ -35,7 +35,8 @@ export const createOrUpdateManualRate = async (req, res) => {
     if (isTestMode()) {
       const existingRateIndex = mockData.exchangeRates.findIndex(
         r => r.targetCurrencyId === targetCurrencyId &&
-             new Date(r.effectiveDate).getTime() === normalizedDate.getTime()
+             new Date(r.effectiveDate).getTime() === normalizedDate.getTime() &&
+             r.source === source
       );
 
       const targetCurrency = mockData.currencies.find(c => c.id === targetCurrencyId);
@@ -43,14 +44,14 @@ export const createOrUpdateManualRate = async (req, res) => {
       let newOrUpdatedRate;
       if (existingRateIndex >= 0) {
         mockData.exchangeRates[existingRateIndex].rate = parseFloat(rate);
-        mockData.exchangeRates[existingRateIndex].source = 'MANUAL';
+        mockData.exchangeRates[existingRateIndex].source = source;
         newOrUpdatedRate = mockData.exchangeRates[existingRateIndex];
       } else {
         newOrUpdatedRate = {
           id: `er-${Date.now()}`,
           rate: parseFloat(rate),
           effectiveDate: normalizedDate,
-          source: 'MANUAL',
+          source: source,
           targetCurrencyId,
           targetCurrency
         };
@@ -63,20 +64,21 @@ export const createOrUpdateManualRate = async (req, res) => {
     // Use Prisma's upsert to automatically create or update based on the unique constraint
     const exchangeRate = await prisma.exchangeRate.upsert({
       where: {
-        effectiveDate_targetCurrencyId: {
+        effectiveDate_targetCurrencyId_source: {
           effectiveDate: normalizedDate,
           targetCurrencyId: targetCurrencyId,
+          source: source
         }
       },
       update: {
         rate: parseFloat(rate),
-        source: 'MANUAL',
+        source: source,
       },
       create: {
         targetCurrencyId: targetCurrencyId,
         rate: parseFloat(rate),
         effectiveDate: normalizedDate,
-        source: 'MANUAL',
+        source: source,
       }
     });
 
@@ -93,7 +95,7 @@ export const fetchAndStoreApiRate = async (req, res) => {
     // Determine which rate type to fetch (bcv or paralelo), default to bcv
     const type = req?.body?.type || 'bcv';
     // Using DolarAPI instead of CriptoYa, but keeping the requested enum structure
-    const sourceEnum = type === 'paralelo' ? 'CRIPTOYA_PARALELO' : 'CRIPTOYA_BCV';
+    const sourceEnum = type === 'paralelo' ? 'PARALLEL' : (type === 'euro' ? 'EURO' : 'OFFICIAL');
 
     // 1. Fetch from DolarAPI Venezuela
     // https://ve.dolarapi.com/v1/dolares
@@ -153,7 +155,8 @@ export const fetchAndStoreApiRate = async (req, res) => {
 
       const existingRateIndex = mockData.exchangeRates.findIndex(
         r => r.targetCurrencyId === targetCurId &&
-             new Date(r.effectiveDate).getTime() === normalizedDate.getTime()
+             new Date(r.effectiveDate).getTime() === normalizedDate.getTime() &&
+             r.source === sourceEnum
       );
 
       let newOrUpdatedRate;
@@ -180,9 +183,10 @@ export const fetchAndStoreApiRate = async (req, res) => {
     // 3. Upsert the rate
     const exchangeRate = await prisma.exchangeRate.upsert({
       where: {
-        effectiveDate_targetCurrencyId: {
+        effectiveDate_targetCurrencyId_source: {
           effectiveDate: normalizedDate,
           targetCurrencyId: targetCurrency.id,
+          source: sourceEnum
         }
       },
       update: {

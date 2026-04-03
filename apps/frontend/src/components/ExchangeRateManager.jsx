@@ -15,6 +15,7 @@ export default function ExchangeRateManager() {
   const [manualRate, setManualRate] = useState('');
   const [manualDate, setManualDate] = useState('');
   const [selectedCurrency, setSelectedCurrency] = useState('');
+  const [manualSource, setManualSource] = useState('MANUAL');
 
   const loadData = async () => {
     try {
@@ -84,11 +85,13 @@ export default function ExchangeRateManager() {
       await exchangeRateApi.createOrUpdateManualRate({
         targetCurrencyId: selectedCurrency,
         rate: parseFloat(manualRate),
-        effectiveDate: manualDate || undefined
+        effectiveDate: manualDate || undefined,
+        source: manualSource
       });
       toast.success('¡Tasa manual guardada correctamente! 🍰');
       setManualRate('');
       setManualDate('');
+      setManualSource('MANUAL');
       await loadData();
     } catch {
       toast.error('Ocurrió un error al guardar tu tasa manual.');
@@ -108,8 +111,9 @@ export default function ExchangeRateManager() {
   const formatSource = (source) => {
     const map = {
       'MANUAL': 'Ingreso Manual ✍️',
-      'CRIPTOYA_BCV': 'API Oficial 🏛️',
-      'CRIPTOYA_PARALELO': 'API Paralelo 🚀'
+      'OFFICIAL': 'Oficial 🏛️',
+      'PARALLEL': 'Paralelo 🚀',
+      'EURO': 'Euro 💶'
     };
     return map[source] || source;
   };
@@ -150,6 +154,31 @@ export default function ExchangeRateManager() {
             </div>
           </motion.div>
         )}
+      </div>
+
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {['OFFICIAL', 'PARALLEL', 'EURO', 'MANUAL'].map(source => {
+          const rateForSource = rates.find(r => r.source === source && new Date(r.effectiveDate).toDateString() === new Date().toDateString());
+          return (
+            <motion.div
+              key={source}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`p-4 rounded-xl border ${rateForSource ? 'bg-white border-peach-soft/30 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-60'}`}
+            >
+              <p className="text-xs text-slate-gray/60 font-medium uppercase mb-1">{formatSource(source).replace(/[^a-zA-Z]/g, '')}</p>
+              {rateForSource ? (
+                <div>
+                   <p className="text-xl font-bold text-slate-gray">{rateForSource.targetCurrency?.symbol} {rateForSource.rate.toFixed(2)}</p>
+                   <p className="text-[10px] text-slate-gray/50 mt-1">Activa hoy</p>
+                </div>
+              ) : (
+                <p className="text-sm font-medium text-slate-gray/40 mt-2">No registrada hoy</p>
+              )}
+            </motion.div>
+          )
+        })}
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -222,6 +251,19 @@ export default function ExchangeRateManager() {
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
                   placeholder="Monto"
                 />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Origen</label>
+                <select
+                  value={manualSource}
+                  onChange={(e) => setManualSource(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
+                >
+                  <option value="MANUAL">Manual</option>
+                  <option value="OFFICIAL">Oficial</option>
+                  <option value="PARALLEL">Paralelo</option>
+                  <option value="EURO">Euro</option>
+                </select>
               </div>
             </div>
 
