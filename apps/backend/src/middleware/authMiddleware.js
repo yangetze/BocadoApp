@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'bocado-super-secret-key-2026';
+import { JWT_SECRET } from '../config/auth.js';
 
 /**
  * Middleware para verificar si el usuario tiene un JWT válido.
