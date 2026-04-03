@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
+    "test": "JWT_SECRET=test-secret-for-jest node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "@prisma/client": "^5.10.2",
