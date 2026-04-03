@@ -46,6 +46,8 @@ DraggableItem.propTypes = {
     type: PropTypes.string,
     globalCost: PropTypes.number,
     measurementUnit: PropTypes.string,
+    unitQuantity: PropTypes.number,
+    brand: PropTypes.string,
   }).isRequired,
   isOverlay: PropTypes.bool,
 };

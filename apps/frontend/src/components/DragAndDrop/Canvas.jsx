@@ -4,7 +4,7 @@ import { SortableItem } from './SortableItem';
 
 import PropTypes from 'prop-types';
 
-export function Canvas({ items, onRemove, onUpdateQuantity }) {
+export function Canvas({ items, mode, onRemove, onUpdateQuantity }) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'canvas',
   });
@@ -28,7 +28,7 @@ export function Canvas({ items, onRemove, onUpdateQuantity }) {
       ) : (
         <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
           {items.map((item) => (
-            <SortableItem key={item.id} id={item.id} item={item} onRemove={onRemove} onUpdateQuantity={onUpdateQuantity} />
+            <SortableItem key={item.id} id={item.id} item={item} mode={mode} onRemove={onRemove} onUpdateQuantity={onUpdateQuantity} />
           ))}
         </SortableContext>
       )}
@@ -37,6 +37,7 @@ export function Canvas({ items, onRemove, onUpdateQuantity }) {
 }
 
 Canvas.propTypes = {
+  mode: PropTypes.string,
   items: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,

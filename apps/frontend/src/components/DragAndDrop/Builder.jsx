@@ -48,6 +48,14 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     else setSuggestedMargin(30);
   }, []);
 
+  // Calcular total de receta base
+  const totalBaseRecipeCost = canvasItems.reduce((acc, item) => {
+    if (mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity) {
+      return acc + ((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity) * item.globalCost;
+    }
+    return acc;
+  }, 0);
+
   const [baseRecipeMetadata, setBaseRecipeMetadata] = useState({
     name: '',
     baseYield: '',
@@ -288,6 +296,12 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 
             {mode === 'baseRecipe' && (
               <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                <div className="md:col-span-3 flex justify-end mb-2">
+                  <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+                    <span className="text-sm font-medium text-gray-500 mr-2">Total Receta:</span>
+                    <span className="text-xl font-black text-slate-gray">$ {totalBaseRecipeCost.toFixed(2)} USD</span>
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-gray mb-1">Nombre de la Receta Base</label>
                   <input
@@ -331,6 +345,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
             <div className="flex-1 flex flex-col">
               <Canvas
                 items={canvasItems}
+                mode={mode}
                 onRemove={removeItem}
                 onUpdateQuantity={updateItemQuantity}
               />
@@ -345,7 +360,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
           activeItem?.source === 'palette' ? (
             <DraggableItem id={activeId} item={activeItem} isOverlay />
           ) : (
-            <SortableItem id={activeId} item={activeItem} onRemove={() => {}} onUpdateQuantity={() => {}} />
+            <SortableItem id={activeId} item={activeItem} mode={mode} onRemove={() => {}} onUpdateQuantity={() => {}} />
           )
         ) : null}
       </DragOverlay>
