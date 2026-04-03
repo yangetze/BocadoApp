@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 
@@ -44,7 +45,7 @@ export const createIngredient = async (req, res) => {
 
     if (isTestMode()) {
       const newIngredient = {
-        id: `ing-${Date.now()}`,
+        id: `ing-${crypto.randomUUID()}`,
         name,
         globalCost: parseFloat(globalCost),
         unitQuantity: unitQuantity !== undefined ? parseFloat(unitQuantity) : 1,
