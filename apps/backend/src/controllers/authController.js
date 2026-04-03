@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../prisma.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'bocado-super-secret-key-2026';
+import { JWT_SECRET } from '../config/auth.js';
 
 export const login = async (req, res) => {
   try {
