@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { UserPlus, Cake, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { authApi } from '../api';
 import { useAuth } from '../context/AuthContext';
