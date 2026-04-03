@@ -13,6 +13,34 @@ import userRoutes from './routes/userRoutes.js';
 import { setupCronJobs } from './cronJobs.js';
 import { isTestMode } from './mockData.js';
 
+import prismaClient from './prisma.js';
+const prisma = prismaClient.default || prismaClient;
+
+// Ensure default currencies exist
+async function initCurrencies() {
+  if (isTestMode()) return;
+  try {
+    let baseCurrency = await prisma.currency.findUnique({ where: { code: 'USD' } });
+    if(!baseCurrency) {
+         await prisma.currency.create({
+            data: { code: 'USD', symbol: '$', isBase: true }
+          });
+         console.log('Created default USD currency');
+    }
+
+    let vesCurrency = await prisma.currency.findUnique({ where: { code: 'VES' } });
+    if (!vesCurrency) {
+      await prisma.currency.create({
+        data: { code: 'VES', symbol: 'Bs', isBase: false }
+      });
+      console.log('Created default VES currency');
+    }
+  } catch (err) {
+    console.error('Error initializing default currencies:', err);
+  }
+}
+
+
 dotenv.config();
 
 const app = express();
@@ -48,6 +76,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  await initCurrencies();
   console.log(`Server running on port ${port}`);
 });

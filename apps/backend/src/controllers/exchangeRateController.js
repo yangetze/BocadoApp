@@ -245,7 +245,7 @@ export const getExchangeRates = async (req, res) => {
 
     return res.status(200).json(rates);
   } catch {
-    return res.status(500).json({ error: \'Internal server error\' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -253,21 +253,6 @@ export const getCurrencies = async (req, res) => {
     try {
         if (isTestMode()) {
           return res.status(200).json(mockData.currencies);
-        }
-
-        // Automatically ensure default currencies exist when querying them to improve UX
-        let baseCurrency = await prisma.currency.findUnique({ where: { code: 'USD' } });
-        if(!baseCurrency) {
-             await prisma.currency.create({
-                data: { code: 'USD', symbol: '$', isBase: true }
-              });
-        }
-
-        let vesCurrency = await prisma.currency.findUnique({ where: { code: 'VES' } });
-        if (!vesCurrency) {
-          await prisma.currency.create({
-            data: { code: 'VES', symbol: 'Bs', isBase: false }
-          });
         }
 
         const currencies = await prisma.currency.findMany();
