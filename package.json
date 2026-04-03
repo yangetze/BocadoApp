@@ -13,5 +13,9 @@
     "dev:backend": "npm run dev --workspace=apps/backend",
     "test:backend": "npm test --workspace=apps/backend",
     "test:frontend": "npm test --workspace=apps/frontend"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.2",
+    "prisma": "^5.10.2"
   }
 }

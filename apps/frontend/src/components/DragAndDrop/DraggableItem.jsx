@@ -33,7 +33,7 @@ export function DraggableItem({ id, item, isOverlay = false }) {
       </div>
       <div>
         <p className="font-medium text-slate-gray">{item.name}</p>
-        <p className="text-xs text-gray-400">{item.globalCost !== undefined ? `Ingrediente (${item.measurementUnit})` : item.type === 'baseRecipe' ? 'Receta Base' : 'Súper Receta'}</p>
+        <p className="text-xs text-gray-400">{item.globalCost !== undefined ? `${item.brand ? item.brand + ' • ' : ''}${item.unitQuantity || ''} ${item.measurementUnit || ''}`.trim() || `Ingrediente (${item.measurementUnit})` : item.type === 'baseRecipe' ? 'Receta Base' : 'Súper Receta'}</p>
       </div>
     </div>
   );
