@@ -186,9 +186,10 @@ model Currency {
 }
 
 enum ExchangeRateSource {
+  OFFICIAL
+  PARALLEL
+  EURO
   MANUAL
-  CRIPTOYA_BCV
-  CRIPTOYA_PARALELO
 }
 
 model ExchangeRate {
@@ -202,5 +203,5 @@ model ExchangeRate {
   targetCurrency   Currency @relation("TargetCurrency", fields: [targetCurrencyId], references: [id], onDelete: Cascade)
 
   // Ensure only one rate per date and currency combination
-  @@unique([effectiveDate, targetCurrencyId])
+  @@unique([effectiveDate, targetCurrencyId, source])
 }
