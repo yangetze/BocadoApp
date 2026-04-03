@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import { RefreshCw, Plus, Calendar, Coins, History } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { exchangeRateApi } from '../api';

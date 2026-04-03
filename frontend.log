@@ -1,9 +1,29 @@
 
+> bocadoapp@1.0.0 dev:frontend
+> npm run dev --workspace=apps/frontend
+
+
 > @bocadoapp/frontend@1.0.0 dev
 > vite
 
 
-  VITE v8.0.3  ready in 300 ms
+  VITE v8.0.3  ready in 607 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
+2:30:40 AM [vite] (client) hmr update /src/pages/Landing.jsx, /src/index.css
+2:30:40 AM [vite] (client) hmr update /src/components/ExchangeRateManager.jsx, /src/index.css
+2:33:32 AM [vite] (client) hmr update /src/App.jsx, /src/index.css
+2:33:32 AM [vite] (client) hmr update /src/components/ExchangeRateManager.jsx, /src/index.css
+2:33:32 AM [vite] (client) hmr update /src/pages/AdminDashboard.jsx, /src/index.css
+2:33:32 AM [vite] (client) hmr update /src/pages/Landing.jsx, /src/index.css
+2:33:32 AM [vite] (client) hmr update /src/pages/LoginPage.jsx, /src/index.css
+2:33:32 AM [vite] (client) hmr update /src/pages/RegisterPage.jsx, /src/index.css
+2:33:55 AM [vite] (client) hmr update /src/components/ExchangeRateManager.jsx, /src/index.css
+2:33:55 AM [vite] (client) hmr update /src/pages/AdminDashboard.jsx, /src/index.css
+2:33:55 AM [vite] (client) hmr update /src/App.jsx, /src/index.css
+2:33:55 AM [vite] (client) hmr update /src/pages/LoginPage.jsx, /src/index.css
+2:33:55 AM [vite] (client) hmr update /src/pages/RegisterPage.jsx, /src/index.css
+2:33:55 AM [vite] (client) hmr update /src/pages/Landing.jsx, /src/index.css
+2:34:45 AM [vite] (client) hmr update /src/pages/Landing.jsx, /src/index.css
+2:34:45 AM [vite] (client) hmr update /src/components/ExchangeRateManager.jsx, /src/index.css

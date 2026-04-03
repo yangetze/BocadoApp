@@ -244,9 +244,8 @@ export const getExchangeRates = async (req, res) => {
     });
 
     return res.status(200).json(rates);
-  } catch (error) {
-    console.error('Error in getExchangeRates:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+  } catch {
+    return res.status(500).json({ error: \'Internal server error\' });
   }
 };
 

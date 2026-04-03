@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import { ingredientApi } from '../../api';
 
@@ -8,7 +8,7 @@ export default function IngredientManager() {
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
 
   // State for the new inline item
   const [newItem, setNewItem] = useState({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'gr' });
@@ -16,7 +16,7 @@ export default function IngredientManager() {
   // State for editing existing item
   const [editItem, setEditItem] = useState({});
 
-  const fetchIngredients = async () => {
+  const fetchIngredients = useCallback(async () => {
     try {
       setLoading(true);
       const data = await ingredientApi.getAll(searchQuery);
@@ -26,7 +26,7 @@ export default function IngredientManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -34,7 +34,7 @@ export default function IngredientManager() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+  }, [fetchIngredients]);
 
   const handleAdd = async () => {
     if (!newItem.name || !newItem.globalCost || !newItem.measurementUnit || !newItem.unitQuantity) {

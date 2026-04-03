@@ -7,7 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Settings, LogOut, TrendingUp } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import ExchangeRateManager from './components/ExchangeRateManager';
 import Builder from './components/DragAndDrop/Builder';
 import IngredientManager from './components/Ingredients/IngredientManager';
