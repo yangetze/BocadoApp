@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Edit3, Trash2, Shield, ArrowLeft } from 'lucide-react';
+import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
