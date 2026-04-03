@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus, Cake, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { UserPlus, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { authApi } from '../api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -45,7 +45,7 @@ export default function RegisterPage() {
       <div className="absolute top-[-5%] right-[-10%] w-80 h-80 bg-peach-soft/20 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-peach-soft/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <motion.div 
+      <div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-lg z-10"
@@ -148,7 +148,7 @@ export default function RegisterPage() {
             <Link to="/login" className="text-peach-soft hover:underline font-bold">Inicia sesión aquí</Link>
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
