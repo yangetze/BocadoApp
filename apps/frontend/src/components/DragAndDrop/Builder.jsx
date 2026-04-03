@@ -295,14 +295,8 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
             )}
 
             {mode === 'baseRecipe' && (
-              <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                <div className="md:col-span-3 flex justify-end mb-2">
-                  <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
-                    <span className="text-sm font-medium text-gray-500 mr-2">Total Receta:</span>
-                    <span className="text-xl font-black text-slate-gray">$ {totalBaseRecipeCost.toFixed(2)} USD</span>
-                  </div>
-                </div>
-                <div>
+              <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                <div className="md:col-span-2 lg:col-span-3">
                   <label className="block text-sm font-medium text-slate-gray mb-1">Nombre de la Receta Base</label>
                   <input
                     type="text"
@@ -312,7 +306,13 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
                     onChange={(e) => setBaseRecipeMetadata({ ...baseRecipeMetadata, name: e.target.value })}
                   />
                 </div>
-                <div>
+                <div className="flex flex-col justify-end">
+                  <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 h-[46px] flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-500 mr-2">Total:</span>
+                    <span className="text-lg font-black text-slate-gray whitespace-nowrap">$ {totalBaseRecipeCost.toFixed(2)} USD</span>
+                  </div>
+                </div>
+                <div className="md:col-span-1 lg:col-span-2">
                   <label className="block text-sm font-medium text-slate-gray mb-1">Rendimiento (Cantidad)</label>
                   <input
                     type="number"
