@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, CheckCircle2, ChevronRight, Cake, PieChart, Layers, DollarSign, ArrowRight, X, Mail, Phone } from 'lucide-react';
+import { Cake, PieChart, Layers, DollarSign, ArrowRight, Mail, Phone } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 
 
