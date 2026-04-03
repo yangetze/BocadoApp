@@ -88,5 +88,46 @@ describe('Cost API', () => {
       expect(response.body.scaleMultiplier).toBe(2);
       expect(response.body.costs.convertedCosts[0].cost).toBe(440); // 11.0 * 40
     });
+
+    it('should calculate cost correctly with default yield parameter (omitted)', async () => {
+      // Mock exchange rate finding logic since it is used in calculation
+      prisma.exchangeRate.findMany.mockResolvedValue([
+        { targetCurrency: { code: 'VES', symbol: 'Bs' }, rate: 40 }
+      ]);
+
+      const mockSuperRecipe = {
+        id: '1',
+        name: 'Wedding Cake',
+        baseRecipes: [
+          {
+            quantityNeeded: 2000,
+            baseRecipe: {
+              name: 'Sponge Cake',
+              baseYield: 1000,
+              ingredients: [
+                { quantity: 500, ingredient: { name: 'Flour', globalCost: 0.002 } },
+                { quantity: 500, ingredient: { name: 'Sugar', globalCost: 0.001 } }
+              ]
+            }
+          }
+        ],
+        directIngredients: [
+          { quantityNeeded: 1, ingredient: { name: 'Cake Box', globalCost: 2.5 } }
+        ]
+      };
+
+      prisma.superRecipe.findUnique.mockResolvedValue(mockSuperRecipe);
+
+      const response = await request(app).get('/api/calculate-cost/1');
+      expect(response.status).toBe(200);
+
+      // Base Recipe cost = 3.0
+      // Direct Ingredient cost = 2.5
+      // Total Cost = 3.0 + 2.5 = 5.5 USD
+
+      expect(response.body.costs.baseCost).toBe(5.5);
+      expect(response.body.scaleMultiplier).toBe(1);
+      expect(response.body.costs.convertedCosts[0].cost).toBe(220); // 5.5 * 40
+    });
   });
 });
