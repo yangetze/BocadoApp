@@ -1,0 +1,130 @@
+import { useState, useCallback } from 'react';
+import toast from 'react-hot-toast';
+import { budgetApi, superRecipeApi, baseRecipeApi } from '../../api';
+
+export function useBuilder(mode) {
+  const [canvasItems, setCanvasItems] = useState([]);
+  const [activeId, setActiveId] = useState(null);
+  const [activeItem, setActiveItem] = useState(null);
+  const [suggestedMargin, setSuggestedMargin] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [baseRecipeMetadata, setBaseRecipeMetadata] = useState({
+    name: '',
+    baseYield: '',
+    yieldUnit: 'gr'
+  });
+
+  const fetchMarginRecommendation = useCallback(async (items) => {
+    if (items.length === 0) {
+      setSuggestedMargin(null);
+      return;
+    }
+    const score = items.reduce((acc, curr) => acc + (curr.quantity || 1) * 3, 0);
+    if (score > 20) setSuggestedMargin(50);
+    else if (score > 10) setSuggestedMargin(40);
+    else setSuggestedMargin(30);
+  }, []);
+
+  const totalBaseRecipeCost = canvasItems.reduce((acc, item) => {
+    if (mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity) {
+      return acc + ((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity) * item.globalCost;
+    }
+    return acc;
+  }, 0);
+
+  const handleSave = async () => {
+    if (canvasItems.length === 0) {
+      toast.error('El lienzo está vacío. Agrega algunos elementos primero.');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      if (mode === 'budget') {
+        const payload = {
+          customerName: 'Cliente ' + Date.now().toString().slice(-4),
+          profitMargin: 0.35,
+          userId: 'user-default-1',
+          superRecipes: canvasItems.map(item => ({
+            superRecipeId: item.id.replace('canvas-', '').split('-')[1] || item.id,
+            scaleQuantity: item.quantity || 1
+          }))
+        };
+        await budgetApi.createBudget(payload);
+        toast.success('Presupuesto guardado exitosamente');
+      } else if (mode === 'superRecipe') {
+        const payload = {
+          name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
+          baseRecipes: canvasItems.map(item => ({
+            baseRecipeId: item.id.replace('canvas-', '').split('-')[1] || item.id,
+            quantity: item.quantity || 1
+          }))
+        };
+        await superRecipeApi.createSuperRecipe(payload);
+        toast.success('Súper Receta guardada exitosamente');
+      } else if (mode === 'baseRecipe') {
+        if (!baseRecipeMetadata.name || !baseRecipeMetadata.baseYield) {
+          toast.error('Debes colocar nombre y rendimiento de la receta');
+          setIsSaving(false);
+          return;
+        }
+
+        const payload = {
+          name: baseRecipeMetadata.name,
+          baseYield: parseFloat(baseRecipeMetadata.baseYield),
+          yieldUnit: baseRecipeMetadata.yieldUnit,
+          ingredients: canvasItems.map(item => ({
+            ingredientId: item.id.replace('canvas-', '').split('-')[1] || item.id,
+            quantity: item.quantity || 1
+          }))
+        };
+        await baseRecipeApi.createBaseRecipe(payload);
+        toast.success('Receta Base guardada exitosamente');
+        setBaseRecipeMetadata({ name: '', baseYield: '', yieldUnit: 'gr' });
+        setCanvasItems([]);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Hubo un error al guardar. Verifica la consola.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const removeItem = useCallback((idToRemove) => {
+    setCanvasItems((items) => {
+      const newItems = items.filter((item) => item.id !== idToRemove);
+      if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
+      return newItems;
+    });
+  }, [mode, fetchMarginRecommendation]);
+
+  const updateItemQuantity = useCallback((idToUpdate, newQuantity) => {
+    setCanvasItems((items) => {
+      const newItems = items.map(item =>
+        item.id === idToUpdate ? { ...item, quantity: newQuantity } : item
+      );
+      if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
+      return newItems;
+    });
+  }, [mode, fetchMarginRecommendation]);
+
+  return {
+    canvasItems,
+    setCanvasItems,
+    activeId,
+    setActiveId,
+    activeItem,
+    setActiveItem,
+    suggestedMargin,
+    setSuggestedMargin,
+    isSaving,
+    baseRecipeMetadata,
+    setBaseRecipeMetadata,
+    totalBaseRecipeCost,
+    handleSave,
+    removeItem,
+    updateItemQuantity,
+    fetchMarginRecommendation,
+  };
+}

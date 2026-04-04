@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 
@@ -11,16 +12,17 @@ export const createBudget = async (req, res) => {
     }
 
     if (isTestMode()) {
+      const budgetId = `bud-${crypto.randomUUID()}`;
       const newBudget = {
-        id: `bud-${Date.now()}`,
+        id: budgetId,
         customerName: customerName || null,
         profitMargin: parseFloat(profitMargin),
         userId,
         createdAt: new Date(),
         updatedAt: new Date(),
         superRecipes: superRecipes.map(sr => ({
-          id: `bsr-${Date.now()}-${Math.random()}`,
-          budgetId: `bud-${Date.now()}`,
+          id: `bsr-${crypto.randomUUID()}`,
+          budgetId,
           superRecipeId: sr.superRecipeId,
           scaleQuantity: sr.scaleQuantity || 1,
           superRecipe: mockData.superRecipes.find(s => s.id === sr.superRecipeId)

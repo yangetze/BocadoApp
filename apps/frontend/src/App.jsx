@@ -9,7 +9,6 @@ import { Toaster } from 'react-hot-toast';
 import { Settings, LogOut, TrendingUp } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import ExchangeRateManager from './components/ExchangeRateManager';
-import Builder from './components/DragAndDrop/Builder';
 import IngredientManager from './components/Ingredients/IngredientManager';
 import BaseRecipeBuilderWrapper from './components/BaseRecipes/BaseRecipeBuilderWrapper';
 import SuperRecipeBuilderWrapper from './components/SuperRecipes/SuperRecipeBuilderWrapper';
@@ -103,6 +102,8 @@ function MainApp() {
                   showSettings ? 'bg-peach-soft/20 text-peach-soft' : 'text-slate-gray hover:bg-gray-100'
                 }`}
                 title="Configuración"
+                aria-label="Configuración"
+                aria-expanded={showSettings}
               >
                 <Settings className="w-5 h-5" />
               </button>

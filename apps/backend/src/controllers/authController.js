@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../prisma.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'bocado-super-secret-key-2026';
+import { JWT_SECRET } from '../config/auth.js';
 
 export const login = async (req, res) => {
   try {
@@ -107,7 +107,7 @@ export const register = async (req, res) => {
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
     }
-    res.status(500).json({ error: 'Error interno del servidor', details: error.message });
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
