@@ -61,16 +61,17 @@ Utilizaremos tres servicios principales:
 1. Ve a [Vercel.com](https://vercel.com/) y crea una cuenta gratuita usando tu cuenta de GitHub.
 2. En el panel de Vercel (Dashboard), haz clic en el botón negro **"Add New..."** y selecciona **"Project"**.
 3. Busca el repositorio de BocadoApp en la lista de GitHub y haz clic en **"Import"**.
-4. En la pantalla "Configure Project", verás una sección llamada **"Environment Variables"** (Variables de entorno).
-5. Abre esa sección y añade lo siguiente:
+4. En la pantalla "Configure Project", asegúrate de que el **"Root Directory"** esté vacío. Vercel utilizará el archivo `vercel.json` de la raíz automáticamente.
+5. En la misma pantalla, verás una sección llamada **"Environment Variables"** (Variables de entorno).
+6. Abre esa sección y añade lo siguiente:
    - **Name:** `VITE_API_URL`
    - **Value:** Pega la URL que obtuviste en Render (Paso 2, punto 9) y añádele `/api` al final.
      *Ejemplo: `https://bocadoapp-backend-xxxxx.onrender.com/api`*
    - Haz clic en **"Add"**.
-6. (El archivo `vercel.json` en la raíz del proyecto se encargará del resto de la configuración automáticamente).
-7. Haz clic en el botón **"Deploy"**.
-8. Espera un par de minutos a que Vercel construya la aplicación. Cuando termine, ¡te mostrará confeti 🎉 y te dará un enlace (URL)!
-9. **Haz clic en ese enlace**. ¡Esa es tu aplicación BocadoApp funcionando en internet para cualquier usuario!
+7. (El archivo `vercel.json` en la raíz del proyecto se encargará del resto de la configuración automáticamente).
+8. Haz clic en el botón **"Deploy"**.
+9. Espera un par de minutos a que Vercel construya la aplicación. Cuando termine, ¡te mostrará confeti 🎉 y te dará un enlace (URL)!
+10. **Haz clic en ese enlace**. ¡Esa es tu aplicación BocadoApp funcionando en internet para cualquier usuario!
 
 ---
 
