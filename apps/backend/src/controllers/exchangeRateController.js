@@ -4,6 +4,29 @@ import prismaClient from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 const prisma = prismaClient.default || prismaClient;
 
+let defaultCurrenciesVerified = false;
+
+// Performance optimization: cache default currencies check to prevent redundant DB queries on every request
+const ensureDefaultCurrencies = async () => {
+  if (defaultCurrenciesVerified || isTestMode()) return;
+
+  let baseCurrency = await prisma.currency.findUnique({ where: { code: 'USD' } });
+  if (!baseCurrency) {
+    await prisma.currency.create({
+      data: { code: 'USD', symbol: '$', isBase: true }
+    });
+  }
+
+  let vesCurrency = await prisma.currency.findUnique({ where: { code: 'VES' } });
+  if (!vesCurrency) {
+    await prisma.currency.create({
+      data: { code: 'VES', symbol: 'Bs', isBase: false }
+    });
+  }
+
+  defaultCurrenciesVerified = true;
+};
+
 // Carga Manual: Recibe targetCurrencyId, rate, y optionally effectiveDate
 export const createOrUpdateManualRate = async (req, res) => {
   try {
@@ -14,19 +37,7 @@ export const createOrUpdateManualRate = async (req, res) => {
     }
 
     // Ensure default currencies exist
-    let baseCurrency = await prisma.currency.findUnique({ where: { code: 'USD' } });
-    if(!baseCurrency) {
-         await prisma.currency.create({
-            data: { code: 'USD', symbol: '$', isBase: true }
-          });
-    }
-
-    let vesCurrency = await prisma.currency.findUnique({ where: { code: 'VES' } });
-    if (!vesCurrency) {
-      await prisma.currency.create({
-        data: { code: 'VES', symbol: 'Bs', isBase: false }
-      });
-    }
+    await ensureDefaultCurrencies();
 
     // Default to today (start of day) if no date provided to ensure uniqueness per day
     const dateToUse = effectiveDate ? new Date(effectiveDate) : new Date();
@@ -132,19 +143,8 @@ export const fetchAndStoreApiRate = async (req, res) => {
       });
     }
 
-    // Default base currency USD is assumed to exist, if not, create it
-    let baseCurrency = await prisma.currency.findUnique({
-      where: { code: 'USD' }
-    });
-    if(!baseCurrency) {
-         await prisma.currency.create({
-            data: {
-              code: 'USD',
-              symbol: '$',
-              isBase: true
-            }
-          });
-    }
+    // Ensure default currencies exist (including USD and VES)
+    await ensureDefaultCurrencies();
 
     // Normalize to today (start of day UTC)
     const today = new Date();
@@ -257,19 +257,7 @@ export const getCurrencies = async (req, res) => {
         }
 
         // Automatically ensure default currencies exist when querying them to improve UX
-        let baseCurrency = await prisma.currency.findUnique({ where: { code: 'USD' } });
-        if(!baseCurrency) {
-             await prisma.currency.create({
-                data: { code: 'USD', symbol: '$', isBase: true }
-              });
-        }
-
-        let vesCurrency = await prisma.currency.findUnique({ where: { code: 'VES' } });
-        if (!vesCurrency) {
-          await prisma.currency.create({
-            data: { code: 'VES', symbol: 'Bs', isBase: false }
-          });
-        }
+        await ensureDefaultCurrencies();
 
         const currencies = await prisma.currency.findMany();
         return res.status(200).json(currencies);
