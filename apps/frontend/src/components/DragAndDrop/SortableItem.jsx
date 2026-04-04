@@ -79,6 +79,7 @@ export function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
             <button
               onClick={() => onUpdateQuantity(id, Math.max(0.5, (item.quantity || 1) - 0.5))}
               className="p-1 hover:bg-white rounded hover:shadow-sm text-gray-500 hover:text-slate-gray transition-all"
+              aria-label="Disminuir cantidad"
             >
               <ChevronDown size={16} />
             </button>
@@ -88,6 +89,7 @@ export function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
             <button
               onClick={() => onUpdateQuantity(id, (item.quantity || 1) + 0.5)}
               className="p-1 hover:bg-white rounded hover:shadow-sm text-gray-500 hover:text-slate-gray transition-all"
+              aria-label="Aumentar cantidad"
             >
               <ChevronUp size={16} />
             </button>
@@ -100,6 +102,7 @@ export function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
           onClick={() => onRemove(id)}
           className="text-gray-300 hover:text-red-400 p-2 rounded-lg hover:bg-red-50 transition-colors"
           title="Eliminar del lienzo"
+          aria-label="Eliminar del lienzo"
         >
           <Trash2 size={20} />
         </button>
