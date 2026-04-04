@@ -102,6 +102,8 @@ function MainApp() {
                   showSettings ? 'bg-peach-soft/20 text-peach-soft' : 'text-slate-gray hover:bg-gray-100'
                 }`}
                 title="Configuración"
+                aria-label="Configuración"
+                aria-expanded={showSettings}
               >
                 <Settings className="w-5 h-5" />
               </button>

@@ -68,6 +68,7 @@ export function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
               type="number"
               min="0"
               step="0.01"
+              aria-label="Cantidad"
               value={item.quantity !== undefined ? item.quantity : 1}
               onChange={(e) => onUpdateQuantity(id, parseFloat(e.target.value) || 0)}
               className="w-20 text-center font-medium text-slate-gray border border-gray-200 rounded-lg p-1 outline-none focus:border-peach-soft focus:ring-1 focus:ring-peach-soft [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
