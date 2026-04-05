@@ -116,13 +116,18 @@ export const updateBaseRecipe = async (req, res) => {
     if (baseYield !== undefined) updateData.baseYield = parseFloat(baseYield);
     if (yieldUnit) updateData.yieldUnit = yieldUnit;
 
+    const existingRecipe = await prisma.baseRecipe.findUnique({
+      where: { id }
+    });
+
+    if (!existingRecipe || existingRecipe.userId !== req.user.id) {
+      return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
+    }
+
     const updatedBaseRecipe = await prisma.$transaction(async (tx) => {
       // Update basic details
       const br = await tx.baseRecipe.update({
-        where: {
-          id,
-          userId: req.user.id // Verificamos propiedad
-        },
+        where: { id },
         data: updateData
       });
 
@@ -147,10 +152,7 @@ export const updateBaseRecipe = async (req, res) => {
 
       // Return the updated recipe with its ingredients
       return tx.baseRecipe.findUnique({
-        where: {
-          id,
-          userId: req.user.id // Verificamos propiedad
-        },
+        where: { id },
         include: {
           ingredients: {
             include: {
