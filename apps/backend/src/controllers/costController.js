@@ -20,15 +20,14 @@ export const calculateSuperRecipeCost = async (req, res) => {
       superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId);
 
       // Filter exchange rates to get the latest distinct ones per currency
-      const sortedRates = [...mockData.exchangeRates].sort((a, b) => b.effectiveDate - a.effectiveDate);
-      exchangeRates = [];
-      const seenCurrencies = new Set();
-      for (const rate of sortedRates) {
-        if (!seenCurrencies.has(rate.targetCurrencyId)) {
-          exchangeRates.push(rate);
-          seenCurrencies.add(rate.targetCurrencyId);
+      const latestRates = new Map();
+      for (const rate of mockData.exchangeRates) {
+        const existing = latestRates.get(rate.targetCurrencyId);
+        if (!existing || rate.effectiveDate > existing.effectiveDate) {
+          latestRates.set(rate.targetCurrencyId, rate);
         }
       }
+      exchangeRates = Array.from(latestRates.values());
     } else {
       // Fetch SuperRecipe with deeply nested base recipes and ingredients
       superRecipe = await prisma.superRecipe.findUnique({
