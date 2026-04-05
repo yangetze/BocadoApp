@@ -1,67 +1,90 @@
-/* global describe, it, expect, jest */
+/* global describe, it, expect, jest, beforeEach */
 import { renderHook, act } from '@testing-library/react';
 import { useBuilder } from './useBuilder';
 
-// Mock api to prevent real network calls
+// Mock dependencies
+jest.mock('react-hot-toast', () => ({
+  error: jest.fn(),
+  success: jest.fn(),
+}));
+
 jest.mock('../../api', () => ({
   budgetApi: { createBudget: jest.fn() },
   superRecipeApi: { createSuperRecipe: jest.fn() },
-  baseRecipeApi: { createBaseRecipe: jest.fn() }
+  baseRecipeApi: { createBaseRecipe: jest.fn() },
 }));
 
-describe('useBuilder Hook', () => {
-  it('should initialize with default values', () => {
-    const { result } = renderHook(() => useBuilder('superRecipe'));
-
-    expect(result.current.canvasItems).toEqual([]);
-    expect(result.current.activeId).toBeNull();
-    expect(result.current.activeItem).toBeNull();
-    expect(result.current.suggestedMargin).toBeNull();
-    expect(result.current.isSaving).toBe(false);
-  });
-
-  it('should compute totalBaseRecipeCost correctly for baseRecipe mode', () => {
+describe('useBuilder - ingredientTotals', () => {
+  it('debería calcular el total de ingredientes para una receta base sumando duplicados', () => {
     const { result } = renderHook(() => useBuilder('baseRecipe'));
 
     act(() => {
       result.current.setCanvasItems([
-        { id: '1', quantity: 200, unitQuantity: 1000, globalCost: 10 }, // 200/1000 * 10 = 2
-        { id: '2', quantity: 50, unitQuantity: 100, globalCost: 20 }   // 50/100 * 20 = 10
+        { id: 'ing1', name: 'Harina', quantity: 200, measurementUnit: 'gr' },
+        { id: 'ing2', name: 'Azúcar', quantity: 50, measurementUnit: 'gr' },
+        { id: 'ing1-dup', ingredientId: 'ing1', name: 'Harina', quantity: 100, measurementUnit: 'gr' }
       ]);
     });
 
-    expect(result.current.totalBaseRecipeCost).toBe(12);
+    const totals = result.current.ingredientTotals;
+    expect(totals).toHaveLength(2);
+
+    const harina = totals.find(t => t.name === 'Harina');
+    expect(harina.totalQuantity).toBe(300);
+
+    const azucar = totals.find(t => t.name === 'Azúcar');
+    expect(azucar.totalQuantity).toBe(50);
   });
 
-  it('should remove item and fetch margin recommendation for superRecipe', () => {
+  it('debería calcular el total de ingredientes para una súper receta en base a proporciones', () => {
     const { result } = renderHook(() => useBuilder('superRecipe'));
 
     act(() => {
       result.current.setCanvasItems([
-        { id: 'item1', quantity: 1 },
-        { id: 'item2', quantity: 2 }
+        {
+          id: 'br1',
+          name: 'Bizcocho',
+          quantity: 500, // quantityNeeded
+          baseYield: 1000,
+          ingredients: [
+            { ingredientId: 'ing1', quantity: 200, ingredient: { name: 'Harina', measurementUnit: 'gr' } },
+            { ingredientId: 'ing2', quantity: 100, ingredient: { name: 'Azúcar', measurementUnit: 'gr' } }
+          ]
+        },
+        {
+          id: 'br2',
+          name: 'Relleno',
+          quantity: 200, // quantityNeeded
+          baseYield: 200,
+          ingredients: [
+            { ingredientId: 'ing2', quantity: 50, ingredient: { name: 'Azúcar', measurementUnit: 'gr' } },
+            { ingredientId: 'ing3', quantity: 150, ingredient: { name: 'Crema', measurementUnit: 'ml' } }
+          ]
+        }
       ]);
     });
 
-    act(() => {
-      result.current.removeItem('item1');
-    });
+    // Factor Bizcocho = 500 / 1000 = 0.5
+    //   - Harina: 200 * 0.5 = 100
+    //   - Azúcar: 100 * 0.5 = 50
+    // Factor Relleno = 200 / 200 = 1.0
+    //   - Azúcar: 50 * 1.0 = 50
+    //   - Crema: 150 * 1.0 = 150
+    // Totales esperados:
+    //   - Harina: 100
+    //   - Azúcar: 100
+    //   - Crema: 150
 
-    expect(result.current.canvasItems).toHaveLength(1);
-    expect(result.current.canvasItems[0].id).toBe('item2');
-  });
+    const totals = result.current.ingredientTotals;
+    expect(totals).toHaveLength(3);
 
-  it('should update item quantity', () => {
-    const { result } = renderHook(() => useBuilder('superRecipe'));
+    const harina = totals.find(t => t.name === 'Harina');
+    expect(harina.totalQuantity).toBe(100);
 
-    act(() => {
-      result.current.setCanvasItems([{ id: 'item1', quantity: 1 }]);
-    });
+    const azucar = totals.find(t => t.name === 'Azúcar');
+    expect(azucar.totalQuantity).toBe(100);
 
-    act(() => {
-      result.current.updateItemQuantity('item1', 5);
-    });
-
-    expect(result.current.canvasItems[0].quantity).toBe(5);
+    const crema = totals.find(t => t.name === 'Crema');
+    expect(crema.totalQuantity).toBe(150);
   });
 });

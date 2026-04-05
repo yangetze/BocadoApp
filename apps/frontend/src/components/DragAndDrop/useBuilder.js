@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { budgetApi, superRecipeApi, baseRecipeApi } from '../../api';
 
@@ -31,6 +31,53 @@ export function useBuilder(mode) {
     }
     return acc;
   }, 0);
+
+
+  const ingredientTotals = useMemo(() => {
+    if (mode === 'budget') return [];
+
+    const totalsMap = new Map();
+
+    canvasItems.forEach(item => {
+      const quantity = item.quantity !== undefined ? item.quantity : 1;
+
+      if (mode === 'baseRecipe') {
+        // En modo baseRecipe, canvasItems son ingredientes
+        const ingredientId = item.ingredientId || item.id;
+        const currentAmount = totalsMap.get(ingredientId)?.totalQuantity || 0;
+
+        totalsMap.set(ingredientId, {
+          name: item.name || item.ingredient?.name || 'Ingrediente desconocido',
+          totalQuantity: currentAmount + quantity,
+          measurementUnit: item.measurementUnit || item.ingredient?.measurementUnit || 'gr'
+        });
+      } else if (mode === 'superRecipe') {
+        // En modo superRecipe, canvasItems son recetas base (o podrían ser ingredientes directos)
+        // Por ahora, asumimos que son recetas base como está en el sistema actual
+        if (item.ingredients && Array.isArray(item.ingredients) && item.baseYield) {
+          const factor = quantity / item.baseYield;
+
+          item.ingredients.forEach(brIng => {
+            const ingredientId = brIng.ingredientId || brIng.ingredient?.id;
+            if (!ingredientId) return;
+
+            const ingQuantityInBaseRecipe = brIng.quantity || 0;
+            const computedQuantity = ingQuantityInBaseRecipe * factor;
+
+            const currentAmount = totalsMap.get(ingredientId)?.totalQuantity || 0;
+
+            totalsMap.set(ingredientId, {
+              name: brIng.ingredient?.name || 'Ingrediente desconocido',
+              totalQuantity: currentAmount + computedQuantity,
+              measurementUnit: brIng.ingredient?.measurementUnit || 'gr'
+            });
+          });
+        }
+      }
+    });
+
+    return Array.from(totalsMap.values());
+  }, [canvasItems, mode]);
 
   const handleSave = async () => {
     if (canvasItems.length === 0) {
@@ -126,5 +173,6 @@ export function useBuilder(mode) {
     removeItem,
     updateItemQuantity,
     fetchMarginRecommendation,
+    ingredientTotals,
   };
 }
