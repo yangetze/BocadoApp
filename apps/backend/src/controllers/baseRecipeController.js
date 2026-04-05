@@ -86,6 +86,10 @@ export const updateBaseRecipe = async (req, res) => {
       const recipeIndex = mockData.baseRecipes.findIndex(br => br.id === id);
       if (recipeIndex === -1) return res.status(404).json({ error: 'Receta base no encontrada' });
 
+      if (mockData.baseRecipes[recipeIndex].userId !== req.user.id) {
+        return res.status(404).json({ error: 'Receta base no encontrada' });
+      }
+
       const updated = {
         ...mockData.baseRecipes[recipeIndex],
         ...(name && { name }),
@@ -115,7 +119,10 @@ export const updateBaseRecipe = async (req, res) => {
     const updatedBaseRecipe = await prisma.$transaction(async (tx) => {
       // Update basic details
       const br = await tx.baseRecipe.update({
-        where: { id },
+        where: {
+          id,
+          userId: req.user.id // Verificamos propiedad
+        },
         data: updateData
       });
 
@@ -140,7 +147,10 @@ export const updateBaseRecipe = async (req, res) => {
 
       // Return the updated recipe with its ingredients
       return tx.baseRecipe.findUnique({
-        where: { id },
+        where: {
+          id,
+          userId: req.user.id // Verificamos propiedad
+        },
         include: {
           ingredients: {
             include: {
@@ -154,6 +164,9 @@ export const updateBaseRecipe = async (req, res) => {
     res.status(200).json(updatedBaseRecipe);
   } catch (error) {
     console.error('Error updating base recipe:', error);
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
+    }
     res.status(500).json({ error: 'Error al actualizar la receta base' });
   }
 };
