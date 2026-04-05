@@ -32,6 +32,12 @@ jest.unstable_mockModule('jsonwebtoken', () => ({
   }
 }));
 
+
+// 1.5 Mock rate limiter
+jest.unstable_mockModule('../src/middleware/rateLimitMiddleware.js', () => ({
+  authLimiter: (req, res, next) => next()
+}));
+
 // 2. Import the routes AFTER the mocks have been set
 const { default: authRoutes } = await import('../src/routes/authRoutes.js');
 
