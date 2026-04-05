@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cake, PieChart, Layers, DollarSign, ArrowRight, Mail, Phone } from 'lucide-react';
 
