@@ -47,3 +47,20 @@ Una Súper Receta está compuesta por Recetas Base y por Ingredientes Directos (
 2.  Crear pruebas unitarias en el frontend para validar que las sumas de ingredientes duplicados en distintas recetas base sean correctas.
 3.  Desarrollar y estilizar el componente `IngredientsSummary.jsx` según el diseño "Sensory Minimalism".
 4.  Integrar el componente en el flujo actual de armar Súper Recetas y Recetas Base.
+
+## 7. Tareas y Pruebas Detalladas
+
+*   [x] **Modificar `useBuilder.js`**:
+    *   [x] Crear función interna o memoizada `calculateIngredientTotals` o state `ingredientTotals` que reaccione a `canvasItems`.
+    *   [x] Lógica para modo `baseRecipe`: sumar las cantidades (`quantity`) de cada ingrediente directo.
+    *   [x] Lógica para modo `superRecipe`: iterar sobre los `canvasItems` (que son recetas base), calcular su proporción (`quantity` / `baseYield`) y multiplicar esta proporción por la `quantity` de cada ingrediente interno de la receta base. Consolidar usando `ingredientId`.
+*   [x] **Crear `IngredientsSummary.jsx`**:
+    *   [x] Crear componente visual en `apps/frontend/src/components/DragAndDrop/IngredientsSummary.jsx`.
+    *   [x] Mostrar la lista consolidada con nombre, cantidad y unidad, siguiendo "Sensory Minimalism".
+*   [x] **Actualizar `Builder.jsx`**:
+    *   [x] Importar `IngredientsSummary`.
+    *   [x] Pasar `ingredientTotals` calculado al componente.
+    *   [x] Mostrar el resumen en los modos `baseRecipe` y `superRecipe`.
+*   [x] **Crear Pruebas Unitarias (`useBuilder.test.js`)**:
+    *   [x] Añadir un test que valide el cálculo correcto en modo `baseRecipe` (suma de ingredientes duplicados si aplica).
+    *   [x] Añadir un test que valide el cálculo en modo `superRecipe` (validando proporciones exactas para una súper receta que contenga dos instancias de una receta base o dos recetas base diferentes).

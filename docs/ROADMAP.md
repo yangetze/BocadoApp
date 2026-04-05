@@ -67,6 +67,7 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | **MVP 1** | Presupuestos: Gestión de Estados y Listado | 🟡 Por Hacer | Alta | Fullstack |
 | **MVP 1** | Presupuestos: Validación de Tasas del Día | 🟡 Por Hacer | Alta | Fullstack |
 | **MVP 2** | Constructor Visual Drag-and-Drop | 🟢 Completado | Media | Equipo Frontend |
+| **MVP 2** | Totales de Ingredientes en Constructor | 🟢 Completado | Media | Equipo Frontend |
 | **MVP 2** | Recomendador Margen Ganancia | 🟢 Completado | Baja | Equipo Backend / IA |
 | **Fase SaaS**| Migración a Multi-tenant (`tenantId`) | ⚪ Futuro | Crítica | Arquitectura |
 

@@ -23,6 +23,7 @@ import { useBuilder } from './useBuilder';
 import { BuilderHeader } from './BuilderHeader';
 import { MarginRecommendationCard } from './MarginRecommendationCard';
 import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm';
+import { IngredientsSummary } from './IngredientsSummary';
 
 export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
   const {
@@ -42,6 +43,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     removeItem,
     updateItemQuantity,
     fetchMarginRecommendation,
+    ingredientTotals,
   } = useBuilder(mode);
 
   const sensors = useSensors(
@@ -171,6 +173,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
               />
             )}
 
+
             {/* The Canvas Area */}
             <div className="flex-1 flex flex-col">
               <Canvas
@@ -179,7 +182,12 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
                 onRemove={removeItem}
                 onUpdateQuantity={updateItemQuantity}
               />
+
+              {(mode === 'baseRecipe' || mode === 'superRecipe') && (
+                <IngredientsSummary totals={ingredientTotals} />
+              )}
             </div>
+
           </div>
         </div>
       </div>
