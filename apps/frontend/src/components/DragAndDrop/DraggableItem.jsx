@@ -2,8 +2,11 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 
-export function DraggableItem({ id, item, isOverlay = false }) {
+// Performance optimization: Memoize DraggableItem to prevent re-rendering the entire
+// palette list when the builder state updates (like dragging or typing metadata)
+export const DraggableItem = memo(function DraggableItem({ id, item, isOverlay = false }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette-${id}`,
     data: { ...item, source: 'palette' }
@@ -37,7 +40,7 @@ export function DraggableItem({ id, item, isOverlay = false }) {
       </div>
     </div>
   );
-}
+});
 
 DraggableItem.propTypes = {
   id: PropTypes.string.isRequired,

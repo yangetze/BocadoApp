@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 
-export function BuilderHeader({ mode, onClear, onSave, isSaving }) {
+export const BuilderHeader = memo(function BuilderHeader({ mode, onClear, onSave, isSaving }) {
   const titles = {
     superRecipe: 'Nueva Súper Receta',
     baseRecipe: 'Nueva Receta Base',
@@ -45,7 +46,7 @@ export function BuilderHeader({ mode, onClear, onSave, isSaving }) {
       </div>
     </div>
   );
-}
+});
 
 BuilderHeader.propTypes = {
   mode: PropTypes.oneOf(['superRecipe', 'baseRecipe', 'budget']).isRequired,
