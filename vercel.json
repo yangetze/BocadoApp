@@ -1,8 +1,12 @@
 {
-  "installCommand": "npm install",
+  "installCommand": "npm install && npx prisma generate --schema=apps/backend/prisma/schema.prisma",
   "buildCommand": "npm run build --workspace=apps/frontend",
   "outputDirectory": "apps/frontend/dist",
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
