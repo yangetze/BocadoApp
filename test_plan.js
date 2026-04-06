@@ -1,0 +1,1 @@
+console.log("I noticed several inputs missing their corresponding labels or not having proper 'htmlFor'/'id' associations for screen readers. Form fields like the search input in Palette or those in LoginPage/RegisterPage/BaseRecipeMetadataForm are good candidates for accessibility improvements.")

@@ -18,6 +18,7 @@ export function Palette({ items, title, description }) {
         <input
           type="text"
           placeholder="Buscar elementos..."
+          aria-label="Buscar elementos"
           className="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:border-peach-soft focus:bg-white focus:ring-4 focus:ring-peach-soft/10 outline-none transition-all placeholder:text-gray-400 text-slate-gray"
         />
       </div>
