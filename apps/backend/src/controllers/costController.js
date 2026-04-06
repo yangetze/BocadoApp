@@ -5,6 +5,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
   try {
     const { superRecipeId } = req.params;
     const { yield: yieldParam } = req.query;
+    const userId = req.user.id;
 
     // Multiplier defaults to 1 if no custom yield is provided
     const scaleMultiplier = yieldParam ? parseFloat(yieldParam) : 1;
@@ -17,7 +18,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
     let exchangeRates;
 
     if (isTestMode()) {
-      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId);
+      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId && sr.userId === userId);
 
       // Filter exchange rates to get the latest distinct ones per currency
       const latestRates = new Map();
@@ -55,7 +56,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
       });
     }
 
-    if (!superRecipe) {
+    if (!superRecipe || (!isTestMode() && superRecipe.userId !== userId)) {
       return res.status(404).json({ error: 'SuperRecipe not found' });
     }
 

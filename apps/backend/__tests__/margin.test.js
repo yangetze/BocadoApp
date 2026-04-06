@@ -7,6 +7,10 @@ import prisma from '../src/prisma.js';
 describe('Margin Controller', () => {
   const app = express();
   app.use(express.json());
+  app.use((req, res, next) => {
+    req.user = { id: 'user1', role: 'USER' };
+    next();
+  });
   app.get('/api/margins/recommend/:superRecipeId', marginController.recommendMargin);
 
   beforeEach(() => {
@@ -23,6 +27,7 @@ describe('Margin Controller', () => {
     prisma.superRecipe.findUnique.mockResolvedValue({
       id: 'simple-recipe',
       name: 'Simple Cake',
+      userId: 'user1',
       directIngredients: [ { id: 'box' } ],
       baseRecipes: [
         {
@@ -39,6 +44,7 @@ describe('Margin Controller', () => {
     prisma.superRecipe.findUnique.mockResolvedValue({
       id: 'medium-recipe',
       name: 'Medium Cake',
+      userId: 'user1',
       directIngredients: [ { id: 'box' }, { id: 'board' }, { id: 'ribbon' } ],
       baseRecipes: [
         { baseRecipe: { ingredients: [ { id: 'i1' }, { id: 'i2' }, { id: 'i3' } ] } },
@@ -54,6 +60,7 @@ describe('Margin Controller', () => {
     prisma.superRecipe.findUnique.mockResolvedValue({
       id: 'complex-recipe',
       name: 'Complex Wedding Cake',
+      userId: 'user1',
       directIngredients: [ { id: 'd1' }, { id: 'd2' }, { id: 'd3' }, { id: 'd4' }, { id: 'd5' } ],
       baseRecipes: [
         { baseRecipe: { ingredients: [ { id: 'i1' }, { id: 'i2' }, { id: 'i3' } ] } },
