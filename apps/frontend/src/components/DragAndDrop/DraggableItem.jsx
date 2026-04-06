@@ -2,12 +2,19 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 
 import PropTypes from 'prop-types';
+import { memo } from 'react';
 
+<<<<<<< bolt/memoize-builder-components-8314505356496657583
+// Performance optimization: Memoize DraggableItem to prevent re-rendering the entire
+// palette list when the builder state updates (like dragging or typing metadata)
+export const DraggableItem = memo(function DraggableItem({ id, item, isOverlay = false }) {
+=======
 import React from 'react';
 
 // ⚡ Bolt: Wrapped DraggableItem in React.memo to prevent expensive re-renders of the entire
 // palette list during drag operations on the canvas. These items are largely static.
 export const DraggableItem = React.memo(function DraggableItem({ id, item, isOverlay = false }) {
+>>>>>>> main
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette-${id}`,
     data: { ...item, source: 'palette' }
