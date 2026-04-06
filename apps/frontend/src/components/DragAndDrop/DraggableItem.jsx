@@ -3,7 +3,11 @@ import { CSS } from '@dnd-kit/utilities';
 
 import PropTypes from 'prop-types';
 
-export function DraggableItem({ id, item, isOverlay = false }) {
+import React from 'react';
+
+// ⚡ Bolt: Wrapped DraggableItem in React.memo to prevent expensive re-renders of the entire
+// palette list during drag operations on the canvas. These items are largely static.
+export const DraggableItem = React.memo(function DraggableItem({ id, item, isOverlay = false }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette-${id}`,
     data: { ...item, source: 'palette' }
@@ -37,7 +41,7 @@ export function DraggableItem({ id, item, isOverlay = false }) {
       </div>
     </div>
   );
-}
+});
 
 DraggableItem.propTypes = {
   id: PropTypes.string.isRequired,

@@ -19,6 +19,8 @@ import { Canvas } from './Canvas';
 import { DraggableItem } from './DraggableItem';
 import { SortableItem } from './SortableItem';
 
+import { useCallback } from 'react';
+
 import { useBuilder } from './useBuilder';
 import { BuilderHeader } from './BuilderHeader';
 import { MarginRecommendationCard } from './MarginRecommendationCard';
@@ -126,10 +128,11 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     }),
   };
 
-  const handleClear = () => {
+  // Memoize handlers passed to memoized components to prevent unnecessary re-renders
+  const handleClear = useCallback(() => {
     setCanvasItems([]);
     setSuggestedMargin(null);
-  };
+  }, [setCanvasItems, setSuggestedMargin]);
 
   const paletteTitle = mode === 'superRecipe' ? 'Recetas Base' : mode === 'baseRecipe' ? 'Ingredientes' : 'Súper Recetas';
   const paletteDescription = mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : mode === 'baseRecipe' ? 'Arrastra ingredientes a la receta' : 'Arrastra para armar tu Presupuesto';
