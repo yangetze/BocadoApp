@@ -25,6 +25,8 @@ A continuación se define el alcance funcional separado por etapas de Minimum Vi
   - Creación de "Recetas Base" (ej. Ganache de Chocolate).
   - Creación de "Súper Recetas" (ej. Pastel Completo).
   - Sistema Bimonetario Base y Automatización (API CriptoYa - Tasas manuales y automáticas con cron-job para USD -> VES).
+  - Generación, previsualización y exportación (PDF/Enlace) de presupuestos configurables (Monedas, Notas, Métodos de Pago).
+  - Gestión de Ciclo de Vida de presupuestos (Borrador, Emitido, Aprobado) y validación de tasas del día.
 - **Diseño UI/UX (En Curso):**
   - Implementación del "Minimalismo Sensorial" definido en `frontend-styleguide.md` (Colores Peach Soft `#F7C5B2` y Slate Gray `#3E4A59`).
   - Dark Mode y Empty States amigables.
@@ -60,7 +62,12 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | **MVP 1** | Testing Integral de API Backend (Jest + Supertest) | 🟢 Completado | Alta | Equipo Backend / QA |
 | **MVP 1.5** | Módulo de Autenticación de Usuarios y Planes | 🟢 Completado | Alta | Fullstack |
 | **MVP 1.5** | Nuevo Landing Page (Minimalismo Sensorial) | 🟢 Completado | Media | Equipo Frontend |
+| **MVP 1** | Presupuestos: Exportación PDF y Enlaces | 🟡 Por Hacer | Alta | Fullstack |
+| **MVP 1** | Presupuestos: Configuración de Moneda, Pagos y Logo | 🟡 Por Hacer | Alta | Fullstack |
+| **MVP 1** | Presupuestos: Gestión de Estados y Listado | 🟡 Por Hacer | Alta | Fullstack |
+| **MVP 1** | Presupuestos: Validación de Tasas del Día | 🟡 Por Hacer | Alta | Fullstack |
 | **MVP 2** | Constructor Visual Drag-and-Drop | 🟢 Completado | Media | Equipo Frontend |
+| **MVP 2** | Totales de Ingredientes en Constructor | 🟢 Completado | Media | Equipo Frontend |
 | **MVP 2** | Recomendador Margen Ganancia | 🟢 Completado | Baja | Equipo Backend / IA |
 | **Fase SaaS**| Migración a Multi-tenant (`tenantId`) | ⚪ Futuro | Crítica | Arquitectura |
 

@@ -11,6 +11,7 @@ if (process.env.NODE_ENV === 'test') {
   prisma = {
     user: {
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       create: jest.fn(),
       findMany: jest.fn(),
       update: jest.fn(),

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Edit3, Trash2, Shield, ArrowLeft } from 'lucide-react';
+import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
@@ -16,7 +15,7 @@ export default function AdminDashboard() {
     try {
       const response = await api.get('/users');
       setUsers(response.data);
-    } catch (error) {
+    } catch {
       toast.error('Error al cargar la lista de usuarios');
     } finally {
       setLoading(false);
@@ -32,7 +31,7 @@ export default function AdminDashboard() {
       await api.put(`/users/${userId}`, { active: !currentStatus });
       toast.success(`Usuario ${!currentStatus ? 'activado' : 'desactivado'} con éxito`);
       setUsers(users.map(u => u.id === userId ? { ...u, active: !currentStatus } : u));
-    } catch (error) {
+    } catch {
       toast.error('Error al actualizar el estado del usuario');
     }
   };

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 
@@ -31,13 +32,13 @@ export const createBaseRecipe = async (req, res) => {
 
     if (isTestMode()) {
       const newRecipe = {
-        id: `br-${Date.now()}`,
+        id: `br-${crypto.randomUUID()}`,
         name,
         baseYield: parseFloat(baseYield),
         yieldUnit,
         userId: userId,
         ingredients: ingredients.map(i => ({
-          id: `bri-${Math.random()}`,
+          id: `bri-${crypto.randomUUID()}`,
           quantity: parseFloat(i.quantity),
           ingredientId: i.ingredientId,
           ingredient: mockData.ingredients.find(ing => ing.id === i.ingredientId)
@@ -85,6 +86,10 @@ export const updateBaseRecipe = async (req, res) => {
       const recipeIndex = mockData.baseRecipes.findIndex(br => br.id === id);
       if (recipeIndex === -1) return res.status(404).json({ error: 'Receta base no encontrada' });
 
+      if (mockData.baseRecipes[recipeIndex].userId !== req.user.id) {
+        return res.status(404).json({ error: 'Receta base no encontrada' });
+      }
+
       const updated = {
         ...mockData.baseRecipes[recipeIndex],
         ...(name && { name }),
@@ -94,7 +99,7 @@ export const updateBaseRecipe = async (req, res) => {
 
       if (items) {
         updated.ingredients = items.map(item => ({
-          id: `bri-${Date.now()}-${Math.random()}`,
+          id: `bri-${crypto.randomUUID()}`,
           baseRecipeId: id,
           ingredientId: item.ingredientId,
           quantity: parseFloat(item.quantity),
@@ -110,6 +115,14 @@ export const updateBaseRecipe = async (req, res) => {
     if (name) updateData.name = name;
     if (baseYield !== undefined) updateData.baseYield = parseFloat(baseYield);
     if (yieldUnit) updateData.yieldUnit = yieldUnit;
+
+    const existingRecipe = await prisma.baseRecipe.findUnique({
+      where: { id }
+    });
+
+    if (!existingRecipe || existingRecipe.userId !== req.user.id) {
+      return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
+    }
 
     const updatedBaseRecipe = await prisma.$transaction(async (tx) => {
       // Update basic details
@@ -153,6 +166,9 @@ export const updateBaseRecipe = async (req, res) => {
     res.status(200).json(updatedBaseRecipe);
   } catch (error) {
     console.error('Error updating base recipe:', error);
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
+    }
     res.status(500).json({ error: 'Error al actualizar la receta base' });
   }
 };
