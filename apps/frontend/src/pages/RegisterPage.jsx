@@ -66,8 +66,9 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-gray/80 ml-1">¿Cómo te llamas?</label>
+              <label htmlFor="name" className="text-sm font-semibold text-slate-gray/80 ml-1">¿Cómo te llamas?</label>
               <input
+                id="name"
                 type="text"
                 name="name"
                 required
@@ -80,8 +81,9 @@ export default function RegisterPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-gray/80 ml-1">Usuario</label>
+                <label htmlFor="username" className="text-sm font-semibold text-slate-gray/80 ml-1">Usuario</label>
                 <input
+                  id="username"
                   type="text"
                   name="username"
                   required
@@ -92,8 +94,9 @@ export default function RegisterPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-slate-gray/80 ml-1">Cédula e ID</label>
+                <label htmlFor="identificationNumber" className="text-sm font-semibold text-slate-gray/80 ml-1">Cédula e ID</label>
                 <input
+                  id="identificationNumber"
                   type="text"
                   name="identificationNumber"
                   required
@@ -106,8 +109,9 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-gray/80 ml-1">Tu email profesional</label>
+              <label htmlFor="email" className="text-sm font-semibold text-slate-gray/80 ml-1">Tu email profesional</label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 required

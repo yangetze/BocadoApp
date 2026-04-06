@@ -2,11 +2,19 @@ import { DraggableItem } from './DraggableItem';
 import { Search } from 'lucide-react';
 
 import PropTypes from 'prop-types';
+<<<<<<< bolt/memoize-builder-components-8314505356496657583
 import { memo } from 'react';
 
 // Memoize the Palette to avoid unnecessary re-renders when the parent Builder state changes
 // but the available items and palette metadata remain exactly the same.
 export const Palette = memo(function Palette({ items, title, description }) {
+=======
+import React from 'react';
+
+// ⚡ Bolt: Wrapped Palette in React.memo. Since the available items list rarely changes
+// while building, this prevents the entire palette list from re-rendering on every drag frame.
+export const Palette = React.memo(function Palette({ items, title, description }) {
+>>>>>>> main
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm h-[calc(100vh-8rem)] sticky top-24 flex flex-col border border-gray-100">
       <div className="mb-6">
@@ -21,6 +29,7 @@ export const Palette = memo(function Palette({ items, title, description }) {
         <input
           type="text"
           placeholder="Buscar elementos..."
+          aria-label="Buscar elementos"
           className="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:border-peach-soft focus:bg-white focus:ring-4 focus:ring-peach-soft/10 outline-none transition-all placeholder:text-gray-400 text-slate-gray"
         />
       </div>

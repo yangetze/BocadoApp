@@ -1,7 +1,16 @@
 import PropTypes from 'prop-types';
+<<<<<<< bolt/memoize-builder-components-8314505356496657583
 import { memo } from 'react';
 
 export const BuilderHeader = memo(function BuilderHeader({ mode, onClear, onSave, isSaving }) {
+=======
+import React from 'react';
+
+// ⚡ Bolt: Wrapped BuilderHeader in React.memo to prevent unnecessary re-renders when parent state
+// (like dragging items in the canvas) updates. Since handlers are memoized via useCallback in the parent,
+// this ensures the header only re-renders when its specific props change.
+export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, onSave, isSaving }) {
+>>>>>>> main
   const titles = {
     superRecipe: 'Nueva Súper Receta',
     baseRecipe: 'Nueva Receta Base',
