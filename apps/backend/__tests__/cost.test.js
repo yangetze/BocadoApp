@@ -1,50 +1,54 @@
+import request from 'supertest';
+import express from 'express';
+import prisma from '../src/prisma.js';
 import { jest } from '@jest/globals';
 
+// Setup mock for verifyToken BEFORE importing routes
 jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
   verifyToken: (req, res, next) => {
-    req.user = { id: 'test-user-id', username: 'testuser' };
+    req.user = { id: 'user1', role: 'USER' };
     next();
   },
+  isAdmin: (req, res, next) => next(),
   requireAdmin: (req, res, next) => next(),
-  isAdmin: (req, res, next) => next()
+  authenticateToken: (req, res, next) => next()
 }));
 
-const request = (await import('supertest')).default;
-const express = (await import('express')).default;
-const costRoutes = (await import('../src/routes/costRoutes.js')).default;
-const prisma = (await import('../src/prisma.js')).default;
-
-const app = express();
-app.use(express.json());
-app.use('/api', costRoutes);
+const { default: costRoutes } = await import('../src/routes/costRoutes.js');
 
 describe('Cost API', () => {
+  let appInstance;
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    appInstance = express();
+    appInstance.use(express.json());
+    appInstance.use('/api', costRoutes);
   });
 
   describe('GET /api/calculate-cost/:superRecipeId', () => {
     it('should return 400 for invalid yield parameter (negative number)', async () => {
-      const response = await request(app).get('/api/calculate-cost/1?yield=-5');
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=-5');
       expect(response.status).toBe(400);
       expect(response.body).toEqual({ error: 'Invalid yield parameter' });
     });
 
     it('should return 400 for invalid yield parameter (zero)', async () => {
-      const response = await request(app).get('/api/calculate-cost/1?yield=0');
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=0');
       expect(response.status).toBe(400);
       expect(response.body).toEqual({ error: 'Invalid yield parameter' });
     });
 
     it('should return 400 for invalid yield parameter (not a number)', async () => {
-      const response = await request(app).get('/api/calculate-cost/1?yield=invalid');
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=invalid');
       expect(response.status).toBe(400);
       expect(response.body).toEqual({ error: 'Invalid yield parameter' });
     });
 
     it('should return 404 if SuperRecipe is not found', async () => {
       prisma.superRecipe.findUnique.mockResolvedValue(null);
-      const response = await request(app).get('/api/calculate-cost/999');
+      const response = await request(appInstance).get('/api/calculate-cost/999');
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: 'SuperRecipe not found' });
     });
@@ -58,6 +62,7 @@ describe('Cost API', () => {
       const mockSuperRecipe = {
         id: '1',
         name: 'Wedding Cake',
+        userId: 'user1',
         baseRecipes: [
           {
             quantityNeeded: 2000,
@@ -78,7 +83,7 @@ describe('Cost API', () => {
 
       prisma.superRecipe.findUnique.mockResolvedValue(mockSuperRecipe);
 
-      const response = await request(app).get('/api/calculate-cost/1?yield=2');
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=2');
       expect(response.status).toBe(200);
 
       // Base Recipe cost (for 1000 yield):
@@ -108,6 +113,7 @@ describe('Cost API', () => {
       const mockSuperRecipe = {
         id: '1',
         name: 'Wedding Cake',
+        userId: 'user1',
         baseRecipes: [
           {
             quantityNeeded: 2000,
@@ -128,7 +134,7 @@ describe('Cost API', () => {
 
       prisma.superRecipe.findUnique.mockResolvedValue(mockSuperRecipe);
 
-      const response = await request(app).get('/api/calculate-cost/1');
+      const response = await request(appInstance).get('/api/calculate-cost/1');
       expect(response.status).toBe(200);
 
       // Base Recipe cost = 3.0
