@@ -5,3 +5,6 @@
 ## 2025-04-05 - Added id and htmlFor to form inputs
 **Learning:** Form inputs like inputs and selects must be explicitly linked to their corresponding `<label>` using matching `id` and `htmlFor` attributes to ensure screen readers correctly read out the field name and so clicking the label focuses the input field, which improves general usability.
 **Action:** Always pair `<label>` and `<input>`/`<select>` using `id` and `htmlFor`.
+## 2025-04-06 - Explicit Input-Label Association for Accessibility
+**Learning:** Form controls (e.g., `<input>`, `<select>`) that are not explicitly linked to their corresponding `<label>` elements hinder accessibility. Screen readers cannot properly associate the label text with the input field, which degrades the experience for users relying on assistive technology. Moreover, explicitly linking them using `htmlFor` and `id` increases the click target area (clicking the label focuses the input).
+**Action:** Always use matching `id` and `htmlFor` attributes to explicitly link labels with their associated inputs in forms. Also, remember to provide an `aria-label` attribute on inputs like search fields that lack visible labels.
