@@ -2,8 +2,11 @@ import { DraggableItem } from './DraggableItem';
 import { Search } from 'lucide-react';
 
 import PropTypes from 'prop-types';
+import React from 'react';
 
-export function Palette({ items, title, description }) {
+// ⚡ Bolt: Wrapped Palette in React.memo. Since the available items list rarely changes
+// while building, this prevents the entire palette list from re-rendering on every drag frame.
+export const Palette = React.memo(function Palette({ items, title, description }) {
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm h-[calc(100vh-8rem)] sticky top-24 flex flex-col border border-gray-100">
       <div className="mb-6">
@@ -35,7 +38,7 @@ export function Palette({ items, title, description }) {
       </div>
     </div>
   );
-}
+});
 
 Palette.propTypes = {
   items: PropTypes.arrayOf(
