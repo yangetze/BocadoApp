@@ -65,8 +65,9 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-slate-gray/80 ml-1">Usuario o Email</label>
+              <label htmlFor="loginId" className="text-sm font-semibold text-slate-gray/80 ml-1">Usuario o Email</label>
               <input
+                id="loginId"
                 type="text"
                 required
                 className="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-peach-soft/15 focus:border-peach-soft transition-all outline-none text-slate-gray font-medium"
@@ -78,11 +79,12 @@ export default function LoginPage() {
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-center px-1">
-                <label className="text-sm font-semibold text-slate-gray/80">Contraseña</label>
+                <label htmlFor="password" className="text-sm font-semibold text-slate-gray/80">Contraseña</label>
                 <a href="#" className="text-xs text-peach-soft hover:underline font-medium">¿Olvidaste tu contraseña?</a>
               </div>
               <div className="relative">
                 <input
+                  id="password"
                   type={showPassword ? "text" : "password"}
                   required
                   className="w-full px-5 py-4 pr-12 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-peach-soft/15 focus:border-peach-soft transition-all outline-none text-slate-gray font-medium"

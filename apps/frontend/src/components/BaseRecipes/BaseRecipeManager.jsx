@@ -1,0 +1,54 @@
+import React, { useState, useEffect } from 'react';
+import { baseRecipeApi } from '../../api';
+import toast from 'react-hot-toast';
+import BaseRecipeList from './BaseRecipeList';
+import BaseRecipeBuilderWrapper from './BaseRecipeBuilderWrapper';
+import { ArrowLeft } from 'lucide-react';
+
+export default function BaseRecipeManager() {
+  const [view, setView] = useState('list'); // 'list' or 'builder'
+  const [baseRecipes, setBaseRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchBaseRecipes = async () => {
+    setLoading(true);
+    try {
+      const data = await baseRecipeApi.getAll();
+      setBaseRecipes(data);
+    } catch (error) {
+      toast.error('Error al cargar las recetas base');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (view === 'list') {
+      fetchBaseRecipes();
+    }
+  }, [view]);
+
+  if (view === 'builder') {
+    return (
+      <div className="space-y-4">
+        <button
+          onClick={() => setView('list')}
+          className="flex items-center gap-2 text-slate-gray hover:text-peach-soft transition-colors font-medium mb-4"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver a la lista
+        </button>
+        <BaseRecipeBuilderWrapper />
+      </div>
+    );
+  }
+
+  return (
+    <BaseRecipeList
+      recipes={baseRecipes}
+      loading={loading}
+      onCreateNew={() => setView('builder')}
+    />
+  );
+}

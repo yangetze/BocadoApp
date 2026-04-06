@@ -1,8 +1,18 @@
-import express from 'express';
-import request from 'supertest';
 import { jest } from '@jest/globals';
-import * as marginController from '../src/controllers/marginController.js';
-import prisma from '../src/prisma.js';
+
+jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
+  verifyToken: (req, res, next) => {
+    req.user = { id: 'test-user-id', username: 'testuser' };
+    next();
+  },
+  requireAdmin: (req, res, next) => next(),
+  isAdmin: (req, res, next) => next()
+}));
+
+const express = (await import('express')).default;
+const request = (await import('supertest')).default;
+const marginRoutes = (await import('../src/routes/marginRoutes.js')).default;
+const prisma = (await import('../src/prisma.js')).default;
 
 describe('Margin Controller', () => {
   const app = express();

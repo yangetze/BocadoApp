@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
 
 import { RefreshCw, Plus, Calendar, Coins, History } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { exchangeRateApi } from '../api';
 
 export default function ExchangeRateManager() {
+  const formId = useId();
   const [rates, setRates] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -229,8 +230,9 @@ export default function ExchangeRateManager() {
           <form onSubmit={handleManualSubmit} className="space-y-4">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Moneda Destino</label>
+                <label htmlFor={`${formId}-currency`} className="block text-xs text-slate-gray/70 mb-1 font-medium">Moneda Destino</label>
                 <select
+                  id={`${formId}-currency`}
                   value={selectedCurrency}
                   onChange={(e) => setSelectedCurrency(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
@@ -241,8 +243,9 @@ export default function ExchangeRateManager() {
                 </select>
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Tasa (ej. 45.2)</label>
+                <label htmlFor={`${formId}-rate`} className="block text-xs text-slate-gray/70 mb-1 font-medium">Tasa (ej. 45.2)</label>
                 <input
+                  id={`${formId}-rate`}
                   type="number"
                   step="0.0001"
                   min="0.0001"
@@ -256,6 +259,9 @@ export default function ExchangeRateManager() {
               <div className="flex-1">
                 <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Origen</label>
                 <select
+                <label htmlFor={`${formId}-source`} className="block text-xs text-slate-gray/70 mb-1 font-medium">Origen</label>
+                <select
+                  id={`${formId}-source`}
                   value={manualSource}
                   onChange={(e) => setManualSource(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
@@ -269,10 +275,11 @@ export default function ExchangeRateManager() {
             </div>
 
             <div>
-              <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Fecha Efectiva (Opcional)</label>
+              <label htmlFor={`${formId}-date`} className="block text-xs text-slate-gray/70 mb-1 font-medium">Fecha Efectiva (Opcional)</label>
               <div className="relative">
                 <Calendar className="w-4 h-4 absolute left-4 top-3.5 text-slate-gray/40" />
                 <input
+                  id={`${formId}-date`}
                   type="date"
                   value={manualDate}
                   onChange={(e) => setManualDate(e.target.value)}
