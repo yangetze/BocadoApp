@@ -1,4 +1,4 @@
-/* global describe, it, expect, jest, beforeEach */
+/* global describe, it, expect, jest */
 import { renderHook, act } from '@testing-library/react';
 import { useBuilder } from './useBuilder';
 

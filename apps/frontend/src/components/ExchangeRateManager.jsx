@@ -229,8 +229,9 @@ export default function ExchangeRateManager() {
           <form onSubmit={handleManualSubmit} className="space-y-4">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Moneda Destino</label>
+                <label htmlFor="targetCurrency" className="block text-xs text-slate-gray/70 mb-1 font-medium">Moneda Destino</label>
                 <select
+                  id="targetCurrency"
                   value={selectedCurrency}
                   onChange={(e) => setSelectedCurrency(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
@@ -241,8 +242,9 @@ export default function ExchangeRateManager() {
                 </select>
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Tasa (ej. 45.2)</label>
+                <label htmlFor="manualRate" className="block text-xs text-slate-gray/70 mb-1 font-medium">Tasa (ej. 45.2)</label>
                 <input
+                  id="manualRate"
                   type="number"
                   step="0.0001"
                   min="0.0001"
@@ -254,8 +256,9 @@ export default function ExchangeRateManager() {
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Origen</label>
+                <label htmlFor="manualSource" className="block text-xs text-slate-gray/70 mb-1 font-medium">Origen</label>
                 <select
+                  id="manualSource"
                   value={manualSource}
                   onChange={(e) => setManualSource(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
@@ -269,10 +272,11 @@ export default function ExchangeRateManager() {
             </div>
 
             <div>
-              <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Fecha Efectiva (Opcional)</label>
+              <label htmlFor="manualDate" className="block text-xs text-slate-gray/70 mb-1 font-medium">Fecha Efectiva (Opcional)</label>
               <div className="relative">
                 <Calendar className="w-4 h-4 absolute left-4 top-3.5 text-slate-gray/40" />
                 <input
+                  id="manualDate"
                   type="date"
                   value={manualDate}
                   onChange={(e) => setManualDate(e.target.value)}
