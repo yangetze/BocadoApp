@@ -257,6 +257,8 @@ export default function ExchangeRateManager() {
                 />
               </div>
               <div className="flex-1">
+                <label className="block text-xs text-slate-gray/70 mb-1 font-medium">Origen</label>
+                <select
                 <label htmlFor={`${formId}-source`} className="block text-xs text-slate-gray/70 mb-1 font-medium">Origen</label>
                 <select
                   id={`${formId}-source`}
