@@ -169,6 +169,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
             )}
 
             {mode === 'baseRecipe' && (
+              <>
               <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
                 <div className="md:col-span-2 lg:col-span-3">
                   <label className="block text-sm font-medium text-slate-gray mb-1">Nombre de la Receta Base</label>
@@ -218,6 +219,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
                 setMetadata={setBaseRecipeMetadata}
                 totalCost={totalBaseRecipeCost}
               />
+              </>
             )}
 
 
@@ -232,7 +234,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 
               {(mode === 'baseRecipe' || mode === 'superRecipe') && (
                 <IngredientsSummary totals={ingredientTotals} />
-              )}
+            )}
             </div>
 
           </div>
