@@ -12,6 +12,7 @@ jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
 const express = (await import('express')).default;
 const request = (await import('supertest')).default;
 const marginRoutes = (await import('../src/routes/marginRoutes.js')).default;
+const marginController = await import('../src/controllers/marginController.js');
 const prisma = (await import('../src/prisma.js')).default;
 
 describe('Margin Controller', () => {
