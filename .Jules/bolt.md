@@ -4,3 +4,6 @@
 ## 2025-04-06 - React.memo requires useCallback in parents
 **Learning:** Wrapping components in `React.memo` (like `BuilderHeader`) is useless if the parent component passes unmemoized function props. `React.memo` performs a shallow comparison, and new function references on every parent render will cause the child to re-render anyway.
 **Action:** When applying `React.memo` for performance, always ensure that any functions passed as props from the parent are memoized using `useCallback()`.
+## 2025-04-07 - React.memo for @dnd-kit list items
+**Learning:** Drag and drop interfaces using `@dnd-kit/core` can suffer severe performance degradation in long lists because dragging an item triggers re-renders across the entire context tree.
+**Action:** Always wrap `SortableItem` and static drop targets (like `Canvas` or `Palette`) with `React.memo` to skip re-rendering sibling components while one is actively being dragged.

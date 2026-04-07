@@ -3,8 +3,12 @@ import { CSS } from '@dnd-kit/utilities';
 import { Trash2, GripVertical, ChevronUp, ChevronDown } from 'lucide-react';
 
 import PropTypes from 'prop-types';
+import React from 'react';
 
-export function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
+// ⚡ Bolt: Wrapped SortableItem in React.memo. When dragging an item, the parent
+// context forces updates, but memoizing individual items ensures that the un-dragged
+// items don't re-render needlessly, significantly improving drag performance in long lists.
+export const SortableItem = React.memo(function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
   const {
     attributes,
     listeners,
@@ -110,7 +114,7 @@ export function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
       </div>
     </div>
   );
-}
+});
 
 SortableItem.propTypes = {
   id: PropTypes.string.isRequired,
