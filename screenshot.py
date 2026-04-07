@@ -1,13 +1,12 @@
 from playwright.sync_api import sync_playwright
 
-def run(playwright):
-    browser = playwright.chromium.launch()
+with sync_playwright() as p:
+    browser = p.chromium.launch()
     page = browser.new_page()
-    page.goto("http://localhost:5173/login")
-    page.screenshot(path="login_screenshot.png")
-    page.goto("http://localhost:5173/register")
-    page.screenshot(path="register_screenshot.png")
-    browser.close()
+    page.goto('http://localhost:5173/')
 
-with sync_playwright() as playwright:
-    run(playwright)
+    # Let's take a screenshot of whatever loads to see if we're redirected to a login page
+    page.wait_for_timeout(3000)
+    page.screenshot(path='frontend_index.png')
+
+    browser.close()

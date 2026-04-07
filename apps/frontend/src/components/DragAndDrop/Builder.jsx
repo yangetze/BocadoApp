@@ -170,50 +170,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 
             {mode === 'baseRecipe' && (
               <>
-              <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                <div className="md:col-span-2 lg:col-span-3">
-                  <label className="block text-sm font-medium text-slate-gray mb-1">Nombre de la Receta Base</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Ganache de Chocolate"
-                    className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
-                    value={baseRecipeMetadata.name}
-                    onChange={(e) => setBaseRecipeMetadata({ ...baseRecipeMetadata, name: e.target.value })}
-                  />
-                </div>
-                <div className="flex flex-col justify-end">
-                  <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 h-[46px] flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-500 mr-2">Total:</span>
-                    <span className="text-lg font-black text-slate-gray whitespace-nowrap">$ {totalBaseRecipeCost.toFixed(2)} USD</span>
-                  </div>
-                </div>
-                <div className="md:col-span-1 lg:col-span-2">
-                  <label className="block text-sm font-medium text-slate-gray mb-1">Rendimiento (Cantidad)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Ej. 1000"
-                    className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
-                    value={baseRecipeMetadata.baseYield}
-                    onChange={(e) => setBaseRecipeMetadata({ ...baseRecipeMetadata, baseYield: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-gray mb-1">Unidad de Rendimiento</label>
-                  <select
-                    className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all bg-white"
-                    value={baseRecipeMetadata.yieldUnit}
-                    onChange={(e) => setBaseRecipeMetadata({ ...baseRecipeMetadata, yieldUnit: e.target.value })}
-                  >
-                    <option value="g">Gramos (g)</option>
-                    <option value="ml">Mililitros (ml)</option>
-                    <option value="kg">Kilogramos (kg)</option>
-                    <option value="l">Litros (l)</option>
-                    <option value="u">Unidades (u)</option>
-                  </select>
-                </div>
-              </div>
+
               <BaseRecipeMetadataForm
                 metadata={baseRecipeMetadata}
                 setMetadata={setBaseRecipeMetadata}
