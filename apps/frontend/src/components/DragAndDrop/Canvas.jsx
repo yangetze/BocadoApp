@@ -3,8 +3,11 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { SortableItem } from './SortableItem';
 
 import PropTypes from 'prop-types';
+import React from 'react';
 
-export function Canvas({ items, mode, onRemove, onUpdateQuantity }) {
+// ⚡ Bolt: Wrapped Canvas in React.memo to prevent unnecessary re-renders of the drop area
+// when parent state updates that don't affect the Canvas properties.
+export const Canvas = React.memo(function Canvas({ items, mode, onRemove, onUpdateQuantity }) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'canvas',
   });
@@ -34,7 +37,7 @@ export function Canvas({ items, mode, onRemove, onUpdateQuantity }) {
       )}
     </div>
   );
-}
+});
 
 Canvas.propTypes = {
   mode: PropTypes.string,
