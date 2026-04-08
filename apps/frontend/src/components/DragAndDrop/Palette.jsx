@@ -18,7 +18,7 @@ export const Palette = React.memo(function Palette({ items, title, description, 
   });
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm h-[400px] lg:h-[calc(100vh-8rem)] sticky top-24 flex flex-col border border-gray-100">
+    <div className="bg-white rounded-3xl p-6 shadow-sm h-full lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 flex flex-col border border-gray-100">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-slate-gray mb-1 flex items-center gap-2">
           {title}

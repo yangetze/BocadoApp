@@ -11,3 +11,7 @@
 ## 2025-04-08 - Search Case Insensitivity
 **Learning:** Searches within the system (like filtering elements in the Palette) were occasionally case and accent sensitive, leading to missed results.
 **Action:** Always implement case-insensitive and accent-insensitive search logic globally. Use `normalize("NFD").replace(/[\u0300-\u036f]/g, "")` to ensure consistent and robust filtering.
+
+## 2024-11-20 - [Mobile UX Layout Order]
+ **Learning:** [On mobile, the builder layout was complex to understand because the palette appeared before the context (title and metadata).]
+ **Action:** [Always prioritize a top-down logical flow for mobile: 1) Context Title (Where am I?), 2) Initial Data/Metadata (Name, Total), 3) Content/Items List, 4) Add Button that opens a modal/drawer for selecting new items. Ensure quantity modifiers are inline with the loaded items.]

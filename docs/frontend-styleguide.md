@@ -98,3 +98,10 @@ La aplicación debe ser completamente usable desde dispositivos móviles. El enf
   - Debe usar `aria-expanded="true"` o `aria-expanded="false"` dependiendo del estado del menú.
 - **Interacción:** El menú colapsable debe usar animaciones suaves (ej. Framer Motion o transiciones de Tailwind) para aparecer/desaparecer. El menú debe ocupar toda la pantalla o un panel lateral (drawer) para facilitar la selección de opciones con el dedo (touch targets amplios).
 - **Prioridad de Acción:** Las acciones principales (ej. crear nueva receta, buscar) deben mantenerse accesibles rápidamente, idealmente fuera del menú hamburguesa si el espacio lo permite, o como opciones destacadas dentro del menú.
+
+### Mobile UX Layout Order
+For a complex builder or creation view, always prioritize a top-down logical flow for mobile layouts:
+1. **Context Title**: (Where am I?) E.g., Header with titles like "Nueva Receta Base".
+2. **Initial Data/Metadata**: Essential forms (Name, Total, Yield).
+3. **Content/Items List**: The main editable list of loaded items (e.g., the Canvas).
+4. **Add Button**: A button placed logically after the items list that opens a modal, drawer, or specific selector for selecting new items. Ensure quantity modifiers for existing items remain inline with the items list rather than requiring a separate modal.
