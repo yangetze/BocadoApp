@@ -117,3 +117,6 @@ Cada vez que se cree un nuevo módulo o vista principal en la aplicación, **deb
 2. **Botón Principal de Acción:** Un botón prominente (generalmente "Crear" o "Agregar") que siga las reglas de botones primarios descritas arriba.
 3. **Buscador (Search):** Como mínimo, debe existir una barra de búsqueda por texto que permita filtrar los resultados listados en función de los campos visibles en la interfaz.
 4. **Diseño Responsivo (Responsive Rules):** Se deben aplicar estrictamente las reglas definidas en la sección 7. La vista debe funcionar impecablemente en dispositivos móviles, adaptando la navegación, el listado y los botones de acción para interfaces táctiles.
+### Listados y Paginación (Novedad Feb 2025)
+- **Regla de Paginación:** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario.
+- **Estándar:** El estándar es de **10 registros por página**.
