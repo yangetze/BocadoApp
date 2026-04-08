@@ -108,3 +108,7 @@ For a complex builder or creation view, always prioritize a top-down logical flo
 2. **Initial Data/Metadata**: Essential forms (Name, Total, Yield).
 3. **Content/Items List**: The main editable list of loaded items (e.g., the Canvas).
 4. **Add Button**: A button placed logically after the items list that opens a modal, drawer, or specific selector for selecting new items. Ensure quantity modifiers for existing items remain inline with the items list rather than requiring a separate modal.
+
+### Listados y Paginación (Novedad Feb 2025)
+- **Regla de Paginación:** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario.
+- **Estándar:** El estándar es de **10 registros por página**.

@@ -51,9 +51,9 @@ export const userApi = {
 };
 
 export const exchangeRateApi = {
-  getRates: async () => {
+  getRates: async (params = {}) => {
     try {
-      const res = await api.get('/exchange-rates');
+      const res = await api.get('/exchange-rates', { params });
       return res.data;
     } catch (error) {
       console.error(error);
