@@ -34,7 +34,6 @@ export default function ExchangeRateManager() {
 
       try {
         ratesData = await exchangeRateApi.getRates({ page: currentPage, limit: 10, startDate: start, endDate: end });
-      }
       } catch (err) {
         console.error("Error fetching rates:", err);
         toast.error('Error al cargar las tasas de cambio: ' + (err.message || ''));
@@ -362,6 +361,7 @@ export default function ExchangeRateManager() {
             <p className="text-sm text-slate-gray/40 mt-1">Sincroniza con la API o agrega una manualmente para empezar.</p>
           </div>
         ) : (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -397,13 +397,13 @@ export default function ExchangeRateManager() {
             </table>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Página anterior"
               >
                 <ChevronLeft className="w-5 h-5 text-slate-gray" />
               </button>
@@ -416,11 +416,13 @@ export default function ExchangeRateManager() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Página siguiente"
               >
                 <ChevronRight className="w-5 h-5 text-slate-gray" />
               </button>
             </div>
           )}
+          </>
         )}
       </motion.div>
     </div>

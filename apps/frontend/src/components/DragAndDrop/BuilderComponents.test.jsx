@@ -52,8 +52,8 @@ describe('Builder Extracted Components', () => {
         />
       );
 
-      expect(screen.getByText('Limpiar')).toBeDisabled();
-      expect(screen.getByText('Guardando...')).toBeDisabled();
+      expect(screen.getByRole('button', { name: /limpiar/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /guardar/i })).toBeDisabled();
     });
   });
 
