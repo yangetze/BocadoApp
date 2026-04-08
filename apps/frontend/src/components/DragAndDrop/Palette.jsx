@@ -2,11 +2,21 @@ import { DraggableItem } from './DraggableItem';
 import { Search } from 'lucide-react';
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
+import { normalizeString } from '../../utils/stringUtils';
 
 // ⚡ Bolt: Wrapped Palette in React.memo. Since the available items list rarely changes
 // while building, this prevents the entire palette list from re-rendering on every drag frame.
 export const Palette = React.memo(function Palette({ items, title, description, onAdd }) {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredItems = items.filter((item) => {
+    if (!searchQuery) return true;
+    const normalizedItemName = normalizeString(item.name);
+    const normalizedSearchQuery = normalizeString(searchQuery);
+    return normalizedItemName.includes(normalizedSearchQuery);
+  });
+
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm h-[400px] lg:h-[calc(100vh-8rem)] sticky top-24 flex flex-col border border-gray-100">
       <div className="mb-6">
@@ -22,17 +32,21 @@ export const Palette = React.memo(function Palette({ items, title, description, 
           type="text"
           placeholder="Buscar elementos..."
           aria-label="Buscar elementos"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:border-peach-soft focus:bg-white focus:ring-4 focus:ring-peach-soft/10 outline-none transition-all placeholder:text-gray-400 text-slate-gray"
         />
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-        {items.length === 0 ? (
+        {filteredItems.length === 0 ? (
           <div className="text-center py-10 text-gray-400">
-            <p className="text-sm">No hay elementos disponibles.</p>
+            <p className="text-sm">
+              {searchQuery ? 'No se encontraron resultados.' : 'No hay elementos disponibles.'}
+            </p>
           </div>
         ) : (
-          items.map((item) => (
+          filteredItems.map((item) => (
             <DraggableItem key={`palette-${item.id}`} id={item.id} item={item} onAdd={onAdd} />
           ))
         )}
