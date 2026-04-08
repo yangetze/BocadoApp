@@ -134,6 +134,20 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     setSuggestedMargin(null);
   }, [setCanvasItems, setSuggestedMargin]);
 
+
+  const handleAddItem = useCallback((item) => {
+    const newItem = {
+      ...item,
+      id: `canvas-${Date.now()}-${item.id}`,
+      quantity: 1,
+    };
+    setCanvasItems((items) => {
+      const newItems = [...items, newItem];
+      if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
+      return newItems;
+    });
+  }, [setCanvasItems, mode, fetchMarginRecommendation]);
+
   const paletteTitle = mode === 'superRecipe' ? 'Recetas Base' : mode === 'baseRecipe' ? 'Ingredientes' : 'Súper Recetas';
   const paletteDescription = mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : mode === 'baseRecipe' ? 'Arrastra ingredientes a la receta' : 'Arrastra para armar tu Presupuesto';
 
@@ -151,12 +165,13 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
             items={availableItems}
             title={paletteTitle}
             description={paletteDescription}
+            onAdd={handleAddItem}
           />
         </div>
 
         {/* Right Column: Canvas & Controls */}
         <div className="lg:col-span-3 flex flex-col gap-6">
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 min-h-[calc(100vh-8rem)] flex flex-col">
+          <div className="bg-white rounded-3xl p-4 lg:p-8 shadow-sm border border-gray-100 lg:min-h-[calc(100vh-8rem)] flex flex-col">
             <BuilderHeader
               mode={mode}
               onClear={handleClear}

@@ -15,7 +15,7 @@ export const Canvas = React.memo(function Canvas({ items, mode, onRemove, onUpda
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-[400px] w-full rounded-2xl border-2 border-dashed p-6 transition-colors duration-300 flex flex-col gap-4
+      className={`min-h-[300px] lg:min-h-[400px] w-full rounded-2xl border-2 border-dashed p-4 lg:p-6 transition-colors duration-300 flex flex-col gap-4
         ${isOver ? 'border-peach-soft bg-peach-soft/5' : 'border-gray-200 bg-white/50'}`}
     >
       {items.length === 0 ? (
@@ -26,7 +26,7 @@ export const Canvas = React.memo(function Canvas({ items, mode, onRemove, onUpda
             </svg>
           </div>
           <p className="text-lg font-medium text-slate-gray">El lienzo está vacío</p>
-          <p className="text-sm">Arrastra elementos desde la paleta aquí.</p>
+          <p className="text-sm text-center">Arrastra elementos desde la paleta aquí o usa el botón +</p>
         </div>
       ) : (
         <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>

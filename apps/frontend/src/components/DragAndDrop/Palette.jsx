@@ -6,9 +6,9 @@ import React from 'react';
 
 // ⚡ Bolt: Wrapped Palette in React.memo. Since the available items list rarely changes
 // while building, this prevents the entire palette list from re-rendering on every drag frame.
-export const Palette = React.memo(function Palette({ items, title, description }) {
+export const Palette = React.memo(function Palette({ items, title, description, onAdd }) {
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm h-[calc(100vh-8rem)] sticky top-24 flex flex-col border border-gray-100">
+    <div className="bg-white rounded-3xl p-6 shadow-sm h-[400px] lg:h-[calc(100vh-8rem)] sticky top-24 flex flex-col border border-gray-100">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-slate-gray mb-1 flex items-center gap-2">
           {title}
@@ -33,7 +33,7 @@ export const Palette = React.memo(function Palette({ items, title, description }
           </div>
         ) : (
           items.map((item) => (
-            <DraggableItem key={`palette-${item.id}`} id={item.id} item={item} />
+            <DraggableItem key={`palette-${item.id}`} id={item.id} item={item} onAdd={onAdd} />
           ))
         )}
       </div>
@@ -50,4 +50,5 @@ Palette.propTypes = {
   ).isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
+  onAdd: PropTypes.func,
 };

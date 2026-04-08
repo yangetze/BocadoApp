@@ -28,9 +28,9 @@ export const SortableItem = React.memo(function SortableItem({ id, item, mode, o
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative group bg-white border ${isDragging ? 'border-peach-soft shadow-lg' : 'border-gray-100 shadow-sm'} rounded-xl p-4 flex items-center justify-between gap-4 transition-colors hover:border-peach-soft/50`}
+      className={`relative group bg-white border ${isDragging ? 'border-peach-soft shadow-lg' : 'border-gray-100 shadow-sm'} rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors hover:border-peach-soft/50`}
     >
-      <div className="flex items-center gap-4 flex-1">
+      <div className="flex items-center gap-4 w-full sm:w-auto flex-1">
         <div
           {...attributes}
           {...listeners}
@@ -55,7 +55,7 @@ export const SortableItem = React.memo(function SortableItem({ id, item, mode, o
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center justify-between w-full sm:w-auto gap-4 sm:gap-6 pl-10 sm:pl-0 mt-2 sm:mt-0">
         {/* Cost & Quantity Selector */}
         {mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity ? (
            <div className="flex flex-col items-end mr-4">
