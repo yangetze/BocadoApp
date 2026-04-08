@@ -109,7 +109,7 @@ export function useBuilder(mode) {
           name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
           baseRecipes: canvasItems.map(item => ({
             baseRecipeId: item.id.replace(/^canvas-\d+-/, '') || item.id,
-            quantity: item.quantity || 1
+            quantityNeeded: item.quantity || 1
           }))
         };
         await superRecipeApi.create(payload);
@@ -127,7 +127,7 @@ export function useBuilder(mode) {
           yieldUnit: baseRecipeMetadata.yieldUnit,
           ingredients: canvasItems.map(item => ({
             ingredientId: item.id.replace(/^canvas-\d+-/, '') || item.id,
-            quantity: item.quantity || 1
+            quantityNeeded: item.quantity || 1
           }))
         };
         await baseRecipeApi.create(payload);
