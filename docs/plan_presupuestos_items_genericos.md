@@ -1,5 +1,9 @@
 # Plan: Ítems Genéricos en Presupuestos
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## Objetivo
 Refactorizar el modelo de Presupuestos (`Budget`) para permitir la inclusión no solo de Super Recetas, sino también de Recetas Base, Ingredientes individuales (ej. velas) y Costos Operacionales/Adicionales (ej. transporte). El diseño debe ser genérico para facilitar la cotización de cualquier combinación de elementos.
 

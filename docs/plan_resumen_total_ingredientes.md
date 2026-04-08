@@ -1,5 +1,9 @@
 # Plan: Resumen Total de Ingredientes
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## 1. Descripción del Problema
 Al armar recetas base o súper recetas, el usuario (por ejemplo, un repostero) necesita saber la cantidad total exacta de cada ingrediente requerido para poder preparar el producto final. Si un ingrediente, como el azúcar, se utiliza en múltiples sub-componentes (por ejemplo, en el bizcocho de vainilla y en el relleno de limón), el sistema debe consolidar y sumar estas cantidades para mostrar un total global (ej. Azúcar: 120 gr).
 

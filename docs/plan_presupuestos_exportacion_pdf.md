@@ -1,5 +1,9 @@
 # Plan: Exportación y Visualización de Presupuestos en PDF
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## 1. Previsualización de Presupuesto (PDF)
 - **Objetivo:** Permitir al usuario (repostero) previsualizar exactamente cómo se verá el presupuesto en formato PDF antes de generarlo, descargarlo o enviarlo.
 - **Implementación (Frontend):**

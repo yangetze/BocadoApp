@@ -1,5 +1,9 @@
 # Plan de Trabajo: Equivalencias de Unidades y Resumen por Tipo
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## 🎯 Objetivo
 Permitir la conversión automática entre unidades de medida de la misma magnitud (peso, volumen) en la creación de recetas base y súper recetas (ej. Kg a gr, Litro a ml). Además, implementar un resumen agrupado de cantidades de ingredientes por tipo de magnitud (ej. líquidos en ml, secos en gr) en el resumen de ingredientes.
 

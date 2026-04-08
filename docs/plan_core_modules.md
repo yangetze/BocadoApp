@@ -1,5 +1,9 @@
 # 🧁 Plan de Trabajo: Reajuste de Módulos Core (BocadoApp)
 
+**Estado:** Completado
+**Rama:** (Por definir)
+
+
 Este plan detalla la corrección e integración de los módulos de Ingredientes, Recetas Base y Tasa de Cambio con el nuevo sistema de autenticación y base de datos real.
 
 ---
