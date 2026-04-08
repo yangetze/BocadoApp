@@ -7,3 +7,7 @@
 ## 2025-04-07 - React.memo for @dnd-kit list items
 **Learning:** Drag and drop interfaces using `@dnd-kit/core` can suffer severe performance degradation in long lists because dragging an item triggers re-renders across the entire context tree.
 **Action:** Always wrap `SortableItem` and static drop targets (like `Canvas` or `Palette`) with `React.memo` to skip re-rendering sibling components while one is actively being dragged.
+
+## 2025-04-08 - Search Case Insensitivity
+**Learning:** Searches within the system (like filtering elements in the Palette) were occasionally case and accent sensitive, leading to missed results.
+**Action:** Always implement case-insensitive and accent-insensitive search logic globally. Use `normalize("NFD").replace(/[\u0300-\u036f]/g, "")` to ensure consistent and robust filtering.
