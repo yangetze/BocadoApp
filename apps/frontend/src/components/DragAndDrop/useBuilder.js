@@ -97,7 +97,7 @@ export function useBuilder(mode) {
             scaleQuantity: item.quantity || 1
           }))
         };
-        await budgetApi.createBudget(payload);
+        await budgetApi.create(payload);
         toast.success('Presupuesto guardado exitosamente');
       } else if (mode === 'superRecipe') {
         const payload = {
@@ -107,7 +107,7 @@ export function useBuilder(mode) {
             quantity: item.quantity || 1
           }))
         };
-        await superRecipeApi.createSuperRecipe(payload);
+        await superRecipeApi.create(payload);
         toast.success('Súper Receta guardada exitosamente');
       } else if (mode === 'baseRecipe') {
         if (!baseRecipeMetadata.name || !baseRecipeMetadata.baseYield) {
@@ -125,7 +125,7 @@ export function useBuilder(mode) {
             quantity: item.quantity || 1
           }))
         };
-        await baseRecipeApi.createBaseRecipe(payload);
+        await baseRecipeApi.create(payload);
         toast.success('Receta Base guardada exitosamente');
         setBaseRecipeMetadata({ name: '', baseYield: '', yieldUnit: 'gr' });
         setCanvasItems([]);

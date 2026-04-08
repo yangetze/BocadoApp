@@ -9,9 +9,9 @@ jest.mock('react-hot-toast', () => ({
 }));
 
 jest.mock('../../api', () => ({
-  budgetApi: { createBudget: jest.fn() },
-  superRecipeApi: { createSuperRecipe: jest.fn() },
-  baseRecipeApi: { createBaseRecipe: jest.fn() },
+  budgetApi: { create: jest.fn() },
+  superRecipeApi: { create: jest.fn() },
+  baseRecipeApi: { create: jest.fn() },
 }));
 
 describe('useBuilder - ingredientTotals', () => {
