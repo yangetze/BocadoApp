@@ -87,3 +87,14 @@ Los iconos de la aplicación (Favicon y App Icon) deberán ubicarse en la carpet
 - **Logo SVG (Header de la app):** `apps/frontend/public/logo.svg`
 
 *Nota para el desarrollador:* Cuando subas los archivos de iconos a estas rutas, asegúrate de referenciarlos correctamente en `apps/frontend/index.html` (o `_document.tsx` si el stack cambia a Next.js en el futuro).
+## 📱 7. Diseño Responsivo (Responsive Design)
+
+La aplicación debe ser completamente usable desde dispositivos móviles. El enfoque "Data-First" debe adaptarse a pantallas pequeñas sin sacrificar la claridad.
+
+### Navegación Móvil
+- **Menú Colapsado:** En pantallas móviles (menores a `sm` o `md` en Tailwind), la navegación principal debe colapsarse en un menú tipo "hamburguesa" (Hamburger Menu).
+- **Accesibilidad:**
+  - El botón del menú hamburguesa debe tener un `aria-label="Abrir menú de navegación"` o `aria-label="Cerrar menú de navegación"`.
+  - Debe usar `aria-expanded="true"` o `aria-expanded="false"` dependiendo del estado del menú.
+- **Interacción:** El menú colapsable debe usar animaciones suaves (ej. Framer Motion o transiciones de Tailwind) para aparecer/desaparecer. El menú debe ocupar toda la pantalla o un panel lateral (drawer) para facilitar la selección de opciones con el dedo (touch targets amplios).
+- **Prioridad de Acción:** Las acciones principales (ej. crear nueva receta, buscar) deben mantenerse accesibles rápidamente, idealmente fuera del menú hamburguesa si el espacio lo permite, o como opciones destacadas dentro del menú.
