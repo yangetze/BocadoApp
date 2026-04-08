@@ -4,7 +4,7 @@ import { isTestMode, mockData } from '../mockData.js';
 
 export const createBudget = async (req, res) => {
   try {
-    const { customerName, profitMargin, superRecipes } = req.body;
+    const { customerName, profitMargin, superRecipes, brandSelections } = req.body;
     const userId = req.user.id;
 
     if (!superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
@@ -26,7 +26,13 @@ export const createBudget = async (req, res) => {
           superRecipeId: sr.superRecipeId,
           scaleQuantity: sr.scaleQuantity || 1,
           superRecipe: mockData.superRecipes.find(s => s.id === sr.superRecipeId)
-        }))
+        })),
+        brandSelections: brandSelections?.map(bs => ({
+           id: `bbs-${crypto.randomUUID()}`,
+           budgetId,
+           ingredientId: bs.ingredientId,
+           brandPresentationId: bs.brandPresentationId
+        })) || []
       };
       mockData.budgets.push(newBudget);
       return res.status(201).json(newBudget);
@@ -42,10 +48,17 @@ export const createBudget = async (req, res) => {
             superRecipeId: sr.superRecipeId,
             scaleQuantity: sr.scaleQuantity || 1
           }))
+        },
+        brandSelections: {
+          create: brandSelections?.map(bs => ({
+            ingredientId: bs.ingredientId,
+            brandPresentationId: bs.brandPresentationId
+          })) || []
         }
       },
       include: {
-        superRecipes: true
+        superRecipes: true,
+        brandSelections: true
       }
     });
 
@@ -72,6 +85,11 @@ export const getBudgets = async (req, res) => {
           include: {
             superRecipe: true
           }
+        },
+        brandSelections: {
+           include: {
+              brandPresentation: true
+           }
         }
       },
       orderBy: { createdAt: 'desc' }

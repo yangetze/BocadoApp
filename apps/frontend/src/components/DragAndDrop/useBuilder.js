@@ -13,6 +13,8 @@ export function useBuilder(mode) {
     baseYield: '',
     yieldUnit: 'gr'
   });
+  const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] = useState(false);
+  const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
 
   const fetchMarginRecommendation = useCallback(async (items) => {
     if (items.length === 0) {
@@ -30,8 +32,8 @@ export function useBuilder(mode) {
   // Impact: Reduces CPU overhead per render cycle for baseRecipe canvases by preventing redundant iteration.
   const totalBaseRecipeCost = useMemo(() => {
     return canvasItems.reduce((acc, item) => {
-      if (mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity) {
-        return acc + ((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity) * item.globalCost;
+      if (mode === 'baseRecipe' && item.defaultCost !== undefined) {
+        return acc + (item.quantity !== undefined ? item.quantity : 1) * item.defaultCost;
       }
       return acc;
     }, 0);
@@ -84,13 +86,35 @@ export function useBuilder(mode) {
     return Array.from(totalsMap.values());
   }, [canvasItems, mode]);
 
+  const confirmBudgetSave = async (brandSelections) => {
+    if (!pendingBudgetPayload) return;
+    setIsSaving(true);
+    try {
+      const payload = {
+        ...pendingBudgetPayload,
+        brandSelections
+      };
+      await budgetApi.create(payload);
+      toast.success('Presupuesto guardado exitosamente');
+      setIsBrandSelectionModalOpen(false);
+      setPendingBudgetPayload(null);
+      setCanvasItems([]);
+    } catch (error) {
+      console.error(error);
+      toast.error('Hubo un error al guardar el presupuesto.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSave = async () => {
     if (canvasItems.length === 0) {
       toast.error('El lienzo está vacío. Agrega algunos elementos primero.');
       return;
     }
 
-    setIsSaving(true);
+    if (mode !== 'budget') setIsSaving(true);
+
     try {
       if (mode === 'budget') {
         const payload = {
@@ -99,11 +123,12 @@ export function useBuilder(mode) {
           userId: 'user-default-1',
           superRecipes: canvasItems.map(item => ({
             superRecipeId: item.id.replace(/^canvas-\d+-/, '') || item.id,
-            scaleQuantity: item.quantity || 1
+            scaleQuantity: item.quantity || 1,
+            originalItem: item
           }))
         };
-        await budgetApi.create(payload);
-        toast.success('Presupuesto guardado exitosamente');
+        setPendingBudgetPayload(payload);
+        setIsBrandSelectionModalOpen(true);
       } else if (mode === 'superRecipe') {
         const payload = {
           name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
@@ -179,5 +204,9 @@ export function useBuilder(mode) {
     updateItemQuantity,
     fetchMarginRecommendation,
     ingredientTotals,
+    isBrandSelectionModalOpen,
+    setIsBrandSelectionModalOpen,
+    pendingBudgetPayload,
+    confirmBudgetSave
   };
 }

@@ -49,8 +49,8 @@ export default function IngredientManager() {
   };
 
   const handleSaveModal = async (formData) => {
-    if (!formData.name || !formData.globalCost || !formData.measurementUnit || !formData.unitQuantity) {
-      toast.error('Nombre, costo, cantidad y unidad son obligatorios');
+    if (!formData.name || !formData.defaultCost || !formData.measurementUnit) {
+      toast.error('Nombre, costo estimado y unidad base son obligatorios');
       return;
     }
 
@@ -110,10 +110,9 @@ export default function IngredientManager() {
           <thead>
             <tr className="border-b-2 border-gray-100 text-slate-gray">
               <th className="py-3 px-4 font-semibold">Nombre</th>
-              <th className="py-3 px-4 font-semibold">Marca <span className="text-sm text-gray-400 font-normal">(Opcional)</span></th>
-              <th className="py-3 px-4 font-semibold">Costo (USD)</th>
-              <th className="py-3 px-4 font-semibold">Cantidad</th>
-              <th className="py-3 px-4 font-semibold">Unidad</th>
+              <th className="py-3 px-4 font-semibold">Costo Estimado Base (USD)</th>
+              <th className="py-3 px-4 font-semibold">Unidad Base</th>
+              <th className="py-3 px-4 font-semibold">Presentaciones</th>
               <th className="py-3 px-4 font-semibold text-right">Acciones</th>
             </tr>
           </thead>
@@ -135,11 +134,12 @@ export default function IngredientManager() {
               ingredients.map((ing) => (
                 <tr key={ing.id} className="border-b border-gray-50 hover:bg-[#F7C5B2]/10 transition-colors group">
                   <td className="py-4 px-4 font-medium text-slate-gray">{ing.name}</td>
-                  <td className="py-4 px-4 text-gray-500">{ing.brand || '-'}</td>
-                  <td className="py-4 px-4 text-slate-gray font-medium">${Number(ing.globalCost).toFixed(2)}</td>
-                  <td className="py-4 px-4 text-slate-gray">{ing.unitQuantity}</td>
+                  <td className="py-4 px-4 text-slate-gray font-medium">${Number(ing.defaultCost).toFixed(2)}</td>
                   <td className="py-4 px-4 text-gray-500">
                      <span className="bg-gray-100 px-2 py-1 rounded-md text-xs font-semibold">{ing.measurementUnit}</span>
+                  </td>
+                  <td className="py-4 px-4 text-slate-gray text-sm">
+                     {ing.presentations?.length || 0} registradas
                   </td>
                   <td className="py-4 px-4 text-right">
                     <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -178,10 +178,10 @@ export default function IngredientManager() {
               >
                 <div className="flex-1 pr-3">
                   <h3 className="font-medium text-slate-gray text-[15px]">{ing.name}</h3>
-                  <p className="text-xs text-gray-400 mt-0.5">{ing.brand || 'Sin marca'}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{ing.presentations?.length || 0} presentaciones</p>
                 </div>
                 <div className="text-right flex items-center gap-3">
-                  <span className="font-semibold text-slate-gray text-[15px]">${Number(ing.globalCost).toFixed(2)}</span>
+                  <span className="font-semibold text-slate-gray text-[15px]">${Number(ing.defaultCost).toFixed(2)}</span>
                   <div className={`text-gray-400 transition-transform ${expandedId === ing.id ? 'rotate-180' : ''}`}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="6 9 12 15 18 9"></polyline>
@@ -200,9 +200,9 @@ export default function IngredientManager() {
                   >
                     <div className="p-4 flex flex-col gap-3">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-500">Cantidad y Unidad:</span>
+                        <span className="text-gray-500">Unidad Base:</span>
                         <span className="font-medium text-slate-gray bg-white px-2 py-1 rounded shadow-sm border border-gray-100">
-                          {ing.unitQuantity} {ing.measurementUnit}
+                          {ing.measurementUnit}
                         </span>
                       </div>
 

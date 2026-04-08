@@ -28,6 +28,7 @@ import { BuilderHeader } from './BuilderHeader';
 import { MarginRecommendationCard } from './MarginRecommendationCard';
 import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm';
 import { IngredientsSummary } from './IngredientsSummary';
+import { BrandSelectionModal } from './BrandSelectionModal';
 
 export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
   const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
@@ -50,6 +51,9 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     updateItemQuantity,
     fetchMarginRecommendation,
     ingredientTotals,
+    isBrandSelectionModalOpen,
+    setIsBrandSelectionModalOpen,
+    confirmBudgetSave
   } = useBuilder(mode);
 
   const sensors = useSensors(
