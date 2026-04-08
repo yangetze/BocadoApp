@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect, useId } from 'react';
 
-import { RefreshCw, Plus, Calendar, Coins, History } from 'lucide-react';
+import { RefreshCw, Plus, Calendar, Coins, History, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { exchangeRateApi } from '../api';
 
@@ -19,15 +19,21 @@ export default function ExchangeRateManager() {
   const [selectedCurrency, setSelectedCurrency] = useState('');
   const [manualSource, setManualSource] = useState('MANUAL');
 
-  const loadData = async () => {
+  // Pagination & Filtering state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const loadData = async (currentPage = page, start = startDate, end = endDate) => {
     try {
       setLoading(true);
 
-      let ratesData = [];
+      let ratesData = { data: [], totalPages: 1 };
       let currenciesData = [];
 
       try {
-        ratesData = await exchangeRateApi.getRates();
+        ratesData = await exchangeRateApi.getRates({ page: currentPage, limit: 10, startDate: start, endDate: end });
       } catch (err) {
         console.error("Error fetching rates:", err);
         toast.error('Error al cargar las tasas de cambio: ' + (err.message || ''));
@@ -40,7 +46,8 @@ export default function ExchangeRateManager() {
         toast.error('Error al cargar las monedas: ' + (err.message || ''));
       }
 
-      setRates(ratesData || []);
+      setRates(ratesData.data || []);
+      setTotalPages(ratesData.totalPages || 1);
       setCurrencies(currenciesData || []);
 
       if (currenciesData && currenciesData.length > 0) {
@@ -59,8 +66,8 @@ export default function ExchangeRateManager() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    loadData(page, startDate, endDate);
+  }, [page, startDate, endDate]);
 
   const handleSyncApi = async (type) => {
     try {
@@ -197,7 +204,7 @@ export default function ExchangeRateManager() {
           <p className="text-sm text-slate-gray/70 mb-6">
             Obtén la tasa del día con un solo clic. Se conectará a DolarAPI para traerte los datos frescos como pan recién horneado.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <button
               onClick={() => handleSyncApi('bcv')}
               disabled={syncing}
@@ -228,7 +235,7 @@ export default function ExchangeRateManager() {
           </div>
 
           <form onSubmit={handleManualSubmit} className="space-y-4">
-            <div className="flex gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex-1">
                 <label htmlFor={`${formId}-currency`} className="block text-xs text-slate-gray/70 mb-1 font-medium">Moneda Destino</label>
                 <select
@@ -299,6 +306,45 @@ export default function ExchangeRateManager() {
       </div>
 
       {/* History Table */}
+      {/* Filters Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-6 mb-6"
+      >
+        <div className="flex flex-col md:flex-row items-end gap-4">
+          <div className="w-full md:w-1/3">
+            <label htmlFor="filter-start" className="block text-xs text-slate-gray/70 mb-1 font-medium">Desde</label>
+            <input
+              id="filter-start"
+              type="date"
+              value={startDate}
+              onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
+            />
+          </div>
+          <div className="w-full md:w-1/3">
+            <label htmlFor="filter-end" className="block text-xs text-slate-gray/70 mb-1 font-medium">Hasta</label>
+            <input
+              id="filter-end"
+              type="date"
+              value={endDate}
+              onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-peach-soft focus:bg-peach-soft/5 transition-colors"
+            />
+          </div>
+          <div className="w-full md:w-auto">
+             <button
+                onClick={() => { setStartDate(''); setEndDate(''); setPage(1); }}
+                className="w-full bg-gray-100 text-slate-gray py-3 px-4 rounded-xl hover:bg-gray-200 transition-all font-medium"
+             >
+               Limpiar Filtros
+             </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* History Table */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -315,6 +361,7 @@ export default function ExchangeRateManager() {
             <p className="text-sm text-slate-gray/40 mt-1">Sincroniza con la API o agrega una manualmente para empezar.</p>
           </div>
         ) : (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -349,6 +396,33 @@ export default function ExchangeRateManager() {
               </tbody>
             </table>
           </div>
+
+          {totalPages > 1 && (
+            <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Página anterior"
+              >
+                <ChevronLeft className="w-5 h-5 text-slate-gray" />
+              </button>
+
+              <span className="text-sm font-medium text-slate-gray">
+                Página {page} de {totalPages}
+              </span>
+
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Página siguiente"
+              >
+                <ChevronRight className="w-5 h-5 text-slate-gray" />
+              </button>
+            </div>
+          )}
+          </>
         )}
       </motion.div>
     </div>

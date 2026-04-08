@@ -59,6 +59,7 @@ describe('Super Recipe Routes', () => {
 
   describe('DELETE /api/super-recipes/:id', () => {
     it('should delete if not used in budget', async () => {
+      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-default-1' });
       prisma.budgetSuperRecipe.findFirst.mockResolvedValue(null);
       prisma.superRecipe.delete.mockResolvedValue({ id: 'sr-1' });
 
@@ -69,6 +70,7 @@ describe('Super Recipe Routes', () => {
     });
 
     it('should error if used in budget', async () => {
+      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-default-1' });
       prisma.budgetSuperRecipe.findFirst.mockResolvedValue({ id: 'b-sr-1' });
 
       const res = await request(app).delete('/api/super-recipes/sr-1');
