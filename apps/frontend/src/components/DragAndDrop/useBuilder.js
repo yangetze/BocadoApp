@@ -25,12 +25,17 @@ export function useBuilder(mode) {
     else setSuggestedMargin(30);
   }, []);
 
-  const totalBaseRecipeCost = canvasItems.reduce((acc, item) => {
-    if (mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity) {
-      return acc + ((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity) * item.globalCost;
-    }
-    return acc;
-  }, 0);
+  // ⚡ Bolt: Wrapped totalBaseRecipeCost calculation in useMemo to prevent an O(N) calculation
+  // on every render of the Builder, especially during 60fps Drag & Drop interactions.
+  // Impact: Reduces CPU overhead per render cycle for baseRecipe canvases by preventing redundant iteration.
+  const totalBaseRecipeCost = useMemo(() => {
+    return canvasItems.reduce((acc, item) => {
+      if (mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity) {
+        return acc + ((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity) * item.globalCost;
+      }
+      return acc;
+    }, 0);
+  }, [canvasItems, mode]);
 
 
   const ingredientTotals = useMemo(() => {
