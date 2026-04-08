@@ -47,10 +47,8 @@ model User {
 model Ingredient {
   id              String   @id @default(uuid())
   name            String
-  globalCost      Float // Always in base currency (e.g. USD)
-  unitQuantity    Float    @default(1) // Quantity of the unit (e.g. 30 units, 900g)
+  defaultCost     Float // Estimated cost in base currency (e.g. USD)
   measurementUnit String // e.g. "gr", "ml", "unit"
-  brand           String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -58,10 +56,28 @@ model Ingredient {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Relations
+  presentations      BrandPresentation[]
   usedInBaseRecipes  BaseRecipeIngredient[]
   usedInSuperRecipes SuperRecipeDirectIngredient[]
+  budgetSelections   BudgetBrandSelection[]
 
   @@index([userId, createdAt(sort: Desc)])
+}
+
+model BrandPresentation {
+  id               String   @id @default(uuid())
+  brand            String?
+  presentationName String
+  cost             Float // Cost in base currency (e.g. USD)
+  unitQuantity     Float // e.g. 1000, 30
+  measurementUnit  String // e.g. "gr", "u"
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  budgetSelections BudgetBrandSelection[]
 }
 
 model BaseRecipe {
@@ -161,7 +177,8 @@ model Budget {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  superRecipes BudgetSuperRecipe[]
+  superRecipes    BudgetSuperRecipe[]
+  brandSelections BudgetBrandSelection[]
 
   @@index([userId, createdAt(sort: Desc)])
 }
@@ -178,6 +195,22 @@ model BudgetSuperRecipe {
   superRecipe   SuperRecipe @relation(fields: [superRecipeId], references: [id], onDelete: Restrict)
 
   @@unique([budgetId, superRecipeId])
+}
+
+// Junction table: Specific Brand Selection for a Generic Ingredient in a Budget
+model BudgetBrandSelection {
+  id String @id @default(uuid())
+
+  budgetId String
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  brandPresentationId String
+  brandPresentation   BrandPresentation @relation(fields: [brandPresentationId], references: [id], onDelete: Restrict)
+
+  @@unique([budgetId, ingredientId])
 }
 
 // ---------------------------------------------------------
