@@ -44,6 +44,7 @@ El Dark Mode debe sentirse como entrar a una cocina profesional de noche: elegan
 ## 🔘 3. Componentes Clave
 
 ### Botones
+- **Regla de Usabilidad (Agregada Feb 2025):** El botón primario ("Guardar", "Crear", etc.) debe tener **siempre un color fuerte y de alto contraste** (idealmente Slate Gray `#3E4A59`) para evitar que parezca bloqueado o deshabilitado. El uso de colores muy suaves (como Peach Soft sólido) para botones principales de acción ha demostrado ser confuso para los usuarios.
 - **Botón Primario:** Fondo Slate Gray `#3E4A59` con texto blanco.
   - *Tailwind:* `bg-[#3E4A59] text-white hover:bg-opacity-90 transition-colors`
 - **Botón Secundario:** Borde Peach Soft `#F7C5B2` con texto Peach Soft. Fondo transparente.
