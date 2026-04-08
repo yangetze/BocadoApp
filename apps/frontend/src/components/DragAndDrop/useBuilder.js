@@ -93,7 +93,7 @@ export function useBuilder(mode) {
           profitMargin: 0.35,
           userId: 'user-default-1',
           superRecipes: canvasItems.map(item => ({
-            superRecipeId: item.id.replace('canvas-', '').split('-')[1] || item.id,
+            superRecipeId: item.id.replace(/^canvas-\d+-/, '') || item.id,
             scaleQuantity: item.quantity || 1
           }))
         };
@@ -103,7 +103,7 @@ export function useBuilder(mode) {
         const payload = {
           name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
           baseRecipes: canvasItems.map(item => ({
-            baseRecipeId: item.id.replace('canvas-', '').split('-')[1] || item.id,
+            baseRecipeId: item.id.replace(/^canvas-\d+-/, '') || item.id,
             quantity: item.quantity || 1
           }))
         };
@@ -121,7 +121,7 @@ export function useBuilder(mode) {
           baseYield: parseFloat(baseRecipeMetadata.baseYield),
           yieldUnit: baseRecipeMetadata.yieldUnit,
           ingredients: canvasItems.map(item => ({
-            ingredientId: item.id.replace('canvas-', '').split('-')[1] || item.id,
+            ingredientId: item.id.replace(/^canvas-\d+-/, '') || item.id,
             quantity: item.quantity || 1
           }))
         };

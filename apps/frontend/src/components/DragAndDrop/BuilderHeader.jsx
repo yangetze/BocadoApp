@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Eraser, Save } from 'lucide-react';
 
 // ⚡ Bolt: Wrapped BuilderHeader in React.memo to prevent unnecessary re-renders when parent state
 // (like dragging items in the canvas) updates. Since handlers are memoized via useCallback in the parent,
@@ -18,7 +19,7 @@ export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, 
   };
 
   return (
-    <div className="flex justify-between items-start mb-8">
+    <div className="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
       <div>
         <h1 className="text-3xl font-bold text-slate-gray mb-2">
           {titles[mode]}
@@ -28,23 +29,28 @@ export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, 
         </p>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 self-end md:self-auto w-full md:w-auto">
         <button
           onClick={onClear}
-          className="px-6 py-2.5 rounded-xl text-slate-gray bg-gray-50 hover:bg-gray-100 font-medium transition-colors border border-gray-200"
+          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-slate-gray bg-gray-50 hover:bg-gray-100 font-medium transition-colors border border-gray-200"
           disabled={isSaving}
+          aria-label="Limpiar lienzo"
         >
-          Limpiar
+          <Eraser size={20} />
+          <span className="hidden sm:inline">Limpiar</span>
         </button>
         <button
           onClick={onSave}
           disabled={isSaving}
-          className="px-6 py-2.5 rounded-xl text-white bg-slate-gray hover:bg-opacity-90 font-medium shadow-md shadow-slate-gray/20 transition-all disabled:opacity-50 flex items-center gap-2"
+          aria-label="Guardar receta"
+          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-white bg-slate-gray hover:bg-opacity-90 font-medium shadow-md shadow-slate-gray/20 transition-all disabled:opacity-50"
         >
           {isSaving ? (
             <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-          ) : null}
-          {isSaving ? 'Guardando...' : 'Guardar'}
+          ) : (
+            <Save size={20} />
+          )}
+          <span className="hidden sm:inline">{isSaving ? 'Guardando...' : 'Guardar'}</span>
         </button>
       </div>
     </div>

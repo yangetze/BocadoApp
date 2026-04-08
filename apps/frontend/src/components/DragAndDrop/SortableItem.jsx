@@ -57,27 +57,25 @@ export const SortableItem = React.memo(function SortableItem({ id, item, mode, o
 
       <div className="flex items-center justify-between w-full sm:w-auto gap-4 sm:gap-6 pl-10 sm:pl-0 mt-2 sm:mt-0">
         {/* Cost & Quantity Selector */}
-        {mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity ? (
-           <div className="flex flex-col items-end mr-4">
+        {mode === 'baseRecipe' ? (
+          <div className="flex flex-col items-end gap-1 mr-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                aria-label="Cantidad"
+                value={item.quantity !== undefined ? item.quantity : 1}
+                onChange={(e) => onUpdateQuantity(id, parseFloat(e.target.value) || 0)}
+                className="w-20 text-center font-medium text-slate-gray border border-gray-200 rounded-lg p-1 outline-none focus:border-peach-soft focus:ring-1 focus:ring-peach-soft [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              <span className="text-sm font-medium text-gray-500 w-8">{item.measurementUnit}</span>
+            </div>
+            {item.globalCost !== undefined && item.unitQuantity && (
               <span className="text-sm font-bold text-slate-gray">
                 $ {((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity * item.globalCost).toFixed(2)} USD
               </span>
-              <span className="text-xs text-gray-400">Costo Calculado</span>
-           </div>
-        ) : null}
-
-        {mode === 'baseRecipe' ? (
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              aria-label="Cantidad"
-              value={item.quantity !== undefined ? item.quantity : 1}
-              onChange={(e) => onUpdateQuantity(id, parseFloat(e.target.value) || 0)}
-              className="w-20 text-center font-medium text-slate-gray border border-gray-200 rounded-lg p-1 outline-none focus:border-peach-soft focus:ring-1 focus:ring-peach-soft [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-            <span className="text-sm font-medium text-gray-500">{item.measurementUnit}</span>
+            )}
           </div>
         ) : (
           <div className="flex items-center bg-gray-50 rounded-lg p-1 border border-gray-100">
