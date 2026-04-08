@@ -1,5 +1,9 @@
 # Plan de Trabajo: Vista de Listado de Recetas Base (3.1)
 
+**Estado:** Completado
+**Rama:** (Por definir)
+
+
 ## 🎯 Objetivo
 Implementar una vista previa que muestre el listado de recetas ya agregadas, con un estado inicial simplificado si no hay registros.
 

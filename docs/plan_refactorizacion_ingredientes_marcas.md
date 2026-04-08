@@ -1,5 +1,9 @@
 # Plan de Trabajo: Refactorización de Ingredientes y Marcas
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## 🎯 Objetivo
 
 Reestructurar la arquitectura de datos del sistema para separar el concepto genérico de "Ingrediente" de sus "Marcas/Presentaciones" específicas. Esto permitirá que las Recetas Base y Súper Recetas funcionen como plantillas (usando ingredientes genéricos), mientras que la selección de marcas, presentaciones y precios exactos se difiere al momento de crear un Presupuesto, el cual dictará el costo real de fabricación.

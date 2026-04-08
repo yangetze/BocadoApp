@@ -90,6 +90,7 @@ Los iconos de la aplicación (Favicon y App Icon) deberán ubicarse en la carpet
 - **Logo SVG (Header de la app):** `apps/frontend/public/logo.svg`
 
 *Nota para el desarrollador:* Cuando subas los archivos de iconos a estas rutas, asegúrate de referenciarlos correctamente en `apps/frontend/index.html` (o `_document.tsx` si el stack cambia a Next.js en el futuro).
+
 ## 📱 7. Diseño Responsivo (Responsive Design)
 
 La aplicación debe ser completamente usable desde dispositivos móviles. El enfoque "Data-First" debe adaptarse a pantallas pequeñas sin sacrificar la claridad.
@@ -109,6 +110,13 @@ For a complex builder or creation view, always prioritize a top-down logical flo
 3. **Content/Items List**: The main editable list of loaded items (e.g., the Canvas).
 4. **Add Button**: A button placed logically after the items list that opens a modal, drawer, or specific selector for selecting new items. Ensure quantity modifiers for existing items remain inline with the items list rather than requiring a separate modal.
 
+## 🧱 8. Estructura Obligatoria de Módulos Nuevos
+Cada vez que se cree un nuevo módulo o vista principal en la aplicación, **debe** cumplir con los siguientes requisitos estructurales y funcionales para mantener la consistencia:
+1. **Listado Principal:** Una vista clara que muestre los elementos del módulo (ej. tabla, tarjetas o lista).
+   - **Regla de Paginación (Novedad Feb 2025):** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario. El estándar es de **10 registros por página**.
+2. **Botón Principal de Acción:** Un botón prominente (generalmente "Crear" o "Agregar") que siga las reglas de botones primarios descritas arriba.
+3. **Buscador (Search):** Como mínimo, debe existir una barra de búsqueda por texto que permita filtrar los resultados listados en función de los campos visibles en la interfaz.
+4. **Diseño Responsivo (Responsive Rules):** Se deben aplicar estrictamente las reglas definidas en la sección 7. La vista debe funcionar impecablemente en dispositivos móviles, adaptando la navegación, el listado y los botones de acción para interfaces táctiles.
 ### Listados y Paginación (Novedad Feb 2025)
 - **Regla de Paginación:** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario.
 - **Estándar:** El estándar es de **10 registros por página**.

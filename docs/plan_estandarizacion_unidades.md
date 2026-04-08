@@ -1,5 +1,9 @@
 # Plan de Trabajo: Estandarización de Unidades de Medida
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 
 ## 🎯 Objetivo
 

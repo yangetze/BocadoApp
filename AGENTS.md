@@ -34,3 +34,16 @@ Welcome to the BocadoApp monorepo! This document serves as a guide for AI assist
 - **Manejo de Errores:** Nunca romper la UI; usar try/catch en el frontend y reportar errores amigables.
 - **Seguridad de API:** Es OBLIGATORIO usar el middleware `verifyToken` en todas las rutas de API que se desarrollen para proteger los endpoints.
 - **Limpieza de Archivos:** OBLIGATORIO: Los logs de error y las capturas de test o de error NO deben subirse al repositorio. Deben ser eliminados antes de armar un pull request.
+
+## 📚 Documentación y Flujo de Trabajo
+- **Estructura de Nuevos Módulos (Frontend):** Cada módulo nuevo que se cree debe incluir obligatoriamente:
+  1. Un listado de elementos.
+  2. Un botón principal de crear.
+  3. Al menos un buscador por texto que filtre por los campos visibles en el listado.
+  4. Aplicación estricta de reglas de diseño responsive (ver `frontend-styleguide.md`).
+  Si estas características ya existen, asegúrate de reforzarlas y mantenerlas operativas.
+- **Guías Específicas:** Consultar `frontend-styleguide.md` para reglas de UI/UX. Consultar `ROADMAP.md` para reglas de Negocio y este mismo documento (`AGENTS.md`) u otra guía dedicada para reglas de Backend.
+- **Actualización de Planes:** Antes de crear un PR, es **obligatorio**:
+  1. Actualizar el estado del plan con todas sus tareas marcadas (`[x]`).
+  2. Cambiar el `**Estado:**` del plan a `Completado`.
+  3. Asegurarse de que el plan incluye el nombre de la rama en el campo `**Rama:**`.

@@ -1,5 +1,9 @@
 # Plan: Vista de Listado y Validación de Tasas en Presupuestos
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## 1. Listado de Presupuestos
 - **Objetivo:** Proveer un panel de control rápido para ver, buscar y gestionar los presupuestos emitidos.
 - **Implementación (Frontend):**

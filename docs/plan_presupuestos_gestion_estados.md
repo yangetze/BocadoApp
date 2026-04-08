@@ -1,5 +1,9 @@
 # Plan: Gestión de Estados y Ciclo de Vida de Presupuestos
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## 1. Definición de Estados
 Todo presupuesto creado en el sistema debe transitar por un ciclo de vida definido mediante una máquina de estados simple para mantener el orden. Los estados propuestos son:
 

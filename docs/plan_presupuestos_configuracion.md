@@ -1,5 +1,9 @@
 # Plan: Configuración Avanzada de Presupuestos
 
+**Estado:** Backlog
+**Rama:** (Por definir)
+
+
 ## 1. Configuración de Moneda
 - **Nivel de Sistema (Ajustes Globales):**
   - Añadir en el menú de "Configuración del Sistema" un campo para definir la **Moneda Default para Presupuestos**.
