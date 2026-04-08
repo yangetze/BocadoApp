@@ -19,7 +19,9 @@ import { Canvas } from './Canvas';
 import { DraggableItem } from './DraggableItem';
 import { SortableItem } from './SortableItem';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { MobilePaletteModal } from './MobilePaletteModal';
+import { Plus } from 'lucide-react';
 
 import { useBuilder } from './useBuilder';
 import { BuilderHeader } from './BuilderHeader';
@@ -28,6 +30,8 @@ import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm';
 import { IngredientsSummary } from './IngredientsSummary';
 
 export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
+  const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
+
   const {
     canvasItems,
     setCanvasItems,
@@ -136,6 +140,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 
 
   const handleAddItem = useCallback((item) => {
+    setIsPaletteModalOpen(false);
     const newItem = {
       ...item,
       id: `canvas-${Date.now()}-${item.id}`,
@@ -160,7 +165,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     >
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Left Column: Palette */}
-        <div className="lg:col-span-1">
+        <div className="hidden lg:block lg:col-span-1">
           <Palette
             items={availableItems}
             title={paletteTitle}
@@ -204,6 +209,16 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
                 onUpdateQuantity={updateItemQuantity}
               />
 
+              {/* Mobile Add Item Button */}
+              <button
+                type="button"
+                onClick={() => setIsPaletteModalOpen(true)}
+                className="w-full mt-4 lg:hidden flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-peach-soft text-peach-soft rounded-xl hover:bg-peach-soft/5 transition-colors font-medium"
+              >
+                <Plus size={20} />
+                Agregar elemento
+              </button>
+
               {(mode === 'baseRecipe' || mode === 'superRecipe') && (
                 <IngredientsSummary totals={ingredientTotals} />
             )}
@@ -212,6 +227,21 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
           </div>
         </div>
       </div>
+
+
+      <MobilePaletteModal
+        isOpen={isPaletteModalOpen}
+        onClose={() => setIsPaletteModalOpen(false)}
+      >
+        <div className="h-full">
+           <Palette
+             items={availableItems}
+             title={paletteTitle}
+             description={paletteDescription}
+             onAdd={handleAddItem}
+           />
+        </div>
+      </MobilePaletteModal>
 
       {/* Drag Overlay for smooth animations while dragging */}
       <DragOverlay dropAnimation={dropAnimationConfig}>
