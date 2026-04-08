@@ -15,10 +15,8 @@
     "test:frontend": "npm test --workspace=apps/frontend"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3"
+    "@prisma/client": "^5.10.2",
+    "prisma": "^5.10.2"
   },
-  "type": "module",
-  "devDependencies": {
-    "prisma": "^6.19.3"
-  }
+  "type": "module"
 }
