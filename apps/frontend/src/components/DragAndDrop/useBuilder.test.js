@@ -1,6 +1,7 @@
 /* global describe, it, expect, jest */
 import { renderHook, act } from '@testing-library/react';
 import { useBuilder } from './useBuilder';
+import { superRecipeApi } from '../../api';
 
 // Mock dependencies
 jest.mock('react-hot-toast', () => ({
@@ -64,17 +65,6 @@ describe('useBuilder - ingredientTotals', () => {
       ]);
     });
 
-    // Factor Bizcocho = 500 / 1000 = 0.5
-    //   - Harina: 200 * 0.5 = 100
-    //   - Azúcar: 100 * 0.5 = 50
-    // Factor Relleno = 200 / 200 = 1.0
-    //   - Azúcar: 50 * 1.0 = 50
-    //   - Crema: 150 * 1.0 = 150
-    // Totales esperados:
-    //   - Harina: 100
-    //   - Azúcar: 100
-    //   - Crema: 150
-
     const totals = result.current.ingredientTotals;
     expect(totals).toHaveLength(3);
 
@@ -86,5 +76,30 @@ describe('useBuilder - ingredientTotals', () => {
 
     const crema = totals.find(t => t.name === 'Crema');
     expect(crema.totalQuantity).toBe(150);
+  });
+});
+
+describe('useBuilder - handleSave', () => {
+  it('debería formatear correctamente el payload de superRecipe con quantityNeeded', async () => {
+    const { result } = renderHook(() => useBuilder('superRecipe'));
+
+    act(() => {
+      result.current.setCanvasItems([
+        { id: 'canvas-12345-br1', quantity: 500 }
+      ]);
+    });
+
+    await act(async () => {
+      await result.current.handleSave();
+    });
+
+    expect(superRecipeApi.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: expect.any(String),
+        baseRecipes: [
+          { baseRecipeId: 'br1', quantityNeeded: 500 }
+        ]
+      })
+    );
   });
 });
