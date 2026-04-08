@@ -1,12 +1,13 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import { Plus } from 'lucide-react';
 
 import PropTypes from 'prop-types';
 import React from 'react';
 
 // ⚡ Bolt: Wrapped DraggableItem in React.memo to prevent expensive re-renders of the entire
 // palette list during drag operations on the canvas. These items are largely static.
-export const DraggableItem = React.memo(function DraggableItem({ id, item, isOverlay = false }) {
+export const DraggableItem = React.memo(function DraggableItem({ id, item, isOverlay = false, onAdd }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `palette-${id}`,
     data: { ...item, source: 'palette' }
@@ -45,6 +46,20 @@ export const DraggableItem = React.memo(function DraggableItem({ id, item, isOve
           </p>
         </div>
       )}
+      {!isOverlay && onAdd && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation(); // prevent drag selection
+            onAdd(item);
+          }}
+          onPointerDown={(e) => e.stopPropagation()} // prevent drag selection in dnd-kit
+          className="ml-2 p-1.5 rounded-lg bg-gray-50 text-gray-400 hover:bg-peach-soft hover:text-white transition-colors lg:hidden"
+          aria-label="Añadir al lienzo"
+        >
+          <Plus size={18} />
+        </button>
+      )}
     </div>
   );
 });
@@ -60,4 +75,5 @@ DraggableItem.propTypes = {
     brand: PropTypes.string,
   }).isRequired,
   isOverlay: PropTypes.bool,
+  onAdd: PropTypes.func,
 };
