@@ -34,17 +34,10 @@ export const DraggableItem = React.memo(function DraggableItem({ id, item, isOve
       <div className="w-10 h-10 rounded-lg bg-peach-soft/20 text-peach-soft flex items-center justify-center font-bold text-lg">
         {item.name.charAt(0)}
       </div>
-      <div className="flex-1 overflow-hidden">
-        <p className="font-medium text-slate-gray truncate">{item.name}</p>
+      <div>
+        <p className="font-medium text-slate-gray">{item.name}</p>
         <p className="text-xs text-gray-400">{item.globalCost !== undefined ? `${item.brand ? item.brand + ' • ' : ''}${item.unitQuantity || ''} ${item.measurementUnit || ''}`.trim() || `Ingrediente (${item.measurementUnit})` : item.type === 'baseRecipe' ? 'Receta Base' : 'Súper Receta'}</p>
       </div>
-      {item.globalCost !== undefined && (
-        <div className="text-right ml-2 flex-shrink-0">
-          <p className="text-sm font-bold text-slate-gray">
-            $ {item.globalCost.toFixed(2)}
-          </p>
-        </div>
-      )}
     </div>
   );
 });
