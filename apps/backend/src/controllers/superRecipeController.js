@@ -63,13 +63,19 @@ export const updateSuperRecipe = async (req, res) => {
     const { id } = req.params;
     const { name, description, baseRecipes, directIngredients } = req.body;
 
+    // Security: Verify ownership before executing transaction to prevent unauthorized nested operations (IDOR)
+    const existingSuperRecipe = await prisma.superRecipe.findUnique({
+      where: { id }
+    });
+
+    if (!existingSuperRecipe || existingSuperRecipe.userId !== req.user.id) {
+      return res.status(404).json({ error: 'Súper receta no encontrada o no tienes permiso para actualizarla' });
+    }
+
     const updated = await prisma.$transaction(async (tx) => {
       // Basic update
       await tx.superRecipe.update({
-        where: { 
-          id,
-          userId: req.user.id 
-        },
+        where: { id },
         data: { name, description }
       });
 
@@ -121,6 +127,15 @@ export const deleteSuperRecipe = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Security: Verify ownership before deleting (IDOR)
+    const existingSuperRecipe = await prisma.superRecipe.findUnique({
+      where: { id }
+    });
+
+    if (!existingSuperRecipe || existingSuperRecipe.userId !== req.user.id) {
+      return res.status(404).json({ error: 'Súper receta no encontrada o no tienes permiso para eliminarla' });
+    }
+
     // Check if used in budgets
     const usedInBudget = await prisma.budgetSuperRecipe.findFirst({ where: { superRecipeId: id } });
     if (usedInBudget) {
@@ -128,10 +143,7 @@ export const deleteSuperRecipe = async (req, res) => {
     }
 
     await prisma.superRecipe.delete({ 
-      where: { 
-        id,
-        userId: req.user.id
-      } 
+      where: { id }
     });
     res.status(200).json({ message: 'Súper receta eliminada exitosamente' });
   } catch (error) {
