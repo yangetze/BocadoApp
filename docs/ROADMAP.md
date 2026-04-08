@@ -56,6 +56,7 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | :--- | :--- | :--- | :--- | :--- |
 | **MVP 1** | Definición de Guía Visual (Minimalismo Sensorial) | 🟢 Completado | Alta | Equipo Diseño/UI |
 | **MVP 1** | Motor Relacional (Ingredientes -> Súper Recetas) | 🟢 Completado | Crítica | Equipo Backend |
+| **MVP 1** | Refactorización de Ingredientes y Marcas | 🟢 Completado | Crítica | Arquitectura |
 | **MVP 1** | Implementación de `frontend-styleguide.md` en código | 🟢 Completado | Alta | Equipo Frontend |
 | **MVP 1** | Automatización API Bimonetaria (Manual + CriptoYa) | 🟢 Completado | Alta | Equipo Backend / Frontend |
 | **MVP 1** | Implementación de TestMode (In-Memory) vs PostgreSQL | 🟢 Completado | Alta | Equipo Backend |
