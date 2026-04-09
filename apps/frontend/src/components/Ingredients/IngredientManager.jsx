@@ -49,8 +49,8 @@ export default function IngredientManager() {
   };
 
   const handleSaveModal = async (formData) => {
-    if (!formData.name || !formData.defaultCost || !formData.measurementUnit) {
-      toast.error('Nombre, costo estimado y unidad base son obligatorios');
+    if (!formData.name || !formData.globalPrice || !formData.globalPriceQuantity || !formData.measurementUnit) {
+      toast.error('Nombre, precio global, cantidad y unidad base son obligatorios');
       return;
     }
 
@@ -110,7 +110,7 @@ export default function IngredientManager() {
           <thead>
             <tr className="border-b-2 border-gray-100 text-slate-gray">
               <th className="py-3 px-4 font-semibold">Nombre</th>
-              <th className="py-3 px-4 font-semibold">Costo Estimado Base (USD)</th>
+              <th className="py-3 px-4 font-semibold">Precio Global (USD)</th>
               <th className="py-3 px-4 font-semibold">Unidad Base</th>
               <th className="py-3 px-4 font-semibold">Presentaciones</th>
               <th className="py-3 px-4 font-semibold text-right">Acciones</th>
@@ -134,7 +134,7 @@ export default function IngredientManager() {
               ingredients.map((ing) => (
                 <tr key={ing.id} className="border-b border-gray-50 hover:bg-[#F7C5B2]/10 transition-colors group">
                   <td className="py-4 px-4 font-medium text-slate-gray">{ing.name}</td>
-                  <td className="py-4 px-4 text-slate-gray font-medium">${Number(ing.defaultCost).toFixed(2)}</td>
+                  <td className="py-4 px-4 text-slate-gray font-medium">${Number(ing.globalPrice).toFixed(2)} / {ing.globalPriceQuantity !== 1 ? ing.globalPriceQuantity + " " : ""}{ing.measurementUnit}</td>
                   <td className="py-4 px-4 text-gray-500">
                      <span className="bg-gray-100 px-2 py-1 rounded-md text-xs font-semibold">{ing.measurementUnit}</span>
                   </td>
@@ -181,7 +181,7 @@ export default function IngredientManager() {
                   <p className="text-xs text-gray-400 mt-0.5">{ing.presentations?.length || 0} presentaciones</p>
                 </div>
                 <div className="text-right flex items-center gap-3">
-                  <span className="font-semibold text-slate-gray text-[15px]">${Number(ing.defaultCost).toFixed(2)}</span>
+                  <span className="font-semibold text-slate-gray text-[15px]">${Number(ing.globalPrice).toFixed(2)} / {ing.globalPriceQuantity !== 1 ? ing.globalPriceQuantity + " " : ""}{ing.measurementUnit}</span>
                   <div className={`text-gray-400 transition-transform ${expandedId === ing.id ? 'rotate-180' : ''}`}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="6 9 12 15 18 9"></polyline>

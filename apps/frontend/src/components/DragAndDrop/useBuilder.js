@@ -32,8 +32,8 @@ export function useBuilder(mode) {
   // Impact: Reduces CPU overhead per render cycle for baseRecipe canvases by preventing redundant iteration.
   const totalBaseRecipeCost = useMemo(() => {
     return canvasItems.reduce((acc, item) => {
-      if (mode === 'baseRecipe' && item.defaultCost !== undefined) {
-        return acc + (item.quantity !== undefined ? item.quantity : 1) * item.defaultCost;
+      if (mode === 'baseRecipe' && item.globalPrice !== undefined) {
+        return acc + (item.quantity !== undefined ? item.quantity : 1) * (item.globalPrice / (item.globalPriceQuantity || 1));
       }
       return acc;
     }, 0);

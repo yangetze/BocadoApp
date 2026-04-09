@@ -7,8 +7,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
   const isEditing = !!initialData;
   const [formData, setFormData] = useState({
     name: '',
-    defaultCost: '',
-    unitQuantity: '1',
+    globalPrice: '',
+    globalPriceQuantity: '1000',
     measurementUnit: 'gr',
     presentations: []
   });
@@ -21,16 +21,12 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
     measurementUnit: 'gr'
   });
 
-  const [autoCalculate, setAutoCalculate] = useState(true);
-
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
         setFormData({ ...initialData, presentations: initialData.presentations || [] });
-        setAutoCalculate(false);
       } else {
-        setFormData({ name: '', defaultCost: '', unitQuantity: '1', measurementUnit: 'gr', presentations: [] });
-        setAutoCalculate(true);
+        setFormData({ name: '', globalPrice: '', globalPriceQuantity: '1000', measurementUnit: 'gr', presentations: [] });
         setCurrentPresentation({
           presentationName: '',
           brand: '',
@@ -42,8 +38,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
     }
   }, [isOpen, initialData]);
 
-  useEffect(() => {
-    if (autoCalculate && formData.presentations && formData.presentations.length > 0) {
+  const calculateAveragePrice = () => {
+    if (formData.presentations && formData.presentations.length > 0) {
       let totalCostPerBaseUnit = 0;
       let validPresentations = 0;
 
@@ -64,11 +60,13 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
       });
 
       if (validPresentations > 0) {
-        const avgCost = totalCostPerBaseUnit / validPresentations;
-        setFormData(prev => ({ ...prev, defaultCost: avgCost.toFixed(4) }));
+        const avgCostPerUnit = totalCostPerBaseUnit / validPresentations;
+        const globalPriceQty = parseFloat(formData.globalPriceQuantity) || 1;
+        const newGlobalPrice = avgCostPerUnit * globalPriceQty;
+        setFormData(prev => ({ ...prev, globalPrice: newGlobalPrice.toFixed(4) }));
       }
     }
-  }, [formData.presentations, autoCalculate, formData.measurementUnit]);
+  };
 
   const addPresentation = () => {
     if (!currentPresentation.presentationName || !currentPresentation.cost || !currentPresentation.unitQuantity) return;
@@ -119,7 +117,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+            className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden"
           >
             <div className="p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-slate-gray">
@@ -127,7 +125,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="name">Nombre *</label>
                 <input
@@ -141,29 +139,44 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 />
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 items-end">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="defaultCost">Costo Estimado Base (USD) *</label>
+                  <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="globalPrice">Precio Global ($) *</label>
                   <div className="relative">
                     <span className="absolute left-3 top-3 text-gray-500">$</span>
                     <input
-                      id="defaultCost"
+                      id="globalPrice"
                       type="number"
                       required
-                      step="0.01"
+                      step="0.0001"
                       min="0"
                       placeholder="0.00"
                       className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
-                      value={formData.defaultCost}
+                      value={formData.globalPrice}
                       onChange={(e) => {
-                        setFormData({ ...formData, defaultCost: e.target.value });
-                        setAutoCalculate(false);
+                        setFormData({ ...formData, globalPrice: e.target.value });
                       }}
                     />
                   </div>
                 </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="measurementUnit">Unidad Base *</label>
+                <div className="w-24">
+                  <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="globalPriceQuantity">Por cada *</label>
+                  <input
+                    id="globalPriceQuantity"
+                    type="number"
+                    required
+                    step="0.01"
+                    min="0"
+                    placeholder="1000"
+                    className="w-full border border-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
+                    value={formData.globalPriceQuantity}
+                    onChange={(e) => {
+                      setFormData({ ...formData, globalPriceQuantity: e.target.value });
+                    }}
+                  />
+                </div>
+                <div className="w-28">
+                  <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="measurementUnit">Unidad *</label>
                   <select
                     id="measurementUnit"
                     required
@@ -175,6 +188,16 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                       <option key={unit} value={unit}>{unit}</option>
                     ))}
                   </select>
+                </div>
+                <div>
+                   <button
+                     type="button"
+                     onClick={calculateAveragePrice}
+                     className="px-4 py-3 bg-gray-100 text-slate-gray rounded-lg hover:bg-gray-200 font-medium transition-colors text-sm"
+                     title="Calcular Precio Promedio de las Presentaciones"
+                   >
+                     Calcular
+                   </button>
                 </div>
               </div>
 

@@ -71,9 +71,9 @@ export const SortableItem = React.memo(function SortableItem({ id, item, mode, o
               />
               <span className="text-sm font-medium text-gray-500 w-8">{item.measurementUnit}</span>
             </div>
-            {item.globalCost !== undefined && item.unitQuantity && (
+            {item.globalPrice !== undefined && item.unitQuantity && (
               <span className="text-sm font-bold text-slate-gray">
-                $ {((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity * item.globalCost).toFixed(2)} USD
+                $ {((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity * (item.globalPrice / (item.globalPriceQuantity || 1))).toFixed(2)} USD
               </span>
             )}
           </div>
@@ -123,7 +123,7 @@ SortableItem.propTypes = {
     brand: PropTypes.string,
     unitQuantity: PropTypes.number,
     measurementUnit: PropTypes.string,
-    globalCost: PropTypes.number,
+    globalPrice: PropTypes.number,
   }).isRequired,
   mode: PropTypes.string,
   onRemove: PropTypes.func.isRequired,

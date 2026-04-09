@@ -20,11 +20,15 @@ describe('IngredientFormModal', () => {
     // Fill main ingredient data
     fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Harina' } });
 
+    // Set global price quantity to 1000 manually for test predictability
+    const qtyGlobalInput = screen.getByLabelText('Por cada *');
+    fireEvent.change(qtyGlobalInput, { target: { value: '1000' } });
+
     // Add first presentation
     const presentationNameInput = screen.getByPlaceholderText('Ej. Paquete 1Kg');
     const brandInput = screen.getByPlaceholderText('Ej. Robin Hood');
-    const costInput = screen.getAllByRole('spinbutton')[1]; // Second number input is cost
-    const qtyInput = screen.getAllByRole('spinbutton')[2]; // Third number input is quantity
+    const costInput = screen.getAllByRole('spinbutton')[2]; // third number input is cost
+    const qtyInput = screen.getAllByRole('spinbutton')[3]; // fourth number input is quantity
 
     fireEvent.change(presentationNameInput, { target: { value: 'P1' } });
     fireEvent.change(brandInput, { target: { value: 'B1' } });
@@ -33,11 +37,14 @@ describe('IngredientFormModal', () => {
 
     fireEvent.click(screen.getByText('Add'));
 
-    // The defaultCost input should be automatically updated
-    // cost per unit = 1.00 / 1000 = 0.001
-    const defaultCostInput = screen.getByLabelText('Costo Estimado Base (USD) *');
+    // We must manually click the calculate button now
+    fireEvent.click(screen.getByText('Calcular'));
+
+    // The globalPrice input should be automatically updated
+    // cost per unit = 1.00 / 1000 = 0.001 * 1000 (global qty) = 1.0000
+    const globalPriceInput = screen.getByLabelText('Precio Global ($) *');
     await waitFor(() => {
-        expect(defaultCostInput.value).toBe('0.0010');
+        expect(globalPriceInput.value).toBe('1.0000');
     });
 
     // Add second presentation
@@ -47,13 +54,15 @@ describe('IngredientFormModal', () => {
     fireEvent.change(qtyInput, { target: { value: '1000' } });
 
     fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByText('Calcular'));
 
     // New average cost per unit:
     // P1: 1.00 / 1000 = 0.001
     // P2: 2.00 / 1000 = 0.002
     // Avg: (0.001 + 0.002) / 2 = 0.0015
+    // Global price = 0.0015 * 1000 = 1.5000
     await waitFor(() => {
-        expect(defaultCostInput.value).toBe('0.0015');
+        expect(globalPriceInput.value).toBe('1.5000');
     });
   });
 });

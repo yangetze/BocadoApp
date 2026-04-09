@@ -115,7 +115,7 @@ export function BrandSelectionModal({ isOpen, onClose, onConfirm, superRecipesLi
 
                       {(!ing.presentations || ing.presentations.length === 0) ? (
                          <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-xl border border-amber-100/50">
-                            Este ingrediente genérico no tiene presentaciones de compra registradas. Se usará el costo estimado de \${Number(ing.defaultCost).toFixed(2)}.
+                            Este ingrediente genérico no tiene presentaciones de compra registradas. Se usará el costo estimado de \${Number(ing.globalPrice).toFixed(2) + " / " + (ing.globalPriceQuantity !== 1 ? ing.globalPriceQuantity + " " : "") + ing.measurementUnit}.
                          </div>
                       ) : (
                          <div className="space-y-2">

@@ -37,12 +37,12 @@ export const DraggableItem = React.memo(function DraggableItem({ id, item, isOve
       </div>
       <div className="flex-1 overflow-hidden">
         <p className="font-medium text-slate-gray truncate">{item.name}</p>
-        <p className="text-xs text-gray-400">{item.globalCost !== undefined ? `${item.brand ? item.brand + ' • ' : ''}${item.unitQuantity || ''} ${item.measurementUnit || ''}`.trim() || `Ingrediente (${item.measurementUnit})` : item.type === 'baseRecipe' ? 'Receta Base' : 'Súper Receta'}</p>
+        <p className="text-xs text-gray-400">{item.globalPrice !== undefined ? `${item.brand ? item.brand + ' • ' : ''}${item.unitQuantity || ''} ${item.measurementUnit || ''}`.trim() || `Ingrediente (${item.measurementUnit})` : item.type === 'baseRecipe' ? 'Receta Base' : 'Súper Receta'}</p>
       </div>
-      {item.globalCost !== undefined && (
+      {item.globalPrice !== undefined && (
         <div className="text-right ml-2 flex-shrink-0">
           <p className="text-sm font-bold text-slate-gray">
-            $ {item.globalCost.toFixed(2)}
+            $ {item.globalPrice.toFixed(2)}
           </p>
         </div>
       )}
@@ -69,7 +69,7 @@ DraggableItem.propTypes = {
   item: PropTypes.shape({
     name: PropTypes.string.isRequired,
     type: PropTypes.string,
-    globalCost: PropTypes.number,
+    globalPrice: PropTypes.number,
     measurementUnit: PropTypes.string,
     unitQuantity: PropTypes.number,
     brand: PropTypes.string,

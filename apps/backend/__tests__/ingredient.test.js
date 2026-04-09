@@ -25,8 +25,8 @@ describe('Ingredient Routes', () => {
   describe('GET /api/ingredients', () => {
     it('should return a list of ingredients', async () => {
       const mockIngredients = [
-        { id: '1', name: 'Flour', globalCost: 1.5, measurementUnit: 'kg' },
-        { id: '2', name: 'Sugar', globalCost: 2.0, measurementUnit: 'kg' }
+        { id: '1', name: 'Flour', globalPrice: 1.5, measurementUnit: 'kg' },
+        { id: '2', name: 'Sugar', globalPrice: 2.0, measurementUnit: 'kg' }
       ];
       prisma.ingredient.findMany.mockResolvedValue(mockIngredients);
 
@@ -39,7 +39,7 @@ describe('Ingredient Routes', () => {
 
     it('should return a filtered list of ingredients when search query is provided', async () => {
       const mockIngredients = [
-        { id: '1', name: 'Flour', globalCost: 1.5, measurementUnit: 'kg' }
+        { id: '1', name: 'Flour', globalPrice: 1.5, measurementUnit: 'kg' }
       ];
       prisma.ingredient.findMany.mockResolvedValue(mockIngredients);
 
@@ -53,7 +53,7 @@ describe('Ingredient Routes', () => {
 
   describe('POST /api/ingredients', () => {
     it('should create a new ingredient', async () => {
-      const newIngredient = { name: 'Eggs', globalCost: 3.0, measurementUnit: 'u', brand: 'Farm', userId: 'user-default-1' };
+      const newIngredient = { name: 'Eggs', globalPrice: 3.0, measurementUnit: 'u', brand: 'Farm', userId: 'user-default-1' };
       const createdIngredient = { id: '3', ...newIngredient };
 
       prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });

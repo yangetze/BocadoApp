@@ -43,14 +43,15 @@ export const getIngredients = async (req, res) => {
 
 export const createIngredient = async (req, res) => {
   try {
-    const { name, defaultCost, measurementUnit, presentations } = req.body;
+    const { name, globalPrice, globalPriceQuantity = 1, measurementUnit, presentations } = req.body;
     const userId = req.user.id;
 
     if (isTestMode()) {
       const newIngredient = {
         id: `ing-${crypto.randomUUID()}`,
         name,
-        defaultCost: parseFloat(defaultCost),
+        globalPrice: parseFloat(globalPrice),
+        globalPriceQuantity: parseFloat(globalPriceQuantity),
         measurementUnit,
         presentations: presentations || [],
         userId: userId,
@@ -64,7 +65,8 @@ export const createIngredient = async (req, res) => {
     const newIngredient = await prisma.ingredient.create({
       data: {
         name,
-        defaultCost: parseFloat(defaultCost),
+        globalPrice: parseFloat(globalPrice),
+        globalPriceQuantity: parseFloat(globalPriceQuantity),
         measurementUnit,
         userId: userId,
         presentations: {
@@ -92,7 +94,7 @@ export const createIngredient = async (req, res) => {
 export const updateIngredient = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, defaultCost, measurementUnit, presentations } = req.body;
+    const { name, globalPrice, globalPriceQuantity = 1, measurementUnit, presentations } = req.body;
 
     if (isTestMode()) {
       const ingredientIndex = mockData.ingredients.findIndex(i => i.id === id);
@@ -101,7 +103,8 @@ export const updateIngredient = async (req, res) => {
       const updated = {
         ...mockData.ingredients[ingredientIndex],
         ...(name && { name }),
-        ...(defaultCost !== undefined && { defaultCost: parseFloat(defaultCost) }),
+        ...(globalPrice !== undefined && { globalPrice: parseFloat(globalPrice) }),
+           ...(globalPriceQuantity !== undefined && { globalPriceQuantity: parseFloat(globalPriceQuantity) }),
         ...(measurementUnit && { measurementUnit }),
         ...(presentations && { presentations })
       };
@@ -120,7 +123,8 @@ export const updateIngredient = async (req, res) => {
          where: { id },
          data: {
            name,
-           ...(defaultCost !== undefined && { defaultCost: parseFloat(defaultCost) }),
+           ...(globalPrice !== undefined && { globalPrice: parseFloat(globalPrice) }),
+           ...(globalPriceQuantity !== undefined && { globalPriceQuantity: parseFloat(globalPriceQuantity) }),
            measurementUnit
          }
        });
