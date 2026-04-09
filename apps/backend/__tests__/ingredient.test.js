@@ -49,7 +49,6 @@ describe('Ingredient Routes', () => {
       expect(res.body).toEqual(mockIngredients);
       expect(prisma.ingredient.findMany).toHaveBeenCalledTimes(1);
     });
-    });
   });
 
   describe('POST /api/ingredients', () => {

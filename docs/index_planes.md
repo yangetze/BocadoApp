@@ -26,3 +26,4 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan: Ítems Genéricos en Presupuestos](plan_presupuestos_items_genericos.md)
 - [Plan de Trabajo: Estandarización de Unidades de Medida](plan_estandarizacion_unidades.md)
 - [Plan: Resumen Total de Ingredientes](plan_resumen_total_ingredientes.md)
+- [Plan de Trabajo: Mejoras UX/UI Módulo Ingredientes - Marcas y Precios](plan_ingredientes_marcas.md)

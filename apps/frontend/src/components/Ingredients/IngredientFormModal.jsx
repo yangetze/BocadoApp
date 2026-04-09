@@ -7,21 +7,92 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
   const isEditing = !!initialData;
   const [formData, setFormData] = useState({
     name: '',
+    defaultCost: '',
+    unitQuantity: '1',
+    measurementUnit: 'gr',
+    presentations: []
+  });
+
+  const [currentPresentation, setCurrentPresentation] = useState({
+    presentationName: '',
     brand: '',
-    globalCost: '',
+    cost: '',
     unitQuantity: '1',
     measurementUnit: 'gr'
   });
 
+  const [autoCalculate, setAutoCalculate] = useState(true);
+
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
-        setFormData({ ...initialData });
+        setFormData({ ...initialData, presentations: initialData.presentations || [] });
+        setAutoCalculate(false);
       } else {
-        setFormData({ name: '', brand: '', globalCost: '', unitQuantity: '1', measurementUnit: 'gr' });
+        setFormData({ name: '', defaultCost: '', unitQuantity: '1', measurementUnit: 'gr', presentations: [] });
+        setAutoCalculate(true);
+        setCurrentPresentation({
+          presentationName: '',
+          brand: '',
+          cost: '',
+          unitQuantity: '1',
+          measurementUnit: 'gr'
+        });
       }
     }
   }, [isOpen, initialData]);
+
+  useEffect(() => {
+    if (autoCalculate && formData.presentations && formData.presentations.length > 0) {
+      let totalCostPerBaseUnit = 0;
+      let validPresentations = 0;
+
+      formData.presentations.forEach(p => {
+        const cost = parseFloat(p.cost);
+        const qty = parseFloat(p.unitQuantity);
+        if (!isNaN(cost) && !isNaN(qty) && qty > 0) {
+          let costPerUnit = cost / qty;
+
+          if (p.measurementUnit === 'kg' && formData.measurementUnit === 'gr') costPerUnit = cost / (qty * 1000);
+          if (p.measurementUnit === 'gr' && formData.measurementUnit === 'kg') costPerUnit = cost / (qty / 1000);
+          if (p.measurementUnit === 'l' && formData.measurementUnit === 'ml') costPerUnit = cost / (qty * 1000);
+          if (p.measurementUnit === 'ml' && formData.measurementUnit === 'l') costPerUnit = cost / (qty / 1000);
+
+          totalCostPerBaseUnit += costPerUnit;
+          validPresentations++;
+        }
+      });
+
+      if (validPresentations > 0) {
+        const avgCost = totalCostPerBaseUnit / validPresentations;
+        setFormData(prev => ({ ...prev, defaultCost: avgCost.toFixed(4) }));
+      }
+    }
+  }, [formData.presentations, autoCalculate, formData.measurementUnit]);
+
+  const addPresentation = () => {
+    if (!currentPresentation.presentationName || !currentPresentation.cost || !currentPresentation.unitQuantity) return;
+
+    setFormData(prev => ({
+      ...prev,
+      presentations: [...(prev.presentations || []), { ...currentPresentation }]
+    }));
+
+    setCurrentPresentation({
+      presentationName: '',
+      brand: '',
+      cost: '',
+      unitQuantity: '1',
+      measurementUnit: formData.measurementUnit || 'gr'
+    });
+  };
+
+  const removePresentation = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      presentations: prev.presentations.filter((_, i) => i !== index)
+    }));
+  };
 
   if (!isOpen) return null;
 
@@ -84,7 +155,10 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                       placeholder="0.00"
                       className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
                       value={formData.defaultCost}
-                      onChange={(e) => setFormData({ ...formData, defaultCost: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, defaultCost: e.target.value });
+                        setAutoCalculate(false);
+                      }}
                     />
                   </div>
                 </div>
