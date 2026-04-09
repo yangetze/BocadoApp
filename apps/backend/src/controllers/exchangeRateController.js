@@ -281,27 +281,19 @@ export const getExchangeRates = async (req, res) => {
     const total = await prisma.exchangeRate.count({ where: whereClause });
     const totalPages = Math.ceil(total / limitNum);
 
+    // ⚡ Bolt: Pushed sorting logic down to the database using Prisma's multiple orderBy
+    // capabilities instead of an expensive O(n log n) in-memory sort in Node.js.
     let rates = await prisma.exchangeRate.findMany({
       where: whereClause,
       include: {
         targetCurrency: true,
       },
-      orderBy: {
-        effectiveDate: 'desc',
-      },
+      orderBy: [
+        { effectiveDate: 'desc' },
+        { targetCurrency: { code: 'asc' } }
+      ],
       skip: (pageNum - 1) * limitNum,
       take: limitNum
-    });
-
-    // In-memory sort for items with the exact same date to be alphabetical by code
-    rates.sort((a, b) => {
-        const dateA = new Date(a.effectiveDate).getTime();
-        const dateB = new Date(b.effectiveDate).getTime();
-        if (dateB !== dateA) return dateB - dateA;
-
-        const codeA = a.targetCurrency?.code || '';
-        const codeB = b.targetCurrency?.code || '';
-        return codeA.localeCompare(codeB);
     });
 
     return res.status(200).json({
