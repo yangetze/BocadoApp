@@ -1,7 +1,7 @@
 # Plan de Trabajo: Refactorización de Ingredientes y Marcas
 
 **Estado:** Completado
-**Rama:** refactor/ingredientes-marcas
+**Rama:** jules-3849347301793117333-6c74bbbc
 
 
 ## 🎯 Objetivo
@@ -33,3 +33,10 @@ Reestructurar la arquitectura de datos del sistema para separar el concepto gen�
 - **Pruebas de Frontend:**
   - Verificar visualmente la nueva UI de Ingredientes (lista de presentaciones anidadas).
   - Verificar que el flujo de Presupuestos bloquee o alerte si faltan selecciones de marcas para ingredientes necesarios.
+
+
+### Actualización - Refactorización de Costo Global
+- [x] Renombrar `defaultCost` a `globalPrice` en el modelo de Prisma.
+- [x] Añadir `globalPriceQuantity` para permitir especificar cantidades dinámicas en los precios (ej. $1.25 por 1000gr).
+- [x] Actualizar frontend (formularios, gestores y drag&drop canvas) para usar y mostrar `globalPrice` y permitir calculo explícito.
+- [x] Actualizar backend y pruebas de Jest para soportar y validar `globalPrice`.

@@ -76,7 +76,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
       for (const brIngredient of baseRecipe.ingredients) {
         const { quantity, ingredient } = brIngredient;
         // Cost of this ingredient for the base recipe's default yield
-        const cost = quantity * ingredient.globalCost;
+        const cost = quantity * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1));
         baseRecipeCostPerUnit += cost;
 
         baseRecipeIngredientsBreakdown.push({
@@ -104,7 +104,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
     // 2. Calculate cost from Direct Ingredients (e.g. Box, Cake board)
     for (const srDirectIngredient of superRecipe.directIngredients) {
       const { quantityNeeded, ingredient } = srDirectIngredient;
-      const finalCost = quantityNeeded * ingredient.globalCost * scaleMultiplier;
+      const finalCost = quantityNeeded * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1)) * scaleMultiplier;
       totalBaseCost += finalCost;
 
       breakdown.directIngredients.push({

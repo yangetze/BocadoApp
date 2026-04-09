@@ -1,3 +1,3 @@
-## 2025-02-28 - Backend Prisma Pagination and Frontend Layout
- **Learning:** When updating UI logic, ensure backend constraints align smoothly. When doing pagination with a specific Prisma constraint, always count elements using \`prisma.*.count\` rather than using \`prisma.*.findMany().length\`. When debugging unique constraints with nested relations, isolate the constraint source from logic that modifies it elsewhere. Also, Dnd-Kit items or normal flex blocks shouldn't be wrapped in generic grid tags without checking responsive behavior.
- **Action:** Make sure to double check that \`isTestMode\` matches production queries, particularly regarding sorting nested fields to match database logic.
+## 2024-04-09 - Ingredient Model Refactoring
+ **Learning:** When calculating costs based on dynamic quantities rather than fixed per-unit costs, we must carefully migrate calculations across the full stack (backend logic, frontend components, and test scenarios) to respect the new structure, especially ensuring new fields like `globalPriceQuantity` do not cause division-by-zero errors.
+ **Action:** Make sure to set a default fallback (e.g. `|| 1`) when dividing by quantity denominators introduced during refactors to prevent mathematical exceptions.

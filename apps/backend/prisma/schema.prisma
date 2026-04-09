@@ -47,7 +47,8 @@ model User {
 model Ingredient {
   id              String   @id @default(uuid())
   name            String
-  defaultCost     Float // Estimated cost in base currency (e.g. USD)
+  globalPrice     Float // Estimated cost in base currency (e.g. USD)
+  globalPriceQuantity Float @default(1)
   measurementUnit String // e.g. "gr", "ml", "unit"
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

@@ -70,14 +70,14 @@ describe('Cost API', () => {
               name: 'Sponge Cake',
               baseYield: 1000,
               ingredients: [
-                { quantity: 500, ingredient: { name: 'Flour', globalCost: 0.002 } },
-                { quantity: 500, ingredient: { name: 'Sugar', globalCost: 0.001 } }
+                { quantity: 500, ingredient: { name: 'Flour', globalPrice: 0.002 } },
+                { quantity: 500, ingredient: { name: 'Sugar', globalPrice: 0.001 } }
               ]
             }
           }
         ],
         directIngredients: [
-          { quantityNeeded: 1, ingredient: { name: 'Cake Box', globalCost: 2.5 } }
+          { quantityNeeded: 1, ingredient: { name: 'Cake Box', globalPrice: 2.5 } }
         ]
       };
 
@@ -121,14 +121,14 @@ describe('Cost API', () => {
               name: 'Sponge Cake',
               baseYield: 1000,
               ingredients: [
-                { quantity: 500, ingredient: { name: 'Flour', globalCost: 0.002 } },
-                { quantity: 500, ingredient: { name: 'Sugar', globalCost: 0.001 } }
+                { quantity: 500, ingredient: { name: 'Flour', globalPrice: 0.002 } },
+                { quantity: 500, ingredient: { name: 'Sugar', globalPrice: 0.001 } }
               ]
             }
           }
         ],
         directIngredients: [
-          { quantityNeeded: 1, ingredient: { name: 'Cake Box', globalCost: 2.5 } }
+          { quantityNeeded: 1, ingredient: { name: 'Cake Box', globalPrice: 2.5 } }
         ]
       };
 
