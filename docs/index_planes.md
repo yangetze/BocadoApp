@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Plan de Trabajo: Refactorización de Ingredientes y Marcas](plan_refactorizacion_ingredientes_marcas.md)
 - [Plan de Trabajo: Búsqueda de Ingredientes](plan_ingredientes_busqueda.md)
 - [🧁 Plan de Trabajo: Reajuste de Módulos Core (BocadoApp)](plan_core_modules.md)
 - [🔐 Plan de Trabajo: Autenticación y Registro (BocadoApp)](plan_auth.md)
@@ -21,7 +22,6 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Equivalencias de Unidades y Resumen por Tipo](plan_equivalencias_unidades.md)
 - [Plan de Trabajo: Información de Ingredientes en Receta Base (3.2)](plan_receta_base_info_ingrediente.md)
 - [Plan de Trabajo: Rendimiento y Unidad de Rendimiento (3.6)](plan_receta_base_rendimiento.md)
-- [Plan de Trabajo: Refactorización de Ingredientes y Marcas](plan_refactorizacion_ingredientes_marcas.md)
 - [Plan: Gestión de Estados y Ciclo de Vida de Presupuestos](plan_presupuestos_gestion_estados.md)
 - [Plan: Ítems Genéricos en Presupuestos](plan_presupuestos_items_genericos.md)
 - [Plan de Trabajo: Estandarización de Unidades de Medida](plan_estandarizacion_unidades.md)
