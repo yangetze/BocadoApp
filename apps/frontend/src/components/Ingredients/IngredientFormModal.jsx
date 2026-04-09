@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Trash2 } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
@@ -244,7 +245,15 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                           <div className="text-sm font-medium text-slate-gray">{p.presentationName} <span className="text-xs text-gray-400 font-normal">{p.brand && `(${p.brand})`}</span></div>
                           <div className="text-xs text-gray-500 mt-0.5">${p.cost} / ${p.unitQuantity}${p.measurementUnit}</div>
                         </div>
-                        <button type="button" onClick={() => removePresentation(idx)} className="text-red-400 hover:text-red-600 p-1">X</button>
+                        <button
+                          type="button"
+                          onClick={() => removePresentation(idx)}
+                          className="text-red-400 hover:text-red-600 p-1"
+                          aria-label="Eliminar presentación"
+                          title="Eliminar presentación"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                     ))}
                   </div>
