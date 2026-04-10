@@ -196,6 +196,24 @@ export const superRecipeApi = {
     } catch (error) {
       throw new Error(error.response?.data?.error || 'Error al crear súper receta');
     }
+  },
+
+  update: async (id, data) => {
+    try {
+      const res = await api.put(`/super-recipes/${id}`, data);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al actualizar súper receta');
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const res = await api.delete(`/super-recipes/${id}`);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al eliminar súper receta');
+    }
   }
 };
 
