@@ -295,4 +295,5 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
 Builder.propTypes = {
   mode: PropTypes.oneOf(['superRecipe', 'baseRecipe', 'budget']),
   availableItems: PropTypes.array,
+  initialData: PropTypes.object,
 };

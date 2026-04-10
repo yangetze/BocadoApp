@@ -21,31 +21,26 @@ export function useBuilder(mode, initialData = null) {
   const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
 
   useEffect(() => {
-    if (initialData && mode === 'superRecipe') {
-      const initialItems = [];
-      if (initialData.baseRecipes) {
-        initialData.baseRecipes.forEach(br => {
-          initialItems.push({
-            id: 'canvas-' + Date.now() + '-' + br.baseRecipeId,
-            name: br.baseRecipe?.name || 'Receta Base',
-            type: 'baseRecipe',
-            quantity: br.quantityNeeded
-          });
-        });
+    if (initialData && mode === 'baseRecipe') {
+      setBaseRecipeMetadata({
+        name: initialData.name || '',
+        baseYield: initialData.baseYield || '',
+        yieldUnit: initialData.yieldUnit || 'gr'
+      });
+
+      if (initialData.ingredients && Array.isArray(initialData.ingredients)) {
+        const loadedItems = initialData.ingredients.map(ing => ({
+          ...ing.ingredient,
+          id: `canvas-${Date.now()}-${ing.ingredient?.id || ing.ingredientId}`,
+          ingredientId: ing.ingredientId,
+          quantity: ing.quantity
+        }));
+        setCanvasItems(loadedItems);
       }
-      if (initialData.directIngredients) {
-        initialData.directIngredients.forEach(di => {
-          initialItems.push({
-            id: 'canvas-' + Date.now() + '-' + di.ingredientId,
-            name: di.ingredient?.name || 'Ingrediente Extra',
-            type: 'ingredient',
-            quantity: di.quantityNeeded
-          });
-        });
-      }
-      setCanvasItems(initialItems);
     }
   }, [initialData, mode]);
+
+
 
   const fetchMarginRecommendation = useCallback(async (items) => {
     if (items.length === 0) {
@@ -205,7 +200,11 @@ export function useBuilder(mode, initialData = null) {
           yieldUnit: baseRecipeMetadata.yieldUnit,
           ingredients: Object.values(groupedIngredients)
         };
-        await baseRecipeApi.create(payload);
+        if (initialData && initialData.id) {
+          await baseRecipeApi.update(initialData.id, payload);
+        } else {
+          await baseRecipeApi.create(payload);
+        }
         toast.success('Receta Base guardada exitosamente');
         setBaseRecipeMetadata({ name: '', baseYield: '', yieldUnit: 'gr' });
         setCanvasItems([]);

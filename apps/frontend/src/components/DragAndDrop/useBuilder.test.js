@@ -12,7 +12,7 @@ jest.mock('react-hot-toast', () => ({
 jest.mock('../../api', () => ({
   budgetApi: { create: jest.fn() },
   superRecipeApi: { create: jest.fn() },
-  baseRecipeApi: { create: jest.fn() },
+  baseRecipeApi: { create: jest.fn(), update: jest.fn() },
 }));
 
 describe('useBuilder - ingredientTotals', () => {
@@ -98,6 +98,51 @@ describe('useBuilder - handleSave', () => {
         name: expect.any(String),
         baseRecipes: [
           { baseRecipeId: 'br1', quantityNeeded: 500 }
+        ]
+      })
+    );
+  });
+});
+
+
+describe('useBuilder - edit baseRecipe', () => {
+  it('debería inicializar correctamente con initialData y llamar a update al guardar', async () => {
+    const { baseRecipeApi } = await import('../../api');
+    const initialData = {
+      id: 'br-edit-1',
+      name: 'Masa Madre Editada',
+      baseYield: 1500,
+      yieldUnit: 'gr',
+      ingredients: [
+        {
+          ingredientId: 'ing-1',
+          quantity: 500,
+          ingredient: { id: 'ing-1', name: 'Harina Fuerte', measurementUnit: 'gr' }
+        }
+      ]
+    };
+
+    const { result } = renderHook(() => useBuilder('baseRecipe', initialData));
+
+    // Verify initialization
+    expect(result.current.baseRecipeMetadata.name).toBe('Masa Madre Editada');
+    expect(result.current.baseRecipeMetadata.baseYield).toBe(1500);
+    expect(result.current.canvasItems).toHaveLength(1);
+    expect(result.current.canvasItems[0].ingredientId).toBe('ing-1');
+    expect(result.current.canvasItems[0].quantity).toBe(500);
+
+    // Trigger save
+    await act(async () => {
+      await result.current.handleSave();
+    });
+
+    expect(baseRecipeApi.update).toHaveBeenCalledWith(
+      'br-edit-1',
+      expect.objectContaining({
+        name: 'Masa Madre Editada',
+        baseYield: 1500,
+        ingredients: [
+          { ingredientId: 'ing-1', quantityNeeded: 500 }
         ]
       })
     );

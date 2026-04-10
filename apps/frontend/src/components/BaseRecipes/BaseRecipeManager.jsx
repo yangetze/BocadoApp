@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function BaseRecipeManager() {
   const [view, setView] = useState('list'); // 'list' or 'builder'
+  const [editingRecipe, setEditingRecipe] = useState(null);
   const [baseRecipes, setBaseRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,13 +34,13 @@ export default function BaseRecipeManager() {
     return (
       <div className="space-y-4">
         <button
-          onClick={() => setView('list')}
+          onClick={() => { setView('list'); setEditingRecipe(null); }}
           className="flex items-center gap-2 text-slate-gray hover:text-peach-soft transition-colors font-medium mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver a la lista
         </button>
-        <BaseRecipeBuilderWrapper />
+        <BaseRecipeBuilderWrapper initialData={editingRecipe} />
       </div>
     );
   }
@@ -48,7 +49,8 @@ export default function BaseRecipeManager() {
     <BaseRecipeList
       recipes={baseRecipes}
       loading={loading}
-      onCreateNew={() => setView('builder')}
+      onCreateNew={() => { setEditingRecipe(null); setView('builder'); }}
+      onEdit={(recipe) => { setEditingRecipe(recipe); setView('builder'); }}
     />
   );
 }
