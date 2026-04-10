@@ -1,10 +1,9 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import PropTypes from 'prop-types';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import PropTypes from "prop-types";
 
 export function MobilePaletteModal({ isOpen, onClose, children }) {
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -20,14 +19,16 @@ export function MobilePaletteModal({ isOpen, onClose, children }) {
 
           {/* Modal Content */}
           <motion.div
-            initial={{ opacity: 0, y: '100%' }}
+            initial={{ opacity: 0, y: "100%" }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="relative bg-white w-full h-[85vh] sm:h-auto sm:max-h-[85vh] sm:rounded-2xl rounded-t-3xl shadow-xl flex flex-col overflow-hidden"
           >
             <div className="flex justify-between items-center p-4 border-b border-gray-100 bg-white z-10 sticky top-0">
-              <h3 className="font-bold text-slate-gray text-lg">Agregar Elemento</h3>
+              <h3 className="font-bold text-slate-gray text-lg">
+                Agregar Elemento
+              </h3>
               <button
                 onClick={onClose}
                 className="p-2 text-gray-400 hover:text-slate-gray hover:bg-gray-100 rounded-full transition-colors"

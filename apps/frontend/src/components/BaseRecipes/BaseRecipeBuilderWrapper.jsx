@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import Builder from '../DragAndDrop/Builder';
-import { ingredientApi } from '../../api';
-import { toast } from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import Builder from "../DragAndDrop/Builder";
+import { ingredientApi } from "../../api";
+import { toast } from "react-hot-toast";
 
-export default function BaseRecipeBuilderWrapper() {
+export default function BaseRecipeBuilderWrapper({ editingRecipe, onSuccess }) {
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,15 +16,26 @@ export default function BaseRecipeBuilderWrapper() {
       const data = await ingredientApi.getAll();
       setIngredients(data);
     } catch {
-      toast.error('Error al cargar los ingredientes para la receta base');
+      toast.error("Error al cargar los ingredientes para la receta base");
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-gray-500">Cargando constructor...</div>;
+    return (
+      <div className="p-8 text-center text-gray-500">
+        Cargando constructor...
+      </div>
+    );
   }
 
-  return <Builder mode="baseRecipe" availableItems={ingredients} />;
+  return (
+    <Builder
+      mode="baseRecipe"
+      availableItems={ingredients}
+      editingItem={editingRecipe}
+      onSuccess={onSuccess}
+    />
+  );
 }

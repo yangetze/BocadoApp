@@ -1,8 +1,13 @@
-import React from 'react';
-import { Plus, Beaker, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { Plus, Beaker, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
-export default function BaseRecipeList({ recipes, onCreateNew, loading }) {
+export default function BaseRecipeList({
+  recipes,
+  onCreateNew,
+  onEdit,
+  loading,
+}) {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-slate-gray/50">
@@ -18,9 +23,12 @@ export default function BaseRecipeList({ recipes, onCreateNew, loading }) {
         <div className="w-20 h-20 bg-peach-soft/20 rounded-full flex items-center justify-center mb-6">
           <Beaker className="w-10 h-10 text-peach-soft" />
         </div>
-        <h3 className="text-2xl font-bold text-slate-gray mb-2">Sin recetas base</h3>
+        <h3 className="text-2xl font-bold text-slate-gray mb-2">
+          Sin recetas base
+        </h3>
         <p className="text-gray-500 max-w-md mb-8">
-          Aún no has creado ninguna receta base. Crea tu primera receta para empezar a construir tus presupuestos y súper recetas.
+          Aún no has creado ninguna receta base. Crea tu primera receta para
+          empezar a construir tus presupuestos y súper recetas.
         </p>
         <button
           onClick={onCreateNew}
@@ -37,8 +45,12 @@ export default function BaseRecipeList({ recipes, onCreateNew, loading }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-gray">Mis Recetas Base</h2>
-          <p className="text-gray-500">Gestiona tus recetas base para usar en presupuestos y súper recetas.</p>
+          <h2 className="text-2xl font-bold text-slate-gray">
+            Mis Recetas Base
+          </h2>
+          <p className="text-gray-500">
+            Gestiona tus recetas base para usar en presupuestos y súper recetas.
+          </p>
         </div>
         <button
           onClick={onCreateNew}
@@ -72,11 +84,16 @@ export default function BaseRecipeList({ recipes, onCreateNew, loading }) {
             </h3>
 
             <div className="mb-4">
-              <p className="text-sm text-gray-500 mb-2">Ingredientes ({recipe.ingredients?.length || 0}):</p>
+              <p className="text-sm text-gray-500 mb-2">
+                Ingredientes ({recipe.ingredients?.length || 0}):
+              </p>
               <div className="flex flex-wrap gap-2">
                 {recipe.ingredients?.slice(0, 3).map((item, i) => (
-                  <span key={i} className="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded-md border border-gray-100">
-                    {item.ingredient?.name || 'Desconocido'}
+                  <span
+                    key={i}
+                    className="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded-md border border-gray-100"
+                  >
+                    {item.ingredient?.name || "Desconocido"}
                   </span>
                 ))}
                 {(recipe.ingredients?.length || 0) > 3 && (
@@ -92,7 +109,7 @@ export default function BaseRecipeList({ recipes, onCreateNew, loading }) {
                 {new Date(recipe.createdAt).toLocaleDateString()}
               </span>
               <button
-                onClick={onCreateNew} // For MVP, maybe clicking edit opens the builder. Currently builder has no easy edit flow initialized with data, so just log or same action. We'll refine edit later if needed, but for now we just show list.
+                onClick={() => onEdit(recipe)}
                 className="text-peach-soft hover:bg-peach-soft/10 p-2 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
               >
                 Editar <ChevronRight className="w-4 h-4" />

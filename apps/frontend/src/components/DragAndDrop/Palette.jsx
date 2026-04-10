@@ -1,14 +1,19 @@
-import { DraggableItem } from './DraggableItem';
-import { Search } from 'lucide-react';
+import { DraggableItem } from "./DraggableItem";
+import { Search } from "lucide-react";
 
-import PropTypes from 'prop-types';
-import React, { useState, useMemo } from 'react';
-import { normalizeString } from '../../utils/stringUtils';
+import PropTypes from "prop-types";
+import React, { useState, useMemo } from "react";
+import { normalizeString } from "../../utils/stringUtils";
 
 // ⚡ Bolt: Wrapped Palette in React.memo. Since the available items list rarely changes
 // while building, this prevents the entire palette list from re-rendering on every drag frame.
-export const Palette = React.memo(function Palette({ items, title, description, onAdd }) {
-  const [searchQuery, setSearchQuery] = useState('');
+export const Palette = React.memo(function Palette({
+  items,
+  title,
+  description,
+  onAdd,
+}) {
+  const [searchQuery, setSearchQuery] = useState("");
 
   // ⚡ Bolt: Memoized the filtered list and moved the search query normalization
   // outside of the filter loop. This replaces an O(n) redundant regex operation
@@ -33,7 +38,10 @@ export const Palette = React.memo(function Palette({ items, title, description, 
       </div>
 
       <div className="relative mb-6 group">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-peach-soft transition-colors" size={18} />
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-peach-soft transition-colors"
+          size={18}
+        />
         <input
           type="text"
           placeholder="Buscar elementos..."
@@ -48,12 +56,19 @@ export const Palette = React.memo(function Palette({ items, title, description, 
         {filteredItems.length === 0 ? (
           <div className="text-center py-10 text-gray-400">
             <p className="text-sm">
-              {searchQuery ? 'No se encontraron resultados.' : 'No hay elementos disponibles.'}
+              {searchQuery
+                ? "No se encontraron resultados."
+                : "No hay elementos disponibles."}
             </p>
           </div>
         ) : (
           filteredItems.map((item) => (
-            <DraggableItem key={`palette-${item.id}`} id={item.id} item={item} onAdd={onAdd} />
+            <DraggableItem
+              key={`palette-${item.id}`}
+              id={item.id}
+              item={item}
+              onAdd={onAdd}
+            />
           ))
         )}
       </div>
@@ -66,7 +81,7 @@ Palette.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-    })
+    }),
   ).isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
