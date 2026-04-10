@@ -17,6 +17,7 @@ Welcome to the BocadoApp monorepo! This document serves as a guide for AI assist
    - All schema changes MUST go in `apps/backend/prisma/schema.prisma`. Siempre ejecutar `npx prisma db push` o `npx prisma migrate dev` tras cambios.
 4. **Environment Variables:** Keep `.env` out of version control. Use `.env.example` to document them.
 5. **Reglas de Negocio, Estilos Visuales y Roadmap:** Consulta `ROADMAP.md` (Skills y MVP) y `frontend-styleguide.md` (UI/UX) para asegurar consistencia sensorial y técnica antes de iniciar cualquier tarea.
+6. **Gestión de Dependencias:** Al actualizar o hacer downgrade de plugins y dependencias (ej. Vite, React plugins), se debe evaluar constantemente si la actualización es estrictamente necesaria y probar exhaustivamente la build (incluyendo en entornos simulados de CI/Vercel) para prevenir que se rompa la integración continua.
 
 ## ⚡️ Workflow Commands (Comandos Especiales)
 - **RUN ALL DEV**: Ejecutar `npm run dev` en `apps/backend` y `apps/frontend` simultáneamente.
