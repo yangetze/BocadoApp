@@ -47,6 +47,8 @@ describe('Super Recipe Routes', () => {
       const created = { id: 'sr-2', name: 'Wedding Cake', baseRecipes: [], directIngredients: [] };
       
       prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
+      prisma.baseRecipe = { ...prisma.baseRecipe, count: jest.fn().mockResolvedValue(1) };
+      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(1) };
       prisma.superRecipe.create.mockResolvedValue(created);
 
       const res = await request(app).post('/api/super-recipes').send(payload);

@@ -27,6 +27,33 @@ export const createSuperRecipe = async (req, res) => {
     const { name, description, baseRecipes, directIngredients } = req.body;
     const userId = req.user.id;
 
+    // Security: Verify ownership of baseRecipes and directIngredients before linking
+    if (baseRecipes && baseRecipes.length > 0) {
+      const baseRecipeIds = [...new Set(baseRecipes.map(br => br.baseRecipeId))];
+      const validBaseRecipesCount = await prisma.baseRecipe.count({
+        where: {
+          id: { in: baseRecipeIds },
+          userId: userId
+        }
+      });
+      if (validBaseRecipesCount !== baseRecipeIds.length) {
+        return res.status(404).json({ error: 'Una o más recetas base no fueron encontradas o no tienes permiso' });
+      }
+    }
+
+    if (directIngredients && directIngredients.length > 0) {
+      const ingredientIds = [...new Set(directIngredients.map(di => di.ingredientId))];
+      const validIngredientsCount = await prisma.ingredient.count({
+        where: {
+          id: { in: ingredientIds },
+          userId: userId
+        }
+      });
+      if (validIngredientsCount !== ingredientIds.length) {
+        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
+    }
+
     const newSuperRecipe = await prisma.superRecipe.create({
       data: {
         name,

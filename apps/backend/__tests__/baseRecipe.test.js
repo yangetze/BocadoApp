@@ -56,6 +56,7 @@ describe('Base Recipe Routes', () => {
       };
 
       prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
+      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(2) };
       prisma.baseRecipe.create.mockResolvedValue(createdBaseRecipe);
 
       const res = await request(app)
