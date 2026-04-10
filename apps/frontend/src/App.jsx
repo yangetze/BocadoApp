@@ -116,8 +116,8 @@ function MainApp() {
                         Tasas de Cambio
                       </button>
                       {user?.role === 'ADMIN' && (
-                        <a 
-                          href="/admin" 
+                        <a
+                          href="/admin"
                           className="w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-50"
                         >
                           <Settings className="w-4 h-4 text-gray-400" />
