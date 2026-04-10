@@ -66,25 +66,36 @@ export const calculateSuperRecipeCost = async (req, res) => {
       directIngredients: []
     }
 
+    // Cache for base recipe calculations to avoid redundant nested ingredient loops
+    const baseRecipeCache = new Map()
+
     // 1. Calculate cost from nested Base Recipes
     for (const srBaseRecipe of superRecipe.baseRecipes) {
       const { quantityNeeded, baseRecipe } = srBaseRecipe
-      let baseRecipeCostPerUnit = 0
 
-      // Calculate the cost of the base recipe based on its ingredients
-      const baseRecipeIngredientsBreakdown = []
-      for (const brIngredient of baseRecipe.ingredients) {
-        const { quantity, ingredient } = brIngredient
-        // Cost of this ingredient for the base recipe's default yield
-        const cost = quantity * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1))
-        baseRecipeCostPerUnit += cost
+      let cachedData = baseRecipeCache.get(baseRecipe.id)
 
-        baseRecipeIngredientsBreakdown.push({
-          ingredientName: ingredient.name,
-          quantityUsed: quantity,
-          cost
-        })
+      if (!cachedData) {
+        let baseRecipeCostPerUnit = 0
+        // Calculate the cost of the base recipe based on its ingredients
+        const baseRecipeIngredientsBreakdown = []
+        for (const brIngredient of baseRecipe.ingredients) {
+          const { quantity, ingredient } = brIngredient
+          // Cost of this ingredient for the base recipe's default yield
+          const cost = quantity * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1))
+          baseRecipeCostPerUnit += cost
+
+          baseRecipeIngredientsBreakdown.push({
+            ingredientName: ingredient.name,
+            quantityUsed: quantity,
+            cost
+          })
+        }
+        cachedData = { baseRecipeCostPerUnit, baseRecipeIngredientsBreakdown }
+        baseRecipeCache.set(baseRecipe.id, cachedData)
       }
+
+      const { baseRecipeCostPerUnit, baseRecipeIngredientsBreakdown } = cachedData
 
       // Pro-rate the cost based on how much of this base recipe is needed for the super recipe
       const costForSuperRecipe = (quantityNeeded / baseRecipe.baseYield) * baseRecipeCostPerUnit

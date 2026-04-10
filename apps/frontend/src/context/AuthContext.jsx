@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import { createContext, useContext, useState, useEffect } from 'react'
 import api from '../api' // Custom axios instance or api util
 

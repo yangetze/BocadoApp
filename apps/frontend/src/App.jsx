@@ -18,7 +18,7 @@ import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper'
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const { user, token } = useAuth()
 
-  if (!token) return <Navigate to='/login' replace />
+  if (!token) return <Navigate to='/' replace />
 
   if (requireAdmin && user?.role !== 'ADMIN') {
     return <Navigate to='/app' replace />

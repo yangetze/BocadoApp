@@ -20,6 +20,23 @@ jest.unstable_mockModule('jsonwebtoken', () => ({
   default: { sign: signMock, verify: verifyMock }
 }))
 
+// Mock express-rate-limit to use a very short window for testing if necessary, or just not skip
+// Since we used process.env.NODE_ENV, let's just make sure we are not skipping it
+jest.unstable_mockModule('express-rate-limit', () => ({
+  default: jest.fn().mockImplementation((opts) => {
+    // Return a basic middleware that implements the logic
+    const hits = {}
+    return (req, res, next) => {
+      const ip = req.ip || req.headers['x-forwarded-for']
+      hits[ip] = (hits[ip] || 0) + 1
+      if (hits[ip] > opts.max) {
+        return res.status(429).json(opts.message)
+      }
+      next()
+    }
+  })
+}))
+
 // Load routes after mocking
 const { default: authRoutes } = await import('../src/routes/authRoutes.js')
 

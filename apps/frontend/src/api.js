@@ -1,4 +1,3 @@
-/* eslint-env browser */
 const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 const fetchWithAuth = async (url, options = {}) => {
@@ -25,7 +24,7 @@ const fetchWithAuth = async (url, options = {}) => {
     if (res.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      window.location.href = '/login'
+      window.location.href = '/'
     }
     const errData = await res.json().catch(() => null)
     throw { response: { data: errData, status: res.status } }
