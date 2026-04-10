@@ -3,7 +3,7 @@ import Builder from '../DragAndDrop/Builder';
 import { ingredientApi } from '../../api';
 import { toast } from 'react-hot-toast';
 
-export default function BaseRecipeBuilderWrapper() {
+export default function BaseRecipeBuilderWrapper({ initialData }) {
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,5 +26,5 @@ export default function BaseRecipeBuilderWrapper() {
     return <div className="p-8 text-center text-gray-500">Cargando constructor...</div>;
   }
 
-  return <Builder mode="baseRecipe" availableItems={ingredients} />;
+  return <Builder mode="baseRecipe" availableItems={ingredients} initialData={initialData} />;
 }

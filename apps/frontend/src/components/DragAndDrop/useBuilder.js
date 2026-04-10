@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { budgetApi, superRecipeApi, baseRecipeApi } from '../../api';
 
-export function useBuilder(mode) {
+export function useBuilder(mode, initialData = null) {
   const [canvasItems, setCanvasItems] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
@@ -15,6 +15,28 @@ export function useBuilder(mode) {
   });
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] = useState(false);
   const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
+
+  useEffect(() => {
+    if (initialData && mode === 'baseRecipe') {
+      setBaseRecipeMetadata({
+        name: initialData.name || '',
+        baseYield: initialData.baseYield || '',
+        yieldUnit: initialData.yieldUnit || 'gr'
+      });
+
+      if (initialData.ingredients && Array.isArray(initialData.ingredients)) {
+        const loadedItems = initialData.ingredients.map(ing => ({
+          ...ing.ingredient,
+          id: `canvas-${Date.now()}-${ing.ingredient?.id || ing.ingredientId}`,
+          ingredientId: ing.ingredientId,
+          quantity: ing.quantity
+        }));
+        setCanvasItems(loadedItems);
+      }
+    }
+  }, [initialData, mode]);
+
+
 
   const fetchMarginRecommendation = useCallback(async (items) => {
     if (items.length === 0) {
@@ -155,7 +177,11 @@ export function useBuilder(mode) {
             quantityNeeded: item.quantity || 1
           }))
         };
-        await baseRecipeApi.create(payload);
+        if (initialData && initialData.id) {
+          await baseRecipeApi.update(initialData.id, payload);
+        } else {
+          await baseRecipeApi.create(payload);
+        }
         toast.success('Receta Base guardada exitosamente');
         setBaseRecipeMetadata({ name: '', baseYield: '', yieldUnit: 'gr' });
         setCanvasItems([]);

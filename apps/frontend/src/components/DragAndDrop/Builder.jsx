@@ -30,7 +30,7 @@ import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm';
 import { IngredientsSummary } from './IngredientsSummary';
 import { BrandSelectionModal } from './BrandSelectionModal';
 
-export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
+export default function Builder({ mode = 'superRecipe', availableItems = [], initialData = null }) {
   const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
 
   const {
@@ -50,11 +50,8 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     removeItem,
     updateItemQuantity,
     fetchMarginRecommendation,
-    ingredientTotals,
-    isBrandSelectionModalOpen,
-    setIsBrandSelectionModalOpen,
-    confirmBudgetSave
-  } = useBuilder(mode);
+    ingredientTotals
+  } = useBuilder(mode, initialData);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -264,4 +261,5 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 Builder.propTypes = {
   mode: PropTypes.oneOf(['superRecipe', 'baseRecipe', 'budget']),
   availableItems: PropTypes.array,
+  initialData: PropTypes.object,
 };
