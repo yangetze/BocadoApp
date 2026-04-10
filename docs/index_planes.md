@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Plan de Trabajo: Corregir Error al Eliminar Ingrediente](plan_bug_eliminar_ingrediente.md)
 - [Plan de Trabajo: Refactorización de Ingredientes y Marcas](plan_refactorizacion_ingredientes_marcas.md)
 - [Plan de Trabajo: Búsqueda de Ingredientes](plan_ingredientes_busqueda.md)
 - [🧁 Plan de Trabajo: Reajuste de Módulos Core (BocadoApp)](plan_core_modules.md)

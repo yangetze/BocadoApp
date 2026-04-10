@@ -15,8 +15,8 @@ export default function SuperRecipeBuilderWrapper() {
     try {
       const data = await baseRecipeApi.getAll();
       setBaseRecipes(data);
-    } catch {
-      toast.error('Error al cargar las recetas base para el constructor');
+    } catch (error) {
+      toast.error(error.message || 'Error al cargar las recetas base para el constructor');
     } finally {
       setLoading(false);
     }

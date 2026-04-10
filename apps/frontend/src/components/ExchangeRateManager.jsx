@@ -102,8 +102,8 @@ export default function ExchangeRateManager() {
       setManualDate('');
       setManualSource('MANUAL');
       await loadData();
-    } catch {
-      toast.error('Ocurrió un error al guardar tu tasa manual.');
+    } catch (error) {
+      toast.error(error.message || 'Ocurrió un error al guardar tu tasa manual.');
     } finally {
       setSavingManual(false);
     }

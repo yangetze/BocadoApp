@@ -115,25 +115,25 @@ export function BrandSelectionModal({ isOpen, onClose, onConfirm, superRecipesLi
 
                       {(!ing.presentations || ing.presentations.length === 0) ? (
                          <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-xl border border-amber-100/50">
-                            Este ingrediente genérico no tiene presentaciones de compra registradas. Se usará el costo estimado de \${Number(ing.globalPrice).toFixed(2) + " / " + (ing.globalPriceQuantity !== 1 ? ing.globalPriceQuantity + " " : "") + ing.measurementUnit}.
+                            Este ingrediente genérico no tiene presentaciones de compra registradas. Se usará el costo estimado de ${Number(ing.globalPrice).toFixed(2) + " / " + (ing.globalPriceQuantity !== 1 ? ing.globalPriceQuantity + " " : "") + ing.measurementUnit}.
                          </div>
                       ) : (
                          <div className="space-y-2">
                             {ing.presentations.map(p => (
-                               <label key={p.id} className={\`flex items-center p-3 rounded-xl border cursor-pointer transition-all \${selections[ing.id] === p.id ? 'border-peach-soft bg-peach-soft/5 ring-1 ring-peach-soft' : 'border-gray-100 hover:border-gray-200 bg-white'}\`}>
+                               <label key={p.id} className={`flex items-center p-3 rounded-xl border cursor-pointer transition-all ${selections[ing.id] === p.id ? 'border-peach-soft bg-peach-soft/5 ring-1 ring-peach-soft' : 'border-gray-100 hover:border-gray-200 bg-white'}`}>
                                   <input
                                      type="radio"
-                                     name={\`ing-\${ing.id}\`}
+                                     name={`ing-${ing.id}`}
                                      className="w-4 h-4 text-peach-soft border-gray-300 focus:ring-peach-soft accent-peach-soft"
                                      checked={selections[ing.id] === p.id}
                                      onChange={() => setSelections(prev => ({...prev, [ing.id]: p.id}))}
                                   />
                                   <div className="ml-3 flex-1 flex justify-between items-center">
                                      <div>
-                                        <span className="font-medium text-sm text-slate-gray">{p.presentationName} {p.brand && \`(\${p.brand})\`}</span>
+                                        <span className="font-medium text-sm text-slate-gray">{p.presentationName} {p.brand && `(${p.brand})`}</span>
                                      </div>
                                      <div className="text-right">
-                                        <span className="text-sm font-semibold text-slate-gray">\${Number(p.cost).toFixed(2)}</span>
+                                        <span className="text-sm font-semibold text-slate-gray">${Number(p.cost).toFixed(2)}</span>
                                         <span className="text-xs text-gray-500 ml-1">por {p.unitQuantity}{p.measurementUnit}</span>
                                      </div>
                                   </div>

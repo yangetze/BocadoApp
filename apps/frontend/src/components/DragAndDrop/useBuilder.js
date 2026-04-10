@@ -101,7 +101,7 @@ export function useBuilder(mode) {
       setCanvasItems([]);
     } catch (error) {
       console.error(error);
-      toast.error('Hubo un error al guardar el presupuesto.');
+      toast.error(error.message || 'Hubo un error al guardar el presupuesto.');
     } finally {
       setIsSaving(false);
     }
@@ -162,7 +162,7 @@ export function useBuilder(mode) {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Hubo un error al guardar. Verifica la consola.');
+      toast.error(error.message || 'Hubo un error al guardar. Verifica la consola.');
     } finally {
       setIsSaving(false);
     }
