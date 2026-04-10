@@ -13,9 +13,9 @@ Mejorar la experiencia de usuario (UX/UI) en el módulo de Ingredientes. En la m
   - [ ] Validar y asegurar que los endpoints de Ingredientes retornen correctamente las presentaciones (`presentations`).
   - [ ] *Opcional*: Si se requiere, calcular en el backend el promedio para `defaultCost` si no es enviado por el cliente, pero la lógica principal puede residir en el frontend para retroalimentación en tiempo real.
 
-- [ ] **Frontend (UI/UX - IngredientFormModal):**
-  - [ ] Implementar la sección para agregar "N marcas" (Presentaciones) en la modal de ingredientes.
-  - [ ] Calcular automáticamente el "Costo Estimado Base (USD)" (`defaultCost`) como el promedio de los costos de las presentaciones agregadas. Permitir al usuario sobrescribir este valor manualmente.
+- [x] **Frontend (UI/UX - IngredientFormModal):**
+  - [x] Implementar la sección para agregar "N marcas" (Presentaciones) en la modal de ingredientes.
+  - [x] Calcular automáticamente el "Costo Estimado Base (USD)" (`defaultCost`) como el promedio de los costos de las presentaciones agregadas. Permitir al usuario sobrescribir este valor manualmente.
 
 - [ ] **Frontend (UI/UX - IngredientManager):**
   - [ ] Modificar la vista de listado (Desktop y Mobile) para que, al seleccionar/expandir un ingrediente, se despliegue el detalle de sus presentaciones/marcas.
