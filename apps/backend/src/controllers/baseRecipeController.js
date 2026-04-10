@@ -138,6 +138,20 @@ export const updateBaseRecipe = async (req, res) => {
       return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
     }
 
+    // Security: Verify ownership of ingredients before linking
+    if (items && items.length > 0) {
+      const ingredientIds = [...new Set(items.map(i => i.ingredientId))];
+      const validIngredientsCount = await prisma.ingredient.count({
+        where: {
+          id: { in: ingredientIds },
+          userId: req.user.id
+        }
+      });
+      if (validIngredientsCount !== ingredientIds.length) {
+        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
+    }
+
     const updatedBaseRecipe = await prisma.$transaction(async (tx) => {
       // Update basic details
       const br = await tx.baseRecipe.update({
