@@ -1,30 +1,30 @@
-import { useState, useEffect } from 'react';
-import Builder from '../DragAndDrop/Builder';
-import { baseRecipeApi } from '../../api';
-import { toast } from 'react-hot-toast';
+import { useState, useEffect } from 'react'
+import Builder from '../DragAndDrop/Builder'
+import { baseRecipeApi } from '../../api'
+import { toast } from 'react-hot-toast'
 
-export default function SuperRecipeBuilderWrapper() {
-  const [baseRecipes, setBaseRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function SuperRecipeBuilderWrapper () {
+  const [baseRecipes, setBaseRecipes] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchBaseRecipes();
-  }, []);
+    fetchBaseRecipes()
+  }, [])
 
   const fetchBaseRecipes = async () => {
     try {
-      const data = await baseRecipeApi.getAll();
-      setBaseRecipes(data);
+      const data = await baseRecipeApi.getAll()
+      setBaseRecipes(data)
     } catch {
-      toast.error('Error al cargar las recetas base para el constructor');
+      toast.error('Error al cargar las recetas base para el constructor')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
-
-  if (loading) {
-    return <div className="p-8 text-center text-gray-500">Cargando constructor de súper recetas...</div>;
   }
 
-  return <Builder mode="superRecipe" availableItems={baseRecipes} />;
+  if (loading) {
+    return <div className='p-8 text-center text-gray-500'>Cargando constructor de súper recetas...</div>
+  }
+
+  return <Builder mode='superRecipe' availableItems={baseRecipes} />
 }

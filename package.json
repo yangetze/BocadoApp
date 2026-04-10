@@ -18,5 +18,15 @@
     "@prisma/client": "^5.10.2",
     "prisma": "^5.10.2"
   },
-  "type": "module"
+  "type": "module",
+  "standard": {
+    "env": [
+      "jest"
+    ],
+    "ignore": [
+      "apps/frontend/src/components/**/*.jsx",
+      "apps/frontend/src/api.js",
+      "apps/frontend/src/context/AuthContext.jsx"
+    ]
+  }
 }

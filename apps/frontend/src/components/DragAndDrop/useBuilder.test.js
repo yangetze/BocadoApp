@@ -1,44 +1,44 @@
 /* global describe, it, expect, jest */
-import { renderHook, act } from '@testing-library/react';
-import { useBuilder } from './useBuilder';
-import { superRecipeApi } from '../../api';
+import { renderHook, act } from '@testing-library/react'
+import { useBuilder } from './useBuilder'
+import { superRecipeApi } from '../../api'
 
 // Mock dependencies
 jest.mock('react-hot-toast', () => ({
   error: jest.fn(),
-  success: jest.fn(),
-}));
+  success: jest.fn()
+}))
 
 jest.mock('../../api', () => ({
   budgetApi: { create: jest.fn() },
   superRecipeApi: { create: jest.fn() },
-  baseRecipeApi: { create: jest.fn() },
-}));
+  baseRecipeApi: { create: jest.fn() }
+}))
 
 describe('useBuilder - ingredientTotals', () => {
   it('debería calcular el total de ingredientes para una receta base sumando duplicados', () => {
-    const { result } = renderHook(() => useBuilder('baseRecipe'));
+    const { result } = renderHook(() => useBuilder('baseRecipe'))
 
     act(() => {
       result.current.setCanvasItems([
         { id: 'ing1', name: 'Harina', quantity: 200, measurementUnit: 'gr' },
         { id: 'ing2', name: 'Azúcar', quantity: 50, measurementUnit: 'gr' },
         { id: 'ing1-dup', ingredientId: 'ing1', name: 'Harina', quantity: 100, measurementUnit: 'gr' }
-      ]);
-    });
+      ])
+    })
 
-    const totals = result.current.ingredientTotals;
-    expect(totals).toHaveLength(2);
+    const totals = result.current.ingredientTotals
+    expect(totals).toHaveLength(2)
 
-    const harina = totals.find(t => t.name === 'Harina');
-    expect(harina.totalQuantity).toBe(300);
+    const harina = totals.find(t => t.name === 'Harina')
+    expect(harina.totalQuantity).toBe(300)
 
-    const azucar = totals.find(t => t.name === 'Azúcar');
-    expect(azucar.totalQuantity).toBe(50);
-  });
+    const azucar = totals.find(t => t.name === 'Azúcar')
+    expect(azucar.totalQuantity).toBe(50)
+  })
 
   it('debería calcular el total de ingredientes para una súper receta en base a proporciones', () => {
-    const { result } = renderHook(() => useBuilder('superRecipe'));
+    const { result } = renderHook(() => useBuilder('superRecipe'))
 
     act(() => {
       result.current.setCanvasItems([
@@ -62,36 +62,36 @@ describe('useBuilder - ingredientTotals', () => {
             { ingredientId: 'ing3', quantity: 150, ingredient: { name: 'Crema', measurementUnit: 'ml' } }
           ]
         }
-      ]);
-    });
+      ])
+    })
 
-    const totals = result.current.ingredientTotals;
-    expect(totals).toHaveLength(3);
+    const totals = result.current.ingredientTotals
+    expect(totals).toHaveLength(3)
 
-    const harina = totals.find(t => t.name === 'Harina');
-    expect(harina.totalQuantity).toBe(100);
+    const harina = totals.find(t => t.name === 'Harina')
+    expect(harina.totalQuantity).toBe(100)
 
-    const azucar = totals.find(t => t.name === 'Azúcar');
-    expect(azucar.totalQuantity).toBe(100);
+    const azucar = totals.find(t => t.name === 'Azúcar')
+    expect(azucar.totalQuantity).toBe(100)
 
-    const crema = totals.find(t => t.name === 'Crema');
-    expect(crema.totalQuantity).toBe(150);
-  });
-});
+    const crema = totals.find(t => t.name === 'Crema')
+    expect(crema.totalQuantity).toBe(150)
+  })
+})
 
 describe('useBuilder - handleSave', () => {
   it('debería formatear correctamente el payload de superRecipe con quantityNeeded', async () => {
-    const { result } = renderHook(() => useBuilder('superRecipe'));
+    const { result } = renderHook(() => useBuilder('superRecipe'))
 
     act(() => {
       result.current.setCanvasItems([
         { id: 'canvas-12345-br1', quantity: 500 }
-      ]);
-    });
+      ])
+    })
 
     await act(async () => {
-      await result.current.handleSave();
-    });
+      await result.current.handleSave()
+    })
 
     expect(superRecipeApi.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -100,6 +100,6 @@ describe('useBuilder - handleSave', () => {
           { baseRecipeId: 'br1', quantityNeeded: 500 }
         ]
       })
-    );
-  });
-});
+    )
+  })
+})

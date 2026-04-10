@@ -1,12 +1,12 @@
-import express from 'express';
-import { calculateSuperRecipeCost } from '../controllers/costController.js';
-import { verifyToken } from '../middleware/authMiddleware.js';
+import express from 'express'
+import { calculateSuperRecipeCost } from '../controllers/costController.js'
+import { verifyToken } from '../middleware/authMiddleware.js'
 
-const router = express.Router();
+const router = express.Router()
 
 // Proteger ruta de cálculo de costos
-router.use(verifyToken);
+router.use(verifyToken)
 
-router.get('/calculate-cost/:superRecipeId', calculateSuperRecipeCost);
+router.get('/calculate-cost/:superRecipeId', calculateSuperRecipeCost)
 
-export default router;
+export default router

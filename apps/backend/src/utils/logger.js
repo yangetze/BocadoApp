@@ -1,4 +1,4 @@
-import winston from 'winston';
+import winston from 'winston'
 
 const logger = winston.createLogger({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
@@ -11,11 +11,11 @@ const logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.colorize(),
         winston.format.printf(({ timestamp, level, message }) => {
-          return `[${timestamp}] ${level}: ${message}`;
+          return `[${timestamp}] ${level}: ${message}`
         })
       )
     })
   ]
-});
+})
 
-export default logger;
+export default logger

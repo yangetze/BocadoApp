@@ -1,60 +1,59 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import Landing from './pages/Landing';
-import AdminDashboard from './pages/AdminDashboard';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import { useState } from 'react';
-import { Toaster } from 'react-hot-toast';
-import { Settings, LogOut, TrendingUp, Menu, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
-import ExchangeRateManager from './components/ExchangeRateManager';
-import IngredientManager from './components/Ingredients/IngredientManager';
-import BaseRecipeManager from './components/BaseRecipes/BaseRecipeManager';
-import SuperRecipeBuilderWrapper from './components/SuperRecipes/SuperRecipeBuilderWrapper';
-import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import Landing from './pages/Landing'
+import AdminDashboard from './pages/AdminDashboard'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import { useState } from 'react'
+import { Toaster } from 'react-hot-toast'
+import { Settings, LogOut, TrendingUp, Menu, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import ExchangeRateManager from './components/ExchangeRateManager'
+import IngredientManager from './components/Ingredients/IngredientManager'
+import BaseRecipeManager from './components/BaseRecipes/BaseRecipeManager'
+import SuperRecipeBuilderWrapper from './components/SuperRecipes/SuperRecipeBuilderWrapper'
+import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper'
 
 // Protect App Routes
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { user, token } = useAuth();
+  const { user, token } = useAuth()
 
-  if (!token) return <Navigate to="/" replace />;
+  if (!token) return <Navigate to='/login' replace />
 
   if (requireAdmin && user?.role !== 'ADMIN') {
-    return <Navigate to="/app" replace />;
+    return <Navigate to='/app' replace />
   }
 
-  return children;
-};
+  return children
+}
 
-function MainApp() {
-  const [activeTab, setActiveTab] = useState('ingredient');
-  const [showSettings, setShowSettings] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+function MainApp () {
+  const [activeTab, setActiveTab] = useState('ingredient')
+  const [showSettings, setShowSettings] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { user, logout } = useAuth()
 
   const navItems = [
     { id: 'ingredient', label: 'Ingredientes' },
     { id: 'baseRecipe', label: 'Recetas Base' },
     { id: 'superRecipe', label: 'Constructor Súper Recetas' },
-    { id: 'budget', label: 'Constructor Presupuestos' },
-  ];
-
+    { id: 'budget', label: 'Constructor Presupuestos' }
+  ]
 
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-20">
+    <div className='min-h-screen bg-gray-50/50 pb-20'>
       {/* Navigation Header */}
-      <header className="bg-white border-b border-gray-100 py-4 px-6 mb-8 sticky top-0 z-20 shadow-sm">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('ingredient')}>
-            <div className="w-8 h-8 rounded-full bg-peach-soft flex items-center justify-center text-white font-bold shadow-sm shadow-peach-soft/40">
+      <header className='bg-white border-b border-gray-100 py-4 px-6 mb-8 sticky top-0 z-20 shadow-sm'>
+        <div className='max-w-6xl mx-auto flex items-center justify-between'>
+          <div className='flex items-center gap-3 cursor-pointer' onClick={() => setActiveTab('ingredient')}>
+            <div className='w-8 h-8 rounded-full bg-peach-soft flex items-center justify-center text-white font-bold shadow-sm shadow-peach-soft/40'>
               B
             </div>
-            <span className="font-bold text-xl tracking-tight text-slate-gray">BocadoApp</span>
+            <span className='font-bold text-xl tracking-tight text-slate-gray'>BocadoApp</span>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 bg-gray-50/80 p-1.5 rounded-xl border border-gray-100 overflow-x-auto">
+          <nav className='hidden lg:flex items-center gap-1 bg-gray-50/80 p-1.5 rounded-xl border border-gray-100 overflow-x-auto'>
             {navItems.map((item) => (
               <button
                 key={item.id}
@@ -70,57 +69,57 @@ function MainApp() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col items-end opacity-80 hidden sm:flex">
-              <span className="text-[10px] font-bold text-slate-gray/50 uppercase tracking-wider">
+          <div className='flex items-center gap-4'>
+            <div className='flex flex-col items-end opacity-80 hidden sm:flex'>
+              <span className='text-[10px] font-bold text-slate-gray/50 uppercase tracking-wider'>
                 {user?.role === 'ADMIN' ? 'Administrador' : 'Pastelero'}
               </span>
-              <span className="text-sm font-bold text-slate-gray">{user?.name || user?.username}</span>
+              <span className='text-sm font-bold text-slate-gray'>{user?.name || user?.username}</span>
             </div>
 
-            <div className="relative">
+            <div className='relative'>
               <button
                 onClick={() => setShowSettings(!showSettings)}
                 className={`p-2 rounded-full transition-all ${
                   showSettings ? 'bg-peach-soft/20 text-peach-soft' : 'text-slate-gray hover:bg-gray-100'
                 }`}
-                title="Configuración"
-                aria-label="Configuración"
+                title='Configuración'
+                aria-label='Configuración'
                 aria-expanded={showSettings}
               >
-                <Settings className="w-5 h-5" />
+                <Settings className='w-5 h-5' />
               </button>
 
               <AnimatePresence>
                 {showSettings && (
                   <>
-                    <div className="fixed inset-0 z-10" onClick={() => setShowSettings(false)} />
+                    <div className='fixed inset-0 z-10' onClick={() => setShowSettings(false)} />
                     <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 z-30 py-2 overflow-hidden"
+                      className='absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 z-30 py-2 overflow-hidden'
                     >
-                      <div className="px-4 py-2 border-b border-gray-50 mb-1">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ajustes de Negocio</p>
+                      <div className='px-4 py-2 border-b border-gray-50 mb-1'>
+                        <p className='text-xs font-bold text-gray-400 uppercase tracking-wider'>Ajustes de Negocio</p>
                       </div>
                       <button
                         onClick={() => {
-                          setActiveTab('settings');
-                          setShowSettings(false);
-                          setIsMobileMenuOpen(false);
+                          setActiveTab('settings')
+                          setShowSettings(false)
+                          setIsMobileMenuOpen(false)
                         }}
-                        className="w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-peach-soft/10 flex items-center gap-3 transition-colors"
+                        className='w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-peach-soft/10 flex items-center gap-3 transition-colors'
                       >
-                        <TrendingUp className="w-4 h-4 text-peach-soft" />
+                        <TrendingUp className='w-4 h-4 text-peach-soft' />
                         Tasas de Cambio
                       </button>
                       {user?.role === 'ADMIN' && (
-                        <a 
-                          href="/admin" 
-                          className="w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-50"
+                        <a
+                          href='/admin'
+                          className='w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-50'
                         >
-                          <Settings className="w-4 h-4 text-gray-400" />
+                          <Settings className='w-4 h-4 text-gray-400' />
                           Master Admin
                         </a>
                       )}
@@ -132,20 +131,20 @@ function MainApp() {
 
             <button
               onClick={logout}
-              className="hidden lg:flex px-4 py-2 text-sm font-bold text-white bg-slate-gray rounded-xl hover:bg-red-500 transition-all items-center gap-2"
+              className='hidden lg:flex px-4 py-2 text-sm font-bold text-white bg-slate-gray rounded-xl hover:bg-red-500 transition-all items-center gap-2'
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className='w-4 h-4' />
               <span>Salir</span>
             </button>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-gray hover:bg-gray-100 transition-colors"
-              aria-label={isMobileMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+              className='lg:hidden p-2 rounded-lg text-slate-gray hover:bg-gray-100 transition-colors'
+              aria-label={isMobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
               aria-expanded={isMobileMenuOpen}
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
             </button>
           </div>
         </div>
@@ -159,22 +158,22 @@ function MainApp() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-slate-gray/20 z-20 lg:hidden"
+              className='fixed inset-0 bg-slate-gray/20 z-20 lg:hidden'
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="fixed top-20 left-0 right-0 bg-white border-b border-gray-100 z-30 lg:hidden shadow-lg"
+              className='fixed top-20 left-0 right-0 bg-white border-b border-gray-100 z-30 lg:hidden shadow-lg'
             >
-              <div className="flex flex-col p-4 gap-2">
+              <div className='flex flex-col p-4 gap-2'>
                 {navItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => {
-                      setActiveTab(item.id);
-                      setIsMobileMenuOpen(false);
+                      setActiveTab(item.id)
+                      setIsMobileMenuOpen(false)
                     }}
                     className={`w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all ${
                       activeTab === item.id
@@ -186,16 +185,16 @@ function MainApp() {
                   </button>
                 ))}
 
-                <div className="h-px bg-gray-100 my-2" />
+                <div className='h-px bg-gray-100 my-2' />
 
                 <button
                   onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    logout();
+                    setIsMobileMenuOpen(false)
+                    logout()
                   }}
-                  className="w-full text-left px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl flex items-center gap-3 transition-colors"
+                  className='w-full text-left px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl flex items-center gap-3 transition-colors'
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className='w-4 h-4' />
                   Salir
                 </button>
               </div>
@@ -204,7 +203,7 @@ function MainApp() {
         )}
       </AnimatePresence>
 
-      <main className="max-w-6xl mx-auto px-6">
+      <main className='max-w-6xl mx-auto px-6'>
         {activeTab === 'ingredient' && <IngredientManager />}
         {activeTab === 'baseRecipe' && <BaseRecipeManager />}
         {activeTab === 'settings' && <ExchangeRateManager />}
@@ -216,38 +215,38 @@ function MainApp() {
         )}
       </main>
     </div>
-  );
+  )
 }
 
-function App() {
+function App () {
   return (
     <AuthProvider>
       <Toaster
-        position="top-right"
+        position='top-right'
         toastOptions={{
           style: {
             background: '#3E4A59',
             color: '#fff',
-            borderRadius: '16px',
+            borderRadius: '16px'
           },
           success: {
             iconTheme: {
               primary: '#F7C5B2',
-              secondary: '#3E4A59',
-            },
-          },
+              secondary: '#3E4A59'
+            }
+          }
         }}
       />
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path='/' element={<Landing />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/register' element={<RegisterPage />} />
 
           {/* Protected Main App Route */}
           <Route
-            path="/app"
+            path='/app'
             element={
               <ProtectedRoute>
                 <MainApp />
@@ -257,20 +256,20 @@ function App() {
 
           {/* Protected Admin Dashboard Route */}
           <Route
-            path="/admin"
+            path='/admin'
             element={
-              <ProtectedRoute requireAdmin={true}>
+              <ProtectedRoute requireAdmin>
                 <AdminDashboard />
               </ProtectedRoute>
             }
           />
 
           {/* Redirect anything else to root */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-  );
+  )
 }
 
-export default App;
+export default App

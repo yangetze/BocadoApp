@@ -1,15 +1,15 @@
-import prisma from '../prisma.js';
-import { isTestMode, mockData } from '../mockData.js';
+import prisma from '../prisma.js'
+import { isTestMode, mockData } from '../mockData.js'
 
 export const recommendMargin = async (req, res) => {
   try {
-    const { superRecipeId } = req.params;
-    const userId = req.user.id;
+    const { superRecipeId } = req.params
+    const userId = req.user.id
 
-    let superRecipe;
+    let superRecipe
 
     if (isTestMode()) {
-      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId && sr.userId === userId);
+      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId && sr.userId === userId)
     } else {
       superRecipe = await prisma.superRecipe.findUnique({
         where: { id: superRecipeId },
@@ -25,41 +25,41 @@ export const recommendMargin = async (req, res) => {
           },
           directIngredients: true
         }
-      });
+      })
     }
 
     if (!superRecipe || (!isTestMode() && superRecipe.userId !== userId)) {
-      return res.status(404).json({ error: 'SuperRecipe not found' });
+      return res.status(404).json({ error: 'SuperRecipe not found' })
     }
 
     // Calcular la complejidad
-    let complexityScore = 0;
+    let complexityScore = 0
 
     // 1 punto por cada ingrediente directo (ej. caja, base)
-    complexityScore += superRecipe.directIngredients ? superRecipe.directIngredients.length : 0;
+    complexityScore += superRecipe.directIngredients ? superRecipe.directIngredients.length : 0
 
     // Por cada receta base
     if (superRecipe.baseRecipes) {
       for (const srBaseRecipe of superRecipe.baseRecipes) {
         // 2 puntos por la receta base en sí (requiere preparación previa)
-        complexityScore += 2;
+        complexityScore += 2
         // 1 punto por cada ingrediente dentro de la receta base
         if (srBaseRecipe.baseRecipe && srBaseRecipe.baseRecipe.ingredients) {
-          complexityScore += srBaseRecipe.baseRecipe.ingredients.length;
+          complexityScore += srBaseRecipe.baseRecipe.ingredients.length
         }
       }
     }
 
     // Regla de negocio simple para el margen sugerido
-    let suggestedMargin = 0.30; // 30% base
-    let complexityLevel = 'Baja';
+    let suggestedMargin = 0.30 // 30% base
+    let complexityLevel = 'Baja'
 
     if (complexityScore > 20) {
-      suggestedMargin = 0.50; // 50% para alta complejidad
-      complexityLevel = 'Alta';
+      suggestedMargin = 0.50 // 50% para alta complejidad
+      complexityLevel = 'Alta'
     } else if (complexityScore > 10) {
-      suggestedMargin = 0.40; // 40% para complejidad media
-      complexityLevel = 'Media';
+      suggestedMargin = 0.40 // 40% para complejidad media
+      complexityLevel = 'Media'
     }
 
     return res.status(200).json({
@@ -67,10 +67,9 @@ export const recommendMargin = async (req, res) => {
       complexityScore,
       complexityLevel,
       suggestedMargin
-    });
-
+    })
   } catch (error) {
-    console.error('Error recommending margin:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Error recommending margin:', error)
+    return res.status(500).json({ error: 'Internal server error' })
   }
-};
+}

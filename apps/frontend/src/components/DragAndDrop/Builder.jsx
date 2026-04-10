@@ -6,32 +6,32 @@ import {
   useSensor,
   useSensors,
   DragOverlay,
-  defaultDropAnimationSideEffects,
-} from '@dnd-kit/core';
+  defaultDropAnimationSideEffects
+} from '@dnd-kit/core'
 import {
   arrayMove,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
-import PropTypes from 'prop-types';
+  sortableKeyboardCoordinates
+} from '@dnd-kit/sortable'
+import PropTypes from 'prop-types'
 
-import { Palette } from './Palette';
-import { Canvas } from './Canvas';
-import { DraggableItem } from './DraggableItem';
-import { SortableItem } from './SortableItem';
+import { Palette } from './Palette'
+import { Canvas } from './Canvas'
+import { DraggableItem } from './DraggableItem'
+import { SortableItem } from './SortableItem'
 
-import { useCallback, useState } from 'react';
-import { MobilePaletteModal } from './MobilePaletteModal';
-import { Plus } from 'lucide-react';
+import { useCallback, useState } from 'react'
+import { MobilePaletteModal } from './MobilePaletteModal'
+import { Plus } from 'lucide-react'
 
-import { useBuilder } from './useBuilder';
-import { BuilderHeader } from './BuilderHeader';
-import { MarginRecommendationCard } from './MarginRecommendationCard';
-import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm';
-import { IngredientsSummary } from './IngredientsSummary';
-import { BrandSelectionModal } from './BrandSelectionModal';
+import { useBuilder } from './useBuilder'
+import { BuilderHeader } from './BuilderHeader'
+import { MarginRecommendationCard } from './MarginRecommendationCard'
+import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm'
+import { IngredientsSummary } from './IngredientsSummary'
+import { BrandSelectionModal } from './BrandSelectionModal'
 
-export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
-  const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
+export default function Builder ({ mode = 'superRecipe', availableItems = [] }) {
+  const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false)
 
   const {
     canvasItems,
@@ -54,111 +54,110 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     isBrandSelectionModalOpen,
     setIsBrandSelectionModalOpen,
     confirmBudgetSave
-  } = useBuilder(mode);
+  } = useBuilder(mode)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5,
-      },
+        distance: 5
+      }
     }),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: sortableKeyboardCoordinates
     })
-  );
+  )
 
   const handleDragStart = (event) => {
-    const { active } = event;
-    setActiveId(active.id);
-    setActiveItem(active.data.current);
-  };
+    const { active } = event
+    setActiveId(active.id)
+    setActiveItem(active.data.current)
+  }
 
   const handleDragEnd = (event) => {
-    const { active, over } = event;
+    const { active, over } = event
 
     if (!over) {
-      setActiveId(null);
-      setActiveItem(null);
-      return;
+      setActiveId(null)
+      setActiveItem(null)
+      return
     }
 
-    const isSourcePalette = active.data.current?.source === 'palette';
+    const isSourcePalette = active.data.current?.source === 'palette'
 
     // 1. Drop from palette into canvas (empty area OR over existing item)
     if (isSourcePalette) {
-      const isOverCanvas = over.id === 'canvas' || canvasItems.some(i => i.id === over.id);
+      const isOverCanvas = over.id === 'canvas' || canvasItems.some(i => i.id === over.id)
       if (isOverCanvas) {
         const newItem = {
           ...active.data.current,
           id: `canvas-${Date.now()}-${active.data.current.id}`,
-          quantity: 1,
-        };
+          quantity: 1
+        }
         setCanvasItems((items) => {
-          let newItems = [...items];
+          const newItems = [...items]
           // Si soltamos sobre un elemento existente, lo insertamos justo después de él
           if (over.id !== 'canvas') {
-            const overIndex = items.findIndex(i => i.id === over.id);
+            const overIndex = items.findIndex(i => i.id === over.id)
             if (overIndex !== -1) {
-              newItems.splice(overIndex + 1, 0, newItem);
+              newItems.splice(overIndex + 1, 0, newItem)
             } else {
-              newItems.push(newItem);
+              newItems.push(newItem)
             }
           } else {
-            newItems.push(newItem);
+            newItems.push(newItem)
           }
 
-          if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
-          return newItems;
-        });
+          if (mode === 'superRecipe') fetchMarginRecommendation(newItems)
+          return newItems
+        })
       }
     }
     // 2. Reordering inside the canvas
     else if (!isSourcePalette && over.id !== 'canvas') {
-      const oldIndex = canvasItems.findIndex((i) => i.id === active.id);
-      const newIndex = canvasItems.findIndex((i) => i.id === over.id);
+      const oldIndex = canvasItems.findIndex((i) => i.id === active.id)
+      const newIndex = canvasItems.findIndex((i) => i.id === over.id)
 
       if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-        setCanvasItems((items) => arrayMove(items, oldIndex, newIndex));
+        setCanvasItems((items) => arrayMove(items, oldIndex, newIndex))
       }
     }
 
-    setActiveId(null);
-    setActiveItem(null);
-  };
+    setActiveId(null)
+    setActiveItem(null)
+  }
 
   const dropAnimationConfig = {
     sideEffects: defaultDropAnimationSideEffects({
       styles: {
         active: {
-          opacity: '0.4',
-        },
-      },
-    }),
-  };
+          opacity: '0.4'
+        }
+      }
+    })
+  }
 
   // Memoize handlers passed to memoized components to prevent unnecessary re-renders
   const handleClear = useCallback(() => {
-    setCanvasItems([]);
-    setSuggestedMargin(null);
-  }, [setCanvasItems, setSuggestedMargin]);
-
+    setCanvasItems([])
+    setSuggestedMargin(null)
+  }, [setCanvasItems, setSuggestedMargin])
 
   const handleAddItem = useCallback((item) => {
-    setIsPaletteModalOpen(false);
+    setIsPaletteModalOpen(false)
     const newItem = {
       ...item,
       id: `canvas-${Date.now()}-${item.id}`,
-      quantity: 1,
-    };
+      quantity: 1
+    }
     setCanvasItems((items) => {
-      const newItems = [...items, newItem];
-      if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
-      return newItems;
-    });
-  }, [setCanvasItems, mode, fetchMarginRecommendation]);
+      const newItems = [...items, newItem]
+      if (mode === 'superRecipe') fetchMarginRecommendation(newItems)
+      return newItems
+    })
+  }, [setCanvasItems, mode, fetchMarginRecommendation])
 
-  const paletteTitle = mode === 'superRecipe' ? 'Recetas Base' : mode === 'baseRecipe' ? 'Ingredientes' : 'Súper Recetas';
-  const paletteDescription = mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : mode === 'baseRecipe' ? 'Arrastra ingredientes a la receta' : 'Arrastra para armar tu Presupuesto';
+  const paletteTitle = mode === 'superRecipe' ? 'Recetas Base' : mode === 'baseRecipe' ? 'Ingredientes' : 'Súper Recetas'
+  const paletteDescription = mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : mode === 'baseRecipe' ? 'Arrastra ingredientes a la receta' : 'Arrastra para armar tu Presupuesto'
 
   return (
     <DndContext
@@ -167,9 +166,9 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className='grid grid-cols-1 lg:grid-cols-4 gap-8'>
         {/* Left Column: Palette */}
-        <div className="hidden lg:block lg:col-span-1">
+        <div className='hidden lg:block lg:col-span-1'>
           <Palette
             items={availableItems}
             title={paletteTitle}
@@ -179,8 +178,8 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
         </div>
 
         {/* Right Column: Canvas & Controls */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
-          <div className="bg-white rounded-3xl p-4 lg:p-8 shadow-sm border border-gray-100 lg:min-h-[calc(100vh-8rem)] flex flex-col">
+        <div className='lg:col-span-3 flex flex-col gap-6'>
+          <div className='bg-white rounded-3xl p-4 lg:p-8 shadow-sm border border-gray-100 lg:min-h-[calc(100vh-8rem)] flex flex-col'>
             <BuilderHeader
               mode={mode}
               onClear={handleClear}
@@ -195,17 +194,16 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
             {mode === 'baseRecipe' && (
               <>
 
-              <BaseRecipeMetadataForm
-                metadata={baseRecipeMetadata}
-                setMetadata={setBaseRecipeMetadata}
-                totalCost={totalBaseRecipeCost}
-              />
+                <BaseRecipeMetadataForm
+                  metadata={baseRecipeMetadata}
+                  setMetadata={setBaseRecipeMetadata}
+                  totalCost={totalBaseRecipeCost}
+                />
               </>
             )}
 
-
             {/* The Canvas Area */}
-            <div className="flex-1 flex flex-col">
+            <div className='flex-1 flex flex-col'>
               <Canvas
                 items={canvasItems}
                 mode={mode}
@@ -215,9 +213,9 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 
               {/* Mobile Add Item Button */}
               <button
-                type="button"
+                type='button'
                 onClick={() => setIsPaletteModalOpen(true)}
-                className="w-full mt-4 lg:hidden flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-peach-soft text-peach-soft rounded-xl hover:bg-peach-soft/5 transition-colors font-medium"
+                className='w-full mt-4 lg:hidden flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-peach-soft text-peach-soft rounded-xl hover:bg-peach-soft/5 transition-colors font-medium'
               >
                 <Plus size={20} />
                 Agregar elemento
@@ -225,43 +223,46 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
 
               {(mode === 'baseRecipe' || mode === 'superRecipe') && (
                 <IngredientsSummary totals={ingredientTotals} />
-            )}
+              )}
             </div>
 
           </div>
         </div>
       </div>
 
-
       <MobilePaletteModal
         isOpen={isPaletteModalOpen}
         onClose={() => setIsPaletteModalOpen(false)}
       >
-        <div className="h-full">
-           <Palette
-             items={availableItems}
-             title={paletteTitle}
-             description={paletteDescription}
-             onAdd={handleAddItem}
-           />
+        <div className='h-full'>
+          <Palette
+            items={availableItems}
+            title={paletteTitle}
+            description={paletteDescription}
+            onAdd={handleAddItem}
+          />
         </div>
       </MobilePaletteModal>
 
       {/* Drag Overlay for smooth animations while dragging */}
       <DragOverlay dropAnimation={dropAnimationConfig}>
-        {activeId ? (
-          activeItem?.source === 'palette' ? (
-            <DraggableItem id={activeId} item={activeItem} isOverlay />
-          ) : (
-            <SortableItem id={activeId} item={activeItem} mode={mode} onRemove={() => {}} onUpdateQuantity={() => {}} />
-          )
-        ) : null}
+        {activeId
+          ? (
+              activeItem?.source === 'palette'
+                ? (
+                  <DraggableItem id={activeId} item={activeItem} isOverlay />
+                  )
+                : (
+                  <SortableItem id={activeId} item={activeItem} mode={mode} onRemove={() => {}} onUpdateQuantity={() => {}} />
+                  )
+            )
+          : null}
       </DragOverlay>
     </DndContext>
-  );
+  )
 }
 
 Builder.propTypes = {
   mode: PropTypes.oneOf(['superRecipe', 'baseRecipe', 'budget']),
-  availableItems: PropTypes.array,
-};
+  availableItems: PropTypes.array
+}

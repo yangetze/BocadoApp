@@ -1,20 +1,20 @@
-import express from 'express';
+import express from 'express'
 import {
   createOrUpdateManualRate,
   fetchAndStoreApiRate,
   getExchangeRates,
   getCurrencies
-} from '../controllers/exchangeRateController.js';
-import { verifyToken } from '../middleware/authMiddleware.js';
+} from '../controllers/exchangeRateController.js'
+import { verifyToken } from '../middleware/authMiddleware.js'
 
-const router = express.Router();
+const router = express.Router()
 
 // Todas las rutas de tasas de cambio requieren autenticación
-router.use(verifyToken);
+router.use(verifyToken)
 
-router.get('/', getExchangeRates);
-router.post('/manual', createOrUpdateManualRate);
-router.post('/sync-api', fetchAndStoreApiRate);
-router.get('/currencies', getCurrencies);
+router.get('/', getExchangeRates)
+router.post('/manual', createOrUpdateManualRate)
+router.post('/sync-api', fetchAndStoreApiRate)
+router.get('/currencies', getCurrencies)
 
-export default router;
+export default router

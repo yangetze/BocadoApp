@@ -1,63 +1,63 @@
-import request from 'supertest';
-import express from 'express';
-import prisma from '../src/prisma.js';
-import { jest } from '@jest/globals';
+import request from 'supertest'
+import express from 'express'
+import prisma from '../src/prisma.js'
+import { jest } from '@jest/globals'
 
 // Setup mock for verifyToken BEFORE importing routes
 jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
   verifyToken: (req, res, next) => {
-    req.user = { id: 'user1', role: 'USER' };
-    next();
+    req.user = { id: 'user1', role: 'USER' }
+    next()
   },
   isAdmin: (req, res, next) => next(),
   requireAdmin: (req, res, next) => next(),
   authenticateToken: (req, res, next) => next()
-}));
+}))
 
-const { default: costRoutes } = await import('../src/routes/costRoutes.js');
+const { default: costRoutes } = await import('../src/routes/costRoutes.js')
 
 describe('Cost API', () => {
-  let appInstance;
+  let appInstance
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.clearAllMocks()
 
-    appInstance = express();
-    appInstance.use(express.json());
-    appInstance.use('/api', costRoutes);
-  });
+    appInstance = express()
+    appInstance.use(express.json())
+    appInstance.use('/api', costRoutes)
+  })
 
   describe('GET /api/calculate-cost/:superRecipeId', () => {
     it('should return 400 for invalid yield parameter (negative number)', async () => {
-      const response = await request(appInstance).get('/api/calculate-cost/1?yield=-5');
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({ error: 'Invalid yield parameter' });
-    });
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=-5')
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ error: 'Invalid yield parameter' })
+    })
 
     it('should return 400 for invalid yield parameter (zero)', async () => {
-      const response = await request(appInstance).get('/api/calculate-cost/1?yield=0');
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({ error: 'Invalid yield parameter' });
-    });
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=0')
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ error: 'Invalid yield parameter' })
+    })
 
     it('should return 400 for invalid yield parameter (not a number)', async () => {
-      const response = await request(appInstance).get('/api/calculate-cost/1?yield=invalid');
-      expect(response.status).toBe(400);
-      expect(response.body).toEqual({ error: 'Invalid yield parameter' });
-    });
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=invalid')
+      expect(response.status).toBe(400)
+      expect(response.body).toEqual({ error: 'Invalid yield parameter' })
+    })
 
     it('should return 404 if SuperRecipe is not found', async () => {
-      prisma.superRecipe.findUnique.mockResolvedValue(null);
-      const response = await request(appInstance).get('/api/calculate-cost/999');
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({ error: 'SuperRecipe not found' });
-    });
+      prisma.superRecipe.findUnique.mockResolvedValue(null)
+      const response = await request(appInstance).get('/api/calculate-cost/999')
+      expect(response.status).toBe(404)
+      expect(response.body).toEqual({ error: 'SuperRecipe not found' })
+    })
 
     it('should calculate cost correctly', async () => {
       // Mock exchange rate finding logic since it is used in calculation
       prisma.exchangeRate.findMany.mockResolvedValue([
         { targetCurrency: { code: 'VES', symbol: 'Bs' }, rate: 40 }
-      ]);
+      ])
 
       const mockSuperRecipe = {
         id: '1',
@@ -79,12 +79,12 @@ describe('Cost API', () => {
         directIngredients: [
           { quantityNeeded: 1, ingredient: { name: 'Cake Box', globalPrice: 2.5 } }
         ]
-      };
+      }
 
-      prisma.superRecipe.findUnique.mockResolvedValue(mockSuperRecipe);
+      prisma.superRecipe.findUnique.mockResolvedValue(mockSuperRecipe)
 
-      const response = await request(appInstance).get('/api/calculate-cost/1?yield=2');
-      expect(response.status).toBe(200);
+      const response = await request(appInstance).get('/api/calculate-cost/1?yield=2')
+      expect(response.status).toBe(200)
 
       // Base Recipe cost (for 1000 yield):
       // Flour = 500 * 0.002 = 1.0
@@ -99,16 +99,16 @@ describe('Cost API', () => {
 
       // Total Cost = 6.0 + 5.0 = 11.0 USD
 
-      expect(response.body.costs.baseCost).toBe(11.0);
-      expect(response.body.scaleMultiplier).toBe(2);
-      expect(response.body.costs.convertedCosts[0].cost).toBe(440); // 11.0 * 40
-    });
+      expect(response.body.costs.baseCost).toBe(11.0)
+      expect(response.body.scaleMultiplier).toBe(2)
+      expect(response.body.costs.convertedCosts[0].cost).toBe(440) // 11.0 * 40
+    })
 
     it('should calculate cost correctly with default yield parameter (omitted)', async () => {
       // Mock exchange rate finding logic since it is used in calculation
       prisma.exchangeRate.findMany.mockResolvedValue([
         { targetCurrency: { code: 'VES', symbol: 'Bs' }, rate: 40 }
-      ]);
+      ])
 
       const mockSuperRecipe = {
         id: '1',
@@ -130,20 +130,20 @@ describe('Cost API', () => {
         directIngredients: [
           { quantityNeeded: 1, ingredient: { name: 'Cake Box', globalPrice: 2.5 } }
         ]
-      };
+      }
 
-      prisma.superRecipe.findUnique.mockResolvedValue(mockSuperRecipe);
+      prisma.superRecipe.findUnique.mockResolvedValue(mockSuperRecipe)
 
-      const response = await request(appInstance).get('/api/calculate-cost/1');
-      expect(response.status).toBe(200);
+      const response = await request(appInstance).get('/api/calculate-cost/1')
+      expect(response.status).toBe(200)
 
       // Base Recipe cost = 3.0
       // Direct Ingredient cost = 2.5
       // Total Cost = 3.0 + 2.5 = 5.5 USD
 
-      expect(response.body.costs.baseCost).toBe(5.5);
-      expect(response.body.scaleMultiplier).toBe(1);
-      expect(response.body.costs.convertedCosts[0].cost).toBe(220); // 5.5 * 40
-    });
-  });
-});
+      expect(response.body.costs.baseCost).toBe(5.5)
+      expect(response.body.scaleMultiplier).toBe(1)
+      expect(response.body.costs.convertedCosts[0].cost).toBe(220) // 5.5 * 40
+    })
+  })
+})

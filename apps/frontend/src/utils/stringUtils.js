@@ -5,9 +5,9 @@
  * @returns {string} The normalized string.
  */
 export const normalizeString = (str) => {
-  if (!str) return '';
+  if (!str) return ''
   return str
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-};
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}

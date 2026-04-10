@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-async function main() {
-  const hashedPassword = await bcrypt.hash('b0cad0', 10);
+async function main () {
+  const hashedPassword = await bcrypt.hash('b0cad0', 10)
 
   const admin = await prisma.user.upsert({
     where: { email: 'admin@bocadoapp.com' },
@@ -16,18 +16,18 @@ async function main() {
       password: hashedPassword,
       name: 'Admin User',
       role: 'ADMIN',
-      active: true,
-    },
-  });
+      active: true
+    }
+  })
 
-  console.log('Admin user seeded:', admin.username);
+  console.log('Admin user seeded:', admin.username)
 }
 
 main()
   .catch((e) => {
-    console.error(e);
-    process.exit(1);
+    console.error(e)
+    process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })

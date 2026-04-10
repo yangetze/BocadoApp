@@ -1,4 +1,4 @@
-export const isTestMode = () => process.env.TEST_MODE === 'true';
+export const isTestMode = () => process.env.TEST_MODE === 'true'
 
 // Mock data structures
 export const mockData = {
@@ -14,7 +14,7 @@ export const mockData = {
   users: [
     { id: 'user-default-1', email: 'test@bocadoapp.com', name: 'Test User' }
   ]
-};
+}
 
 // Populate some initial mock data for a better test mode experience
 export const initMockData = () => {
@@ -25,7 +25,7 @@ export const initMockData = () => {
     { id: 'ing-3', name: 'Huevos', globalPrice: 5.0, globalPriceQuantity: 1, measurementUnit: 'u', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
     { id: 'ing-4', name: 'Mantequilla', globalPrice: 4.2, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
     { id: 'ing-5', name: 'Caja para pastel', globalPrice: 1.5, globalPriceQuantity: 1, measurementUnit: 'u', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() }
-  );
+  )
 
   // Add a base recipe (Bizcocho)
   mockData.baseRecipes.push({
@@ -41,7 +41,7 @@ export const initMockData = () => {
       { id: 'bri-3', baseRecipeId: 'br-1', ingredientId: 'ing-3', quantity: 4, ingredient: mockData.ingredients.find(i => i.id === 'ing-3') },
       { id: 'bri-4', baseRecipeId: 'br-1', ingredientId: 'ing-4', quantity: 250, ingredient: mockData.ingredients.find(i => i.id === 'ing-4') }
     ]
-  });
+  })
 
   // Add a super recipe (Pastel Básico)
   mockData.superRecipes.push({
@@ -56,7 +56,7 @@ export const initMockData = () => {
     directIngredients: [
       { id: 'srdi-1', superRecipeId: 'sr-1', ingredientId: 'ing-5', quantityNeeded: 1, ingredient: mockData.ingredients.find(i => i.id === 'ing-5') }
     ]
-  });
+  })
 
   // Add an exchange rate
   mockData.exchangeRates.push({
@@ -66,7 +66,7 @@ export const initMockData = () => {
     source: 'MANUAL',
     targetCurrencyId: 'cur-2',
     targetCurrency: mockData.currencies.find(c => c.id === 'cur-2')
-  });
-};
+  })
+}
 
-initMockData();
+initMockData()

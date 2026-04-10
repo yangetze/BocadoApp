@@ -1,5 +1,5 @@
-import bcrypt from 'bcryptjs';
-import prisma from '../prisma.js';
+import bcrypt from 'bcryptjs'
+import prisma from '../prisma.js'
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -14,23 +14,23 @@ export const getAllUsers = async (req, res) => {
         role: true,
         createdAt: true
       }
-    });
-    res.json(users);
+    })
+    res.json(users)
   } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    console.error('Error fetching users:', error)
+    res.status(500).json({ error: 'Error interno del servidor' })
   }
-};
+}
 
 export const createUser = async (req, res) => {
   try {
-    const { username, email, identificationNumber, name, active, role } = req.body;
+    const { username, email, identificationNumber, name, active, role } = req.body
 
     if (!username || !email || !identificationNumber) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+      return res.status(400).json({ error: 'Faltan campos obligatorios' })
     }
 
-    const hashedPassword = await bcrypt.hash(identificationNumber, 10);
+    const hashedPassword = await bcrypt.hash(identificationNumber, 10)
 
     const newUser = await prisma.user.create({
       data: {
@@ -52,30 +52,30 @@ export const createUser = async (req, res) => {
         role: true,
         createdAt: true
       }
-    });
+    })
 
-    res.status(201).json(newUser);
+    res.status(201).json(newUser)
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error('Error creating user:', error)
     if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
+      return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' })
     }
-    res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error interno del servidor' })
   }
-};
+}
 
 export const updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { username, email, identificationNumber, name, active, role } = req.body;
+    const { id } = req.params
+    const { username, email, identificationNumber, name, active, role } = req.body
 
-    const dataToUpdate = {};
-    if (username !== undefined) dataToUpdate.username = username;
-    if (email !== undefined) dataToUpdate.email = email;
-    if (identificationNumber !== undefined) dataToUpdate.identificationNumber = identificationNumber;
-    if (name !== undefined) dataToUpdate.name = name;
-    if (active !== undefined) dataToUpdate.active = active;
-    if (role !== undefined) dataToUpdate.role = role;
+    const dataToUpdate = {}
+    if (username !== undefined) dataToUpdate.username = username
+    if (email !== undefined) dataToUpdate.email = email
+    if (identificationNumber !== undefined) dataToUpdate.identificationNumber = identificationNumber
+    if (name !== undefined) dataToUpdate.name = name
+    if (active !== undefined) dataToUpdate.active = active
+    if (role !== undefined) dataToUpdate.role = role
 
     const updatedUser = await prisma.user.update({
       where: { id },
@@ -90,22 +90,22 @@ export const updateUser = async (req, res) => {
         role: true,
         createdAt: true
       }
-    });
+    })
 
-    res.json(updatedUser);
+    res.json(updatedUser)
   } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    console.error('Error updating user:', error)
+    res.status(500).json({ error: 'Error interno del servidor' })
   }
-};
+}
 
 export const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    await prisma.user.delete({ where: { id } });
-    res.json({ message: 'Usuario eliminado correctamente' });
+    const { id } = req.params
+    await prisma.user.delete({ where: { id } })
+    res.json({ message: 'Usuario eliminado correctamente' })
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    console.error('Error deleting user:', error)
+    res.status(500).json({ error: 'Error interno del servidor' })
   }
-};
+}
