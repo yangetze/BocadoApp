@@ -1,9 +1,5 @@
 # Plan de Trabajo: Editor de Recetas Base (Drag & Drop, Columnas y Totales) (3.4 & 3.5)
 
-**Estado:** Completado
-**Rama:** (Por definir)
-
-
 ## 🎯 Objetivo
 Rediseñar la fila de ingredientes arrastrados para incluir columnas de cantidad, unidad y costo calculado. Además, implementar un total general en la parte superior.
 

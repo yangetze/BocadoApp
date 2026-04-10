@@ -1,13 +1,8 @@
 {
-  "installCommand": "npm install && npx prisma generate --schema=apps/backend/prisma/schema.prisma",
+  "installCommand": "npm install",
   "buildCommand": "npm run build --workspace=apps/frontend",
-  "ignoreCommand": "if [ \"$VERCEL_GIT_COMMIT_REF\" = \"main\" ]; then exit 1; else exit 0; fi",
   "outputDirectory": "apps/frontend/dist",
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

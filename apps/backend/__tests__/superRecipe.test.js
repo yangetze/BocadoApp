@@ -47,8 +47,6 @@ describe('Super Recipe Routes', () => {
       const created = { id: 'sr-2', name: 'Wedding Cake', baseRecipes: [], directIngredients: [] };
       
       prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
-      prisma.baseRecipe = { ...prisma.baseRecipe, count: jest.fn().mockResolvedValue(1) };
-      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(1) };
       prisma.superRecipe.create.mockResolvedValue(created);
 
       const res = await request(app).post('/api/super-recipes').send(payload);
@@ -59,45 +57,8 @@ describe('Super Recipe Routes', () => {
     });
   });
 
-
-  describe('PUT /api/super-recipes/:id', () => {
-    it('should error if linking unauthorized base recipe (IDOR)', async () => {
-      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-default-1' });
-      // Mocking that the base recipe doesn't belong to the user
-      prisma.baseRecipe = { ...prisma.baseRecipe, count: jest.fn().mockResolvedValue(0) };
-
-      const payload = {
-        name: 'Updated Cake',
-        baseRecipes: [{ baseRecipeId: 'br-unauthorized', quantityNeeded: 10 }]
-      };
-
-      const res = await request(app).put('/api/super-recipes/sr-1').send(payload);
-
-      expect(res.statusCode).toBe(404);
-      expect(res.body.error).toContain('recetas base no fueron encontradas');
-    });
-
-    it('should error if linking unauthorized direct ingredient (IDOR)', async () => {
-      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-default-1' });
-      prisma.baseRecipe = { ...prisma.baseRecipe, count: jest.fn().mockResolvedValue(0) };
-      // Mocking that the ingredient doesn't belong to the user
-      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(0) };
-
-      const payload = {
-        name: 'Updated Cake',
-        directIngredients: [{ ingredientId: 'i-unauthorized', quantityNeeded: 1 }]
-      };
-
-      const res = await request(app).put('/api/super-recipes/sr-1').send(payload);
-
-      expect(res.statusCode).toBe(404);
-      expect(res.body.error).toContain('ingredientes no fueron encontrados');
-    });
-  });
-
   describe('DELETE /api/super-recipes/:id', () => {
     it('should delete if not used in budget', async () => {
-      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-default-1' });
       prisma.budgetSuperRecipe.findFirst.mockResolvedValue(null);
       prisma.superRecipe.delete.mockResolvedValue({ id: 'sr-1' });
 
@@ -108,7 +69,6 @@ describe('Super Recipe Routes', () => {
     });
 
     it('should error if used in budget', async () => {
-      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-default-1' });
       prisma.budgetSuperRecipe.findFirst.mockResolvedValue({ id: 'b-sr-1' });
 
       const res = await request(app).delete('/api/super-recipes/sr-1');

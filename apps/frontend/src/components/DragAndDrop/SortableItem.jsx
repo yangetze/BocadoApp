@@ -3,12 +3,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { Trash2, GripVertical, ChevronUp, ChevronDown } from 'lucide-react';
 
 import PropTypes from 'prop-types';
-import React from 'react';
 
-// ⚡ Bolt: Wrapped SortableItem in React.memo. When dragging an item, the parent
-// context forces updates, but memoizing individual items ensures that the un-dragged
-// items don't re-render needlessly, significantly improving drag performance in long lists.
-export const SortableItem = React.memo(function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
+export function SortableItem({ id, item, mode, onRemove, onUpdateQuantity }) {
   const {
     attributes,
     listeners,
@@ -28,9 +24,9 @@ export const SortableItem = React.memo(function SortableItem({ id, item, mode, o
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative group bg-white border ${isDragging ? 'border-peach-soft shadow-lg' : 'border-gray-100 shadow-sm'} rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors hover:border-peach-soft/50`}
+      className={`relative group bg-white border ${isDragging ? 'border-peach-soft shadow-lg' : 'border-gray-100 shadow-sm'} rounded-xl p-4 flex items-center justify-between gap-4 transition-colors hover:border-peach-soft/50`}
     >
-      <div className="flex items-center gap-4 w-full sm:w-auto flex-1">
+      <div className="flex items-center gap-4 flex-1">
         <div
           {...attributes}
           {...listeners}
@@ -55,27 +51,29 @@ export const SortableItem = React.memo(function SortableItem({ id, item, mode, o
         </div>
       </div>
 
-      <div className="flex items-center justify-between w-full sm:w-auto gap-4 sm:gap-6 pl-10 sm:pl-0 mt-2 sm:mt-0">
+      <div className="flex items-center gap-6">
         {/* Cost & Quantity Selector */}
-        {mode === 'baseRecipe' ? (
-          <div className="flex flex-col items-end gap-1 mr-2">
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                aria-label="Cantidad"
-                value={item.quantity !== undefined ? item.quantity : 1}
-                onChange={(e) => onUpdateQuantity(id, parseFloat(e.target.value) || 0)}
-                className="w-20 text-center font-medium text-slate-gray border border-gray-200 rounded-lg p-1 outline-none focus:border-peach-soft focus:ring-1 focus:ring-peach-soft [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-              <span className="text-sm font-medium text-gray-500 w-8">{item.measurementUnit}</span>
-            </div>
-            {item.globalPrice !== undefined && item.unitQuantity && (
+        {mode === 'baseRecipe' && item.globalCost !== undefined && item.unitQuantity ? (
+           <div className="flex flex-col items-end mr-4">
               <span className="text-sm font-bold text-slate-gray">
-                $ {((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity * (item.globalPrice / (item.globalPriceQuantity || 1))).toFixed(2)} USD
+                $ {((item.quantity !== undefined ? item.quantity : 1) / item.unitQuantity * item.globalCost).toFixed(2)} USD
               </span>
-            )}
+              <span className="text-xs text-gray-400">Costo Calculado</span>
+           </div>
+        ) : null}
+
+        {mode === 'baseRecipe' ? (
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              aria-label="Cantidad"
+              value={item.quantity !== undefined ? item.quantity : 1}
+              onChange={(e) => onUpdateQuantity(id, parseFloat(e.target.value) || 0)}
+              className="w-20 text-center font-medium text-slate-gray border border-gray-200 rounded-lg p-1 outline-none focus:border-peach-soft focus:ring-1 focus:ring-peach-soft [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <span className="text-sm font-medium text-gray-500">{item.measurementUnit}</span>
           </div>
         ) : (
           <div className="flex items-center bg-gray-50 rounded-lg p-1 border border-gray-100">
@@ -112,7 +110,7 @@ export const SortableItem = React.memo(function SortableItem({ id, item, mode, o
       </div>
     </div>
   );
-});
+}
 
 SortableItem.propTypes = {
   id: PropTypes.string.isRequired,
@@ -123,7 +121,7 @@ SortableItem.propTypes = {
     brand: PropTypes.string,
     unitQuantity: PropTypes.number,
     measurementUnit: PropTypes.string,
-    globalPrice: PropTypes.number,
+    globalCost: PropTypes.number,
   }).isRequired,
   mode: PropTypes.string,
   onRemove: PropTypes.func.isRequired,

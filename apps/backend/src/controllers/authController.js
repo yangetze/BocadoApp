@@ -12,10 +12,6 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: 'Debes proporcionar tu usuario/email y contraseña' });
     }
 
-    if (typeof loginId !== 'string' || typeof password !== 'string') {
-      return res.status(400).json({ error: 'Formato de credenciales inválido' });
-    }
-
     const user = await prisma.user.findFirst({
       where: {
         OR: [

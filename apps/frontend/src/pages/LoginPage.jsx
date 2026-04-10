@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, Cake, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { LogIn, Cake, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api';
 import toast from 'react-hot-toast';
@@ -9,7 +9,6 @@ import toast from 'react-hot-toast';
 export default function LoginPage() {
   const [formData, setFormData] = useState({ loginId: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const { login, token, user } = useAuth();
   const navigate = useNavigate();
 
@@ -65,9 +64,8 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
-              <label htmlFor="loginId" className="text-sm font-semibold text-slate-gray/80 ml-1">Usuario o Email</label>
+              <label className="text-sm font-semibold text-slate-gray/80 ml-1">Usuario o Email</label>
               <input
-                id="loginId"
                 type="text"
                 required
                 className="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-peach-soft/15 focus:border-peach-soft transition-all outline-none text-slate-gray font-medium"
@@ -79,29 +77,17 @@ export default function LoginPage() {
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-center px-1">
-                <label htmlFor="password" className="text-sm font-semibold text-slate-gray/80">Contraseña</label>
+                <label className="text-sm font-semibold text-slate-gray/80">Contraseña</label>
                 <a href="#" className="text-xs text-peach-soft hover:underline font-medium">¿Olvidaste tu contraseña?</a>
               </div>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  className="w-full px-5 py-4 pr-12 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-peach-soft/15 focus:border-peach-soft transition-all outline-none text-slate-gray font-medium"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-gray/50 hover:text-slate-gray transition-colors"
-                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  aria-expanded={showPassword}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
+              <input
+                type="password"
+                required
+                className="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-peach-soft/15 focus:border-peach-soft transition-all outline-none text-slate-gray font-medium"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
             </div>
 
             <button

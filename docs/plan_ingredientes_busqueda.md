@@ -1,9 +1,5 @@
 # Plan de Trabajo: Búsqueda de Ingredientes
 
-**Estado:** Completado
-**Rama:** (Por definir)
-
-
 
 ## 🎯 Objetivo
 

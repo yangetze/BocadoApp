@@ -24,26 +24,19 @@ describe('Exchange Rate API', () => {
 
   describe('GET /api/exchange-rates', () => {
     it('should return a list of exchange rates', async () => {
-      process.env.TEST_MODE = 'false';
       const mockRates = [
         { id: '1', rate: 36.5, targetCurrencyId: 'ves-id', targetCurrency: { code: 'VES' } }
       ];
-
-      prisma.exchangeRate.count.mockResolvedValue(1);
       prisma.exchangeRate.findMany.mockResolvedValue(mockRates);
 
       const response = await request(app).get('/api/exchange-rates');
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toEqual(mockRates);
-      expect(response.body.total).toBe(1);
-      expect(response.body.page).toBe(1);
+      expect(response.body).toEqual(mockRates);
       expect(prisma.exchangeRate.findMany).toHaveBeenCalledTimes(1);
     });
 
     it('should handle internal server error', async () => {
-      process.env.TEST_MODE = 'false';
-      prisma.exchangeRate.count.mockRejectedValue(new Error('DB Error'));
       prisma.exchangeRate.findMany.mockRejectedValue(new Error('DB Error'));
 
       const response = await request(app).get('/api/exchange-rates');
@@ -63,7 +56,6 @@ describe('Exchange Rate API', () => {
 
     it('should create or update a manual rate', async () => {
       prisma.currency.findUnique.mockResolvedValue({ id: 'ves-id', code: 'VES' });
-      process.env.TEST_MODE = 'false';
       const mockRate = { id: 'rate-1', rate: 36.5 };
       prisma.exchangeRate.upsert.mockResolvedValue(mockRate);
 
@@ -72,7 +64,7 @@ describe('Exchange Rate API', () => {
         .send({ targetCurrencyId: 'ves-id', rate: 36.5 });
 
       expect(response.status).toBe(200);
-      expect(response.body.rate).toEqual(mockRate.rate);
+      expect(response.body).toEqual(mockRate);
       expect(prisma.exchangeRate.upsert).toHaveBeenCalledTimes(1);
     });
   });

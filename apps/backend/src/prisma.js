@@ -86,7 +86,6 @@ if (process.env.NODE_ENV === 'test') {
       upsert: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-      count: jest.fn(),
     },
     $transaction: jest.fn(async (callback) => await callback(prisma)),
   };

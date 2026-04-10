@@ -1,9 +1,5 @@
 # Plan de Trabajo: Información de Ingredientes en Receta Base (3.2)
 
-**Estado:** Backlog
-**Rama:** (Por definir)
-
-
 ## 🎯 Objetivo
 Hacer visible la marca y la cantidad base de cada ingrediente en el listado para mejorar la identificación.
 

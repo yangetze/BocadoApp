@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 const fetchWithAuth = async (url, options = {}) => {
   const token = localStorage.getItem('token');
@@ -11,11 +11,7 @@ const fetchWithAuth = async (url, options = {}) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Si API_URL es '/api', esto creará peticiones a '/api/ruta'
-  // Si estamos en Vercel, Vercel reenviará '/api/ruta' a nuestra función serverless
-  const fullUrl = API_URL.startsWith('http') ? `${API_URL}${url}` : `${API_URL}${url}`;
-
-  const res = await fetch(fullUrl, {
+  const res = await fetch(`${API_URL}${url}`, {
     ...options,
     headers,
   });
@@ -51,9 +47,9 @@ export const userApi = {
 };
 
 export const exchangeRateApi = {
-  getRates: async (params = {}) => {
+  getRates: async () => {
     try {
-      const res = await api.get('/exchange-rates', { params });
+      const res = await api.get('/exchange-rates');
       return res.data;
     } catch (error) {
       console.error(error);

@@ -1,9 +1,5 @@
 # Plan de Trabajo: Rendimiento y Unidad de Rendimiento (3.6)
 
-**Estado:** Backlog
-**Rama:** (Por definir)
-
-
 ## 🎯 Objetivo
 Definir y desarrollar los campos de **Rendimiento** (Yield) y **Unidad de Rendimiento** (Yield Unit) para las recetas finales.
 

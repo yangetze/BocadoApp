@@ -29,9 +29,6 @@ export const getIngredients = async (req, res) => {
 
     const ingredients = await prisma.ingredient.findMany({
       where: whereClause,
-      include: {
-        presentations: true
-      },
       orderBy: { createdAt: 'desc' }
     });
     res.status(200).json(ingredients);
@@ -43,17 +40,17 @@ export const getIngredients = async (req, res) => {
 
 export const createIngredient = async (req, res) => {
   try {
-    const { name, globalPrice, globalPriceQuantity = 1, measurementUnit, presentations } = req.body;
-    const userId = req.user.id;
+    const { name, globalCost, unitQuantity, measurementUnit, brand } = req.body;
+    const userId = req.user.id; // Obtenido del token decodificado
 
     if (isTestMode()) {
       const newIngredient = {
         id: `ing-${crypto.randomUUID()}`,
         name,
-        globalPrice: parseFloat(globalPrice),
-        globalPriceQuantity: parseFloat(globalPriceQuantity),
+        globalCost: parseFloat(globalCost),
+        unitQuantity: unitQuantity !== undefined ? parseFloat(unitQuantity) : 1,
         measurementUnit,
-        presentations: presentations || [],
+        brand: brand || null,
         userId: userId,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -65,22 +62,11 @@ export const createIngredient = async (req, res) => {
     const newIngredient = await prisma.ingredient.create({
       data: {
         name,
-        globalPrice: parseFloat(globalPrice),
-        globalPriceQuantity: parseFloat(globalPriceQuantity),
+        globalCost: parseFloat(globalCost),
+        unitQuantity: unitQuantity !== undefined ? parseFloat(unitQuantity) : 1,
         measurementUnit,
-        userId: userId,
-        presentations: {
-          create: presentations?.map(p => ({
-            brand: p.brand,
-            presentationName: p.presentationName,
-            cost: parseFloat(p.cost),
-            unitQuantity: parseFloat(p.unitQuantity),
-            measurementUnit: p.measurementUnit
-          })) || []
-        }
-      },
-      include: {
-        presentations: true
+        brand,
+        userId: userId // Vinculamos al usuario real de Supabase
       }
     });
 
@@ -94,7 +80,7 @@ export const createIngredient = async (req, res) => {
 export const updateIngredient = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, globalPrice, globalPriceQuantity = 1, measurementUnit, presentations } = req.body;
+    const { name, globalCost, unitQuantity, measurementUnit, brand } = req.body;
 
     if (isTestMode()) {
       const ingredientIndex = mockData.ingredients.findIndex(i => i.id === id);
@@ -103,52 +89,27 @@ export const updateIngredient = async (req, res) => {
       const updated = {
         ...mockData.ingredients[ingredientIndex],
         ...(name && { name }),
-        ...(globalPrice !== undefined && { globalPrice: parseFloat(globalPrice) }),
-           ...(globalPriceQuantity !== undefined && { globalPriceQuantity: parseFloat(globalPriceQuantity) }),
+        ...(globalCost !== undefined && { globalCost: parseFloat(globalCost) }),
+        ...(unitQuantity !== undefined && { unitQuantity: parseFloat(unitQuantity) }),
         ...(measurementUnit && { measurementUnit }),
-        ...(presentations && { presentations })
+        ...(brand !== undefined && { brand })
       };
       mockData.ingredients[ingredientIndex] = updated;
       return res.status(200).json(updated);
     }
 
-    // Validate ownership
-    const existingIngredient = await prisma.ingredient.findUnique({ where: { id } });
-    if (!existingIngredient || existingIngredient.userId !== req.user.id) {
-       return res.status(404).json({ error: 'Ingrediente no encontrado' });
-    }
-
-    const updatedIngredient = await prisma.$transaction(async (tx) => {
-       await tx.ingredient.update({
-         where: { id },
-         data: {
-           name,
-           ...(globalPrice !== undefined && { globalPrice: parseFloat(globalPrice) }),
-           ...(globalPriceQuantity !== undefined && { globalPriceQuantity: parseFloat(globalPriceQuantity) }),
-           measurementUnit
-         }
-       });
-
-       if (presentations) {
-          await tx.brandPresentation.deleteMany({ where: { ingredientId: id } });
-          if (presentations.length > 0) {
-              await tx.brandPresentation.createMany({
-                 data: presentations.map(p => ({
-                    ingredientId: id,
-                    brand: p.brand,
-                    presentationName: p.presentationName,
-                    cost: parseFloat(p.cost),
-                    unitQuantity: parseFloat(p.unitQuantity),
-                    measurementUnit: p.measurementUnit
-                 }))
-              });
-          }
-       }
-
-       return tx.ingredient.findUnique({
-          where: { id },
-          include: { presentations: true }
-       });
+    const updatedIngredient = await prisma.ingredient.update({
+      where: {
+        id,
+        userId: req.user.id // Verificamos propiedad
+      },
+      data: {
+        name,
+        ...(globalCost !== undefined && { globalCost: parseFloat(globalCost) }),
+        ...(unitQuantity !== undefined && { unitQuantity: parseFloat(unitQuantity) }),
+        measurementUnit,
+        brand
+      }
     });
 
     res.status(200).json(updatedIngredient);

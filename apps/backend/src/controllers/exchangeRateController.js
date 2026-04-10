@@ -128,15 +128,23 @@ export const fetchAndStoreApiRate = async (req, res) => {
 
     // 2. Find the VES Currency ID
     // Assuming 'VES' is the code for Bolivar
-    // Ensure default currencies exist (including USD and VES)
-    await ensureDefaultCurrencies();
-
-    // 2. Find the VES Currency ID
-    // Assuming 'VES' is the code for Bolivar
     let targetCurrency = await prisma.currency.findUnique({
       where: { code: 'VES' }
     });
 
+    // If VES doesn't exist, create it for convenience
+    if (!targetCurrency) {
+      targetCurrency = await prisma.currency.create({
+        data: {
+          code: 'VES',
+          symbol: 'Bs',
+          isBase: false
+        }
+      });
+    }
+
+    // Ensure default currencies exist (including USD and VES)
+    await ensureDefaultCurrencies();
 
     // Normalize to today (start of day UTC)
     const today = new Date();
@@ -214,97 +222,30 @@ export const fetchAndStoreApiRate = async (req, res) => {
 // GET: Devuelve historial de tasas
 export const getExchangeRates = async (req, res) => {
   try {
-    const { targetCurrencyId, page = 1, limit = 10, startDate, endDate } = req.query;
-
-    const pageNum = parseInt(page, 10) || 1;
-    const limitNum = parseInt(limit, 10) || 10;
-
-    let effectiveDateFilter = undefined;
-    if (startDate || endDate) {
-        effectiveDateFilter = {};
-        if (startDate) {
-            effectiveDateFilter.gte = new Date(startDate);
-        }
-        if (endDate) {
-            const end = new Date(endDate);
-            end.setUTCHours(23, 59, 59, 999);
-            effectiveDateFilter.lte = end;
-        }
-    }
+    const { targetCurrencyId } = req.query;
 
     if (isTestMode()) {
       let result = mockData.exchangeRates;
       if (targetCurrencyId) {
         result = result.filter(r => r.targetCurrencyId === targetCurrencyId);
       }
-      if (startDate) {
-          result = result.filter(r => new Date(r.effectiveDate) >= new Date(startDate));
-      }
-      if (endDate) {
-          const end = new Date(endDate);
-          end.setUTCHours(23, 59, 59, 999);
-          result = result.filter(r => new Date(r.effectiveDate) <= end);
-      }
-
-      // Sort by effectiveDate desc, then alphabetically by currency code
-      result.sort((a, b) => {
-          const dateA = new Date(a.effectiveDate).getTime();
-          const dateB = new Date(b.effectiveDate).getTime();
-          if (dateB !== dateA) return dateB - dateA;
-
-          const codeA = a.targetCurrency?.code || '';
-          const codeB = b.targetCurrency?.code || '';
-          return codeA.localeCompare(codeB);
-      });
-
-      const total = result.length;
-      const totalPages = Math.ceil(total / limitNum);
-      const data = result.slice((pageNum - 1) * limitNum, pageNum * limitNum);
-
-      return res.status(200).json({
-          data,
-          total,
-          page: pageNum,
-          limit: limitNum,
-          totalPages
-      });
+      return res.status(200).json(result.sort((a, b) => b.effectiveDate - a.effectiveDate));
     }
 
-    const whereClause = {};
-    if (targetCurrencyId) {
-        whereClause.targetCurrencyId = targetCurrencyId;
-    }
-    if (effectiveDateFilter) {
-        whereClause.effectiveDate = effectiveDateFilter;
-    }
+    const whereClause = targetCurrencyId ? { targetCurrencyId } : {};
 
-    const total = await prisma.exchangeRate.count({ where: whereClause });
-    const totalPages = Math.ceil(total / limitNum);
-
-    // ⚡ Bolt: Pushed sorting logic down to the database using Prisma's multiple orderBy
-    // capabilities instead of an expensive O(n log n) in-memory sort in Node.js.
-    let rates = await prisma.exchangeRate.findMany({
+    const rates = await prisma.exchangeRate.findMany({
       where: whereClause,
       include: {
         targetCurrency: true,
       },
-      orderBy: [
-        { effectiveDate: 'desc' },
-        { targetCurrency: { code: 'asc' } }
-      ],
-      skip: (pageNum - 1) * limitNum,
-      take: limitNum
+      orderBy: {
+        effectiveDate: 'desc',
+      },
     });
 
-    return res.status(200).json({
-        data: rates,
-        total,
-        page: pageNum,
-        limit: limitNum,
-        totalPages
-    });
+    return res.status(200).json(rates);
   } catch (error) {
-    console.error('Error in getExchangeRates:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

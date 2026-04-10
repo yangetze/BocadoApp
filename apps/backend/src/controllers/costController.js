@@ -5,7 +5,6 @@ export const calculateSuperRecipeCost = async (req, res) => {
   try {
     const { superRecipeId } = req.params;
     const { yield: yieldParam } = req.query;
-    const userId = req.user.id;
 
     // Multiplier defaults to 1 if no custom yield is provided
     const scaleMultiplier = yieldParam ? parseFloat(yieldParam) : 1;
@@ -18,17 +17,18 @@ export const calculateSuperRecipeCost = async (req, res) => {
     let exchangeRates;
 
     if (isTestMode()) {
-      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId && sr.userId === userId);
+      superRecipe = mockData.superRecipes.find(sr => sr.id === superRecipeId);
 
       // Filter exchange rates to get the latest distinct ones per currency
-      const latestRates = new Map();
-      for (const rate of mockData.exchangeRates) {
-        const existing = latestRates.get(rate.targetCurrencyId);
-        if (!existing || rate.effectiveDate > existing.effectiveDate) {
-          latestRates.set(rate.targetCurrencyId, rate);
+      const sortedRates = [...mockData.exchangeRates].sort((a, b) => b.effectiveDate - a.effectiveDate);
+      exchangeRates = [];
+      const seenCurrencies = new Set();
+      for (const rate of sortedRates) {
+        if (!seenCurrencies.has(rate.targetCurrencyId)) {
+          exchangeRates.push(rate);
+          seenCurrencies.add(rate.targetCurrencyId);
         }
       }
-      exchangeRates = Array.from(latestRates.values());
     } else {
       // Fetch SuperRecipe with deeply nested base recipes and ingredients
       superRecipe = await prisma.superRecipe.findUnique({
@@ -56,7 +56,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
       });
     }
 
-    if (!superRecipe || (!isTestMode() && superRecipe.userId !== userId)) {
+    if (!superRecipe) {
       return res.status(404).json({ error: 'SuperRecipe not found' });
     }
 
@@ -76,7 +76,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
       for (const brIngredient of baseRecipe.ingredients) {
         const { quantity, ingredient } = brIngredient;
         // Cost of this ingredient for the base recipe's default yield
-        const cost = quantity * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1));
+        const cost = quantity * ingredient.globalCost;
         baseRecipeCostPerUnit += cost;
 
         baseRecipeIngredientsBreakdown.push({
@@ -104,7 +104,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
     // 2. Calculate cost from Direct Ingredients (e.g. Box, Cake board)
     for (const srDirectIngredient of superRecipe.directIngredients) {
       const { quantityNeeded, ingredient } = srDirectIngredient;
-      const finalCost = quantityNeeded * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1)) * scaleMultiplier;
+      const finalCost = quantityNeeded * ingredient.globalCost * scaleMultiplier;
       totalBaseCost += finalCost;
 
       breakdown.directIngredients.push({

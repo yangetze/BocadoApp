@@ -30,20 +30,6 @@ export const createBaseRecipe = async (req, res) => {
     const { name, baseYield, yieldUnit, ingredients } = req.body;
     const userId = req.user.id;
 
-    // Security: Verify ownership of ingredients before linking
-    if (ingredients && ingredients.length > 0) {
-      const ingredientIds = [...new Set(ingredients.map(i => i.ingredientId))];
-      const validIngredientsCount = await prisma.ingredient.count({
-        where: {
-          id: { in: ingredientIds },
-          userId: userId
-        }
-      });
-      if (validIngredientsCount !== ingredientIds.length) {
-        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
-      }
-    }
-
     if (isTestMode()) {
       const newRecipe = {
         id: `br-${crypto.randomUUID()}`,
@@ -100,10 +86,6 @@ export const updateBaseRecipe = async (req, res) => {
       const recipeIndex = mockData.baseRecipes.findIndex(br => br.id === id);
       if (recipeIndex === -1) return res.status(404).json({ error: 'Receta base no encontrada' });
 
-      if (mockData.baseRecipes[recipeIndex].userId !== req.user.id) {
-        return res.status(404).json({ error: 'Receta base no encontrada' });
-      }
-
       const updated = {
         ...mockData.baseRecipes[recipeIndex],
         ...(name && { name }),
@@ -129,14 +111,6 @@ export const updateBaseRecipe = async (req, res) => {
     if (name) updateData.name = name;
     if (baseYield !== undefined) updateData.baseYield = parseFloat(baseYield);
     if (yieldUnit) updateData.yieldUnit = yieldUnit;
-
-    const existingRecipe = await prisma.baseRecipe.findUnique({
-      where: { id }
-    });
-
-    if (!existingRecipe || existingRecipe.userId !== req.user.id) {
-      return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
-    }
 
     const updatedBaseRecipe = await prisma.$transaction(async (tx) => {
       // Update basic details
@@ -180,9 +154,6 @@ export const updateBaseRecipe = async (req, res) => {
     res.status(200).json(updatedBaseRecipe);
   } catch (error) {
     console.error('Error updating base recipe:', error);
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
-    }
     res.status(500).json({ error: 'Error al actualizar la receta base' });
   }
 };

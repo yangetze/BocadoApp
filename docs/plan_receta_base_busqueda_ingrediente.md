@@ -1,9 +1,5 @@
 # Plan de Trabajo: Búsqueda de Ingredientes en Receta Base (3.3)
 
-**Estado:** Completado
-**Rama:** (Por definir)
-
-
 ## 🎯 Objetivo
 Habilitar búsqueda avanzada por **Nombre** o **Marca** en la barra del editor de recetas base.
 

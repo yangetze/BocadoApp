@@ -17,28 +17,9 @@ import { isTestMode } from './mockData.js';
 dotenv.config();
 
 const app = express();
-
-app.set('trust proxy', 1);
 const port = process.env.PORT || 3000;
 
-const defaultAllowedOrigins = ['http://localhost:5173'];
-const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : defaultAllowedOrigins;
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 
 // Main API routes

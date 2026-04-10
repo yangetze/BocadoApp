@@ -1,9 +1,5 @@
 # 🔐 Plan de Trabajo: Autenticación y Registro (BocadoApp)
 
-**Estado:** Completado
-**Rama:** (Por definir)
-
-
 Este plan detalla la implementación del sistema de seguridad para el MVP 1.5, integrando el backend existente con una nueva interfaz de usuario moderna y segura.
 
 ---

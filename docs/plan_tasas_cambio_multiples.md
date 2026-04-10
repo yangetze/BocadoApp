@@ -1,9 +1,5 @@
 # Plan de Trabajo: Tasas de Cambio Múltiples
 
-**Estado:** Backlog
-**Rama:** (Por definir)
-
-
 ## 🎯 Objetivo
 Habilitar el soporte para múltiples tasas de cambio simultáneas (Oficial, Paralelo, Euro, Manual) para la misma fecha, garantizando que cada combinación de **Origen** y **Fecha** sea única en el sistema.
 
