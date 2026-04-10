@@ -30,6 +30,20 @@ export const createBaseRecipe = async (req, res) => {
     const { name, baseYield, yieldUnit, ingredients } = req.body;
     const userId = req.user.id;
 
+    // Security: Verify ownership of ingredients before linking
+    if (ingredients && ingredients.length > 0) {
+      const ingredientIds = [...new Set(ingredients.map(i => i.ingredientId))];
+      const validIngredientsCount = await prisma.ingredient.count({
+        where: {
+          id: { in: ingredientIds },
+          userId: userId
+        }
+      });
+      if (validIngredientsCount !== ingredientIds.length) {
+        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
+    }
+
     if (isTestMode()) {
       const newRecipe = {
         id: `br-${crypto.randomUUID()}`,
