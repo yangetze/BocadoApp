@@ -1,7 +1,7 @@
 # Plan de Trabajo: Refactorización de Ingredientes y Marcas
 
 **Estado:** Completado
-**Rama:** jules-3849347301793117333-6c74bbbc
+**Rama:** jules-823612080078631080-ceca0607
 
 
 ## 🎯 Objetivo
