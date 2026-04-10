@@ -4,8 +4,9 @@ export function BaseRecipeMetadataForm({ metadata, setMetadata, totalCost }) {
   return (
     <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-100">
       <div className="md:col-span-2 lg:col-span-3">
-        <label className="block text-sm font-medium text-slate-gray mb-1">Nombre de la Receta Base</label>
+        <label htmlFor="recipeName" className="block text-sm font-medium text-slate-gray mb-1">Nombre de la Receta Base</label>
         <input
+          id="recipeName"
           type="text"
           placeholder="Ej. Ganache de Chocolate"
           className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all"
@@ -20,8 +21,9 @@ export function BaseRecipeMetadataForm({ metadata, setMetadata, totalCost }) {
         </div>
       </div>
       <div className="md:col-span-1 lg:col-span-2">
-        <label className="block text-sm font-medium text-slate-gray mb-1">Rendimiento (Cantidad)</label>
+        <label htmlFor="recipeYield" className="block text-sm font-medium text-slate-gray mb-1">Rendimiento (Cantidad)</label>
         <input
+          id="recipeYield"
           type="number"
           min="0"
           step="0.01"
@@ -32,8 +34,9 @@ export function BaseRecipeMetadataForm({ metadata, setMetadata, totalCost }) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-gray mb-1">Unidad de Rendimiento</label>
+        <label htmlFor="recipeUnit" className="block text-sm font-medium text-slate-gray mb-1">Unidad de Rendimiento</label>
         <select
+          id="recipeUnit"
           className="w-full border-gray-200 rounded-lg p-2.5 focus:ring-2 focus:ring-peach-soft focus:border-peach-soft outline-none transition-all bg-white"
           value={metadata.yieldUnit}
           onChange={(e) => setMetadata({ ...metadata, yieldUnit: e.target.value })}

@@ -19,12 +19,20 @@ import { Canvas } from './Canvas';
 import { DraggableItem } from './DraggableItem';
 import { SortableItem } from './SortableItem';
 
+import { useCallback, useState } from 'react';
+import { MobilePaletteModal } from './MobilePaletteModal';
+import { Plus } from 'lucide-react';
+
 import { useBuilder } from './useBuilder';
 import { BuilderHeader } from './BuilderHeader';
 import { MarginRecommendationCard } from './MarginRecommendationCard';
 import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm';
+import { IngredientsSummary } from './IngredientsSummary';
+import { BrandSelectionModal } from './BrandSelectionModal';
 
 export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
+  const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
+
   const {
     canvasItems,
     setCanvasItems,
@@ -42,6 +50,10 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     removeItem,
     updateItemQuantity,
     fetchMarginRecommendation,
+    ingredientTotals,
+    isBrandSelectionModalOpen,
+    setIsBrandSelectionModalOpen,
+    confirmBudgetSave
   } = useBuilder(mode);
 
   const sensors = useSensors(
@@ -124,10 +136,26 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     }),
   };
 
-  const handleClear = () => {
+  // Memoize handlers passed to memoized components to prevent unnecessary re-renders
+  const handleClear = useCallback(() => {
     setCanvasItems([]);
     setSuggestedMargin(null);
-  };
+  }, [setCanvasItems, setSuggestedMargin]);
+
+
+  const handleAddItem = useCallback((item) => {
+    setIsPaletteModalOpen(false);
+    const newItem = {
+      ...item,
+      id: `canvas-${Date.now()}-${item.id}`,
+      quantity: 1,
+    };
+    setCanvasItems((items) => {
+      const newItems = [...items, newItem];
+      if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
+      return newItems;
+    });
+  }, [setCanvasItems, mode, fetchMarginRecommendation]);
 
   const paletteTitle = mode === 'superRecipe' ? 'Recetas Base' : mode === 'baseRecipe' ? 'Ingredientes' : 'Súper Recetas';
   const paletteDescription = mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : mode === 'baseRecipe' ? 'Arrastra ingredientes a la receta' : 'Arrastra para armar tu Presupuesto';
@@ -141,17 +169,18 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
     >
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Left Column: Palette */}
-        <div className="lg:col-span-1">
+        <div className="hidden lg:block lg:col-span-1">
           <Palette
             items={availableItems}
             title={paletteTitle}
             description={paletteDescription}
+            onAdd={handleAddItem}
           />
         </div>
 
         {/* Right Column: Canvas & Controls */}
         <div className="lg:col-span-3 flex flex-col gap-6">
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 min-h-[calc(100vh-8rem)] flex flex-col">
+          <div className="bg-white rounded-3xl p-4 lg:p-8 shadow-sm border border-gray-100 lg:min-h-[calc(100vh-8rem)] flex flex-col">
             <BuilderHeader
               mode={mode}
               onClear={handleClear}
@@ -164,12 +193,16 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
             )}
 
             {mode === 'baseRecipe' && (
+              <>
+
               <BaseRecipeMetadataForm
                 metadata={baseRecipeMetadata}
                 setMetadata={setBaseRecipeMetadata}
                 totalCost={totalBaseRecipeCost}
               />
+              </>
             )}
+
 
             {/* The Canvas Area */}
             <div className="flex-1 flex flex-col">
@@ -179,10 +212,40 @@ export default function Builder({ mode = 'superRecipe', availableItems = [] }) {
                 onRemove={removeItem}
                 onUpdateQuantity={updateItemQuantity}
               />
+
+              {/* Mobile Add Item Button */}
+              <button
+                type="button"
+                onClick={() => setIsPaletteModalOpen(true)}
+                className="w-full mt-4 lg:hidden flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-peach-soft text-peach-soft rounded-xl hover:bg-peach-soft/5 transition-colors font-medium"
+              >
+                <Plus size={20} />
+                Agregar elemento
+              </button>
+
+              {(mode === 'baseRecipe' || mode === 'superRecipe') && (
+                <IngredientsSummary totals={ingredientTotals} />
+            )}
             </div>
+
           </div>
         </div>
       </div>
+
+
+      <MobilePaletteModal
+        isOpen={isPaletteModalOpen}
+        onClose={() => setIsPaletteModalOpen(false)}
+      >
+        <div className="h-full">
+           <Palette
+             items={availableItems}
+             title={paletteTitle}
+             description={paletteDescription}
+             onAdd={handleAddItem}
+           />
+        </div>
+      </MobilePaletteModal>
 
       {/* Drag Overlay for smooth animations while dragging */}
       <DragOverlay dropAnimation={dropAnimationConfig}>

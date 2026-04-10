@@ -20,11 +20,11 @@ export const mockData = {
 export const initMockData = () => {
   // Add some ingredients
   mockData.ingredients.push(
-    { id: 'ing-1', name: 'Harina de Trigo', globalCost: 2.5, unitQuantity: 1000, measurementUnit: 'gr', brand: 'Robin Hood', userId: 'user-default-1', createdAt: new Date() },
-    { id: 'ing-2', name: 'Azúcar Refinada', globalCost: 1.8, unitQuantity: 1000, measurementUnit: 'gr', brand: 'Montalban', userId: 'user-default-1', createdAt: new Date() },
-    { id: 'ing-3', name: 'Huevos', globalCost: 5.0, unitQuantity: 30, measurementUnit: 'u', brand: 'Granja', userId: 'user-default-1', createdAt: new Date() },
-    { id: 'ing-4', name: 'Mantequilla', globalCost: 4.2, unitQuantity: 500, measurementUnit: 'gr', brand: 'Mavesa', userId: 'user-default-1', createdAt: new Date() },
-    { id: 'ing-5', name: 'Caja para pastel', globalCost: 1.5, unitQuantity: 1, measurementUnit: 'u', brand: 'Empaques', userId: 'user-default-1', createdAt: new Date() }
+    { id: 'ing-1', name: 'Harina de Trigo', globalPrice: 2.5, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
+    { id: 'ing-2', name: 'Azúcar Refinada', globalPrice: 1.8, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
+    { id: 'ing-3', name: 'Huevos', globalPrice: 5.0, globalPriceQuantity: 1, measurementUnit: 'u', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
+    { id: 'ing-4', name: 'Mantequilla', globalPrice: 4.2, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
+    { id: 'ing-5', name: 'Caja para pastel', globalPrice: 1.5, globalPriceQuantity: 1, measurementUnit: 'u', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() }
   );
 
   // Add a base recipe (Bizcocho)

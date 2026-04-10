@@ -44,6 +44,9 @@ El Dark Mode debe sentirse como entrar a una cocina profesional de noche: elegan
 ## 🔘 3. Componentes Clave
 
 ### Botones
+- **Mobile Action Buttons (Agregado):** En constructores complejos en dispositivos móviles, los botones de acción como "Guardar" y "Limpiar" pueden y deben utilizar íconos para ahorrar espacio, ubicándose preferiblemente en el Header para una fácil accesibilidad.
+
+- **Regla de Usabilidad (Agregada Feb 2025):** El botón primario ("Guardar", "Crear", etc.) debe tener **siempre un color fuerte y de alto contraste** (idealmente Slate Gray `#3E4A59`) para evitar que parezca bloqueado o deshabilitado. El uso de colores muy suaves (como Peach Soft sólido) para botones principales de acción ha demostrado ser confuso para los usuarios.
 - **Botón Primario:** Fondo Slate Gray `#3E4A59` con texto blanco.
   - *Tailwind:* `bg-[#3E4A59] text-white hover:bg-opacity-90 transition-colors`
 - **Botón Secundario:** Borde Peach Soft `#F7C5B2` con texto Peach Soft. Fondo transparente.
@@ -87,3 +90,33 @@ Los iconos de la aplicación (Favicon y App Icon) deberán ubicarse en la carpet
 - **Logo SVG (Header de la app):** `apps/frontend/public/logo.svg`
 
 *Nota para el desarrollador:* Cuando subas los archivos de iconos a estas rutas, asegúrate de referenciarlos correctamente en `apps/frontend/index.html` (o `_document.tsx` si el stack cambia a Next.js en el futuro).
+
+## 📱 7. Diseño Responsivo (Responsive Design)
+
+La aplicación debe ser completamente usable desde dispositivos móviles. El enfoque "Data-First" debe adaptarse a pantallas pequeñas sin sacrificar la claridad.
+
+### Navegación Móvil
+- **Menú Colapsado:** En pantallas móviles (menores a `sm` o `md` en Tailwind), la navegación principal debe colapsarse en un menú tipo "hamburguesa" (Hamburger Menu).
+- **Accesibilidad:**
+  - El botón del menú hamburguesa debe tener un `aria-label="Abrir menú de navegación"` o `aria-label="Cerrar menú de navegación"`.
+  - Debe usar `aria-expanded="true"` o `aria-expanded="false"` dependiendo del estado del menú.
+- **Interacción:** El menú colapsable debe usar animaciones suaves (ej. Framer Motion o transiciones de Tailwind) para aparecer/desaparecer. El menú debe ocupar toda la pantalla o un panel lateral (drawer) para facilitar la selección de opciones con el dedo (touch targets amplios).
+- **Prioridad de Acción:** Las acciones principales (ej. crear nueva receta, buscar) deben mantenerse accesibles rápidamente, idealmente fuera del menú hamburguesa si el espacio lo permite, o como opciones destacadas dentro del menú.
+
+### Mobile UX Layout Order
+For a complex builder or creation view, always prioritize a top-down logical flow for mobile layouts:
+1. **Context Title**: (Where am I?) E.g., Header with titles like "Nueva Receta Base".
+2. **Initial Data/Metadata**: Essential forms (Name, Total, Yield).
+3. **Content/Items List**: The main editable list of loaded items (e.g., the Canvas).
+4. **Add Button**: A button placed logically after the items list that opens a modal, drawer, or specific selector for selecting new items. Ensure quantity modifiers for existing items remain inline with the items list rather than requiring a separate modal.
+
+## 🧱 8. Estructura Obligatoria de Módulos Nuevos
+Cada vez que se cree un nuevo módulo o vista principal en la aplicación, **debe** cumplir con los siguientes requisitos estructurales y funcionales para mantener la consistencia:
+1. **Listado Principal:** Una vista clara que muestre los elementos del módulo (ej. tabla, tarjetas o lista).
+   - **Regla de Paginación (Novedad Feb 2025):** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario. El estándar es de **10 registros por página**.
+2. **Botón Principal de Acción:** Un botón prominente (generalmente "Crear" o "Agregar") que siga las reglas de botones primarios descritas arriba.
+3. **Buscador (Search):** Como mínimo, debe existir una barra de búsqueda por texto que permita filtrar los resultados listados en función de los campos visibles en la interfaz.
+4. **Diseño Responsivo (Responsive Rules):** Se deben aplicar estrictamente las reglas definidas en la sección 7. La vista debe funcionar impecablemente en dispositivos móviles, adaptando la navegación, el listado y los botones de acción para interfaces táctiles.
+### Listados y Paginación (Novedad Feb 2025)
+- **Regla de Paginación:** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario.
+- **Estándar:** El estándar es de **10 registros por página**.

@@ -1,4 +1,4 @@
-import { motion as MotionDiv } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Cake, PieChart, Layers, DollarSign, ArrowRight, Mail, Phone } from 'lucide-react';
 
@@ -46,7 +46,7 @@ export default function Landing() {
           <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-peach-soft/10 rounded-full blur-[80px] opacity-60 pointer-events-none"></div>
 
           <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
-            <MotionDiv
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -73,7 +73,7 @@ export default function Landing() {
                   Descubre cómo funciona
                 </a>
               </div>
-            </MotionDiv>
+            </motion.div>
           </div>
         </section>
 
@@ -103,7 +103,7 @@ export default function Landing() {
                   desc: "Olvídate de las hojas de cálculo aburridas. Arrastra y suelta ingredientes para armar tus presupuestos con nuestra interfaz intuitiva y amigable."
                 }
               ].map((feature, idx) => (
-                <MotionDiv
+                <motion.div
                   key={idx}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -116,7 +116,7 @@ export default function Landing() {
                   </div>
                   <h3 className="text-xl font-bold text-slate-gray mb-3">{feature.title}</h3>
                   <p className="text-slate-gray/70 leading-relaxed">{feature.desc}</p>
-                </MotionDiv>
+                </motion.div>
               ))}
             </div>
           </div>
