@@ -1,11 +1,15 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { budgetApi, superRecipeApi, baseRecipeApi } from '../../api';
 
-export function useBuilder(mode) {
+export function useBuilder(mode, initialData = null) {
   const [canvasItems, setCanvasItems] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
+  const [superRecipeMetadata, setSuperRecipeMetadata] = useState({
+    name: initialData?.name || '',
+    description: initialData?.description || ''
+  });
   const [suggestedMargin, setSuggestedMargin] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [baseRecipeMetadata, setBaseRecipeMetadata] = useState({
@@ -15,6 +19,33 @@ export function useBuilder(mode) {
   });
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] = useState(false);
   const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
+
+  useEffect(() => {
+    if (initialData && mode === 'superRecipe') {
+      const initialItems = [];
+      if (initialData.baseRecipes) {
+        initialData.baseRecipes.forEach(br => {
+          initialItems.push({
+            id: 'canvas-' + Date.now() + '-' + br.baseRecipeId,
+            name: br.baseRecipe?.name || 'Receta Base',
+            type: 'baseRecipe',
+            quantity: br.quantityNeeded
+          });
+        });
+      }
+      if (initialData.directIngredients) {
+        initialData.directIngredients.forEach(di => {
+          initialItems.push({
+            id: 'canvas-' + Date.now() + '-' + di.ingredientId,
+            name: di.ingredient?.name || 'Ingrediente Extra',
+            type: 'ingredient',
+            quantity: di.quantityNeeded
+          });
+        });
+      }
+      setCanvasItems(initialItems);
+    }
+  }, [initialData, mode]);
 
   const fetchMarginRecommendation = useCallback(async (items) => {
     if (items.length === 0) {
@@ -187,6 +218,8 @@ export function useBuilder(mode) {
   }, [mode, fetchMarginRecommendation]);
 
   return {
+    superRecipeMetadata,
+    setSuperRecipeMetadata,
     canvasItems,
     setCanvasItems,
     activeId,
