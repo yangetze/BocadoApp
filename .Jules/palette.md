@@ -11,3 +11,7 @@
 ## 2026-04-09 - Accessible Icon Buttons for Destructive Actions
 **Learning:** A simple text "X" inside a button for destructive actions (like removing an item) is poor for both visual clarity and screen reader accessibility, as it lacks a semantic name and visual weight.
 **Action:** Replace text "X" with standard `lucide-react` icons (like `Trash2` or `X`), and strictly pair them with `aria-label` and `title` attributes (e.g. "Eliminar presentación") to ensure both visual and assistive technology users understand the button's intent clearly.
+
+## 2025-04-10 - Explicit Input-Label Association for Accessibility in Modals
+**Learning:** In dynamically generated forms like presentation inputs within modals, failing to link labels with inputs using `id` and `htmlFor` degrades accessibility and usability. Screen readers fail to announce the field name, and users cannot click the label to focus the input.
+**Action:** Ensure all dynamically rendered form inputs are correctly paired with their `label` elements using unique or clearly identifiable `id`s and `htmlFor`s.
