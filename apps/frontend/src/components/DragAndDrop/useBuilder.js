@@ -130,15 +130,25 @@ export function useBuilder(mode) {
         setPendingBudgetPayload(payload);
         setIsBrandSelectionModalOpen(true);
       } else if (mode === 'superRecipe') {
+        // Group by baseRecipeId and sum quantities to avoid unique constraint errors
+        const groupedBaseRecipes = canvasItems.reduce((acc, item) => {
+          const baseRecipeId = item.id.replace(/^canvas-\d+-/, '') || item.id;
+          const quantity = parseFloat(item.quantity || 1);
+          if (acc[baseRecipeId]) {
+            acc[baseRecipeId].quantityNeeded += quantity;
+          } else {
+            acc[baseRecipeId] = { baseRecipeId, quantityNeeded: quantity };
+          }
+          return acc;
+        }, {});
+
         const payload = {
           name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
-          baseRecipes: canvasItems.map(item => ({
-            baseRecipeId: item.id.replace(/^canvas-\d+-/, '') || item.id,
-            quantityNeeded: item.quantity || 1
-          }))
+          baseRecipes: Object.values(groupedBaseRecipes)
         };
         await superRecipeApi.create(payload);
         toast.success('Súper Receta guardada exitosamente');
+        setCanvasItems([]);
       } else if (mode === 'baseRecipe') {
         if (!baseRecipeMetadata.name || !baseRecipeMetadata.baseYield) {
           toast.error('Debes colocar nombre y rendimiento de la receta');
@@ -146,14 +156,23 @@ export function useBuilder(mode) {
           return;
         }
 
+        // Group by ingredientId and sum quantities to avoid unique constraint errors
+        const groupedIngredients = canvasItems.reduce((acc, item) => {
+          const ingredientId = item.id.replace(/^canvas-\d+-/, '') || item.id;
+          const quantity = parseFloat(item.quantity || 1);
+          if (acc[ingredientId]) {
+            acc[ingredientId].quantity += quantity;
+          } else {
+            acc[ingredientId] = { ingredientId, quantity };
+          }
+          return acc;
+        }, {});
+
         const payload = {
           name: baseRecipeMetadata.name,
           baseYield: parseFloat(baseRecipeMetadata.baseYield),
           yieldUnit: baseRecipeMetadata.yieldUnit,
-          ingredients: canvasItems.map(item => ({
-            ingredientId: item.id.replace(/^canvas-\d+-/, '') || item.id,
-            quantityNeeded: item.quantity || 1
-          }))
+          ingredients: Object.values(groupedIngredients)
         };
         await baseRecipeApi.create(payload);
         toast.success('Receta Base guardada exitosamente');

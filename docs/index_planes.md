@@ -11,9 +11,9 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Vista de Listado de Recetas Base (3.1)](plan_receta_base_vista_listado.md)
 - [Plan de Trabajo: Editor de Recetas Base (Drag & Drop, Columnas y Totales) (3.4 & 3.5)](plan_receta_base_editor_campos_totales.md)
 - [Plan de Trabajo: Búsqueda de Ingredientes en Receta Base (3.3)](plan_receta_base_busqueda_ingrediente.md)
+- [Plan de Trabajo: Corregir Error al Guardar Súper Recetas](plan_bug_super_receta.md)
 
 ## En desarrollo
-- [Plan de Trabajo: Corregir Error al Guardar Súper Recetas](plan_bug_super_receta.md)
 
 ## Backlog
 - [Plan de Trabajo: Tasas de Cambio Múltiples](plan_tasas_cambio_multiples.md)
