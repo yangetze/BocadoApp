@@ -27,8 +27,23 @@ export const getBaseRecipes = async (req, res) => {
 
 export const createBaseRecipe = async (req, res) => {
   try {
-    const { name, baseYield, yieldUnit, ingredients } = req.body;
+    const { name, baseYield, yieldUnit, ingredients, items } = req.body;
+    const payloadItems = items || ingredients || [];
     const userId = req.user.id;
+
+    // Security: Verify ownership of ingredients before linking
+    if (payloadItems && payloadItems.length > 0) {
+      const ingredientIds = [...new Set(payloadItems.map(i => i.ingredientId))];
+      const validIngredientsCount = await prisma.ingredient.count({
+        where: {
+          id: { in: ingredientIds },
+          userId: userId
+        }
+      });
+      if (validIngredientsCount !== ingredientIds.length) {
+        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
+    }
 
     if (isTestMode()) {
       const newRecipe = {
@@ -37,9 +52,9 @@ export const createBaseRecipe = async (req, res) => {
         baseYield: parseFloat(baseYield),
         yieldUnit,
         userId: userId,
-        ingredients: ingredients.map(i => ({
+        ingredients: payloadItems.map(i => ({
           id: `bri-${crypto.randomUUID()}`,
-          quantity: parseFloat(i.quantity),
+          quantity: parseFloat(i.quantity) || 0,
           ingredientId: i.ingredientId,
           ingredient: mockData.ingredients.find(ing => ing.id === i.ingredientId)
         })),
@@ -57,8 +72,8 @@ export const createBaseRecipe = async (req, res) => {
         yieldUnit,
         userId: userId,
         ingredients: {
-          create: ingredients.map(i => ({
-            quantity: parseFloat(i.quantity),
+          create: payloadItems.map(i => ({
+            quantity: parseFloat(i.quantity) || 0,
             ingredientId: i.ingredientId
           }))
         }
@@ -102,7 +117,7 @@ export const updateBaseRecipe = async (req, res) => {
           id: `bri-${crypto.randomUUID()}`,
           baseRecipeId: id,
           ingredientId: item.ingredientId,
-          quantity: parseFloat(item.quantity),
+          quantity: parseFloat(item.quantity) || 0,
           ingredient: mockData.ingredients.find(i => i.id === item.ingredientId)
         }));
       }
@@ -122,6 +137,20 @@ export const updateBaseRecipe = async (req, res) => {
 
     if (!existingRecipe || existingRecipe.userId !== req.user.id) {
       return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
+    }
+
+    // Security: Verify ownership of ingredients before linking
+    if (items && items.length > 0) {
+      const ingredientIds = [...new Set(items.map(i => i.ingredientId))];
+      const validIngredientsCount = await prisma.ingredient.count({
+        where: {
+          id: { in: ingredientIds },
+          userId: req.user.id
+        }
+      });
+      if (validIngredientsCount !== ingredientIds.length) {
+        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
     }
 
     const updatedBaseRecipe = await prisma.$transaction(async (tx) => {
@@ -144,7 +173,7 @@ export const updateBaseRecipe = async (req, res) => {
             data: items.map(item => ({
               baseRecipeId: id,
               ingredientId: item.ingredientId,
-              quantity: parseFloat(item.quantity)
+              quantity: parseFloat(item.quantity) || 0
             }))
           });
         }

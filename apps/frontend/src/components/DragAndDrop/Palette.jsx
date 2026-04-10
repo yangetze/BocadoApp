@@ -2,7 +2,7 @@ import { DraggableItem } from './DraggableItem';
 import { Search } from 'lucide-react';
 
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { normalizeString } from '../../utils/stringUtils';
 
 // ⚡ Bolt: Wrapped Palette in React.memo. Since the available items list rarely changes
@@ -10,12 +10,18 @@ import { normalizeString } from '../../utils/stringUtils';
 export const Palette = React.memo(function Palette({ items, title, description, onAdd }) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredItems = items.filter((item) => {
-    if (!searchQuery) return true;
-    const normalizedItemName = normalizeString(item.name);
+  // ⚡ Bolt: Memoized the filtered list and moved the search query normalization
+  // outside of the filter loop. This replaces an O(n) redundant regex operation
+  // with an O(1) operation, and prevents unnecessary re-calculations on re-renders.
+  const filteredItems = useMemo(() => {
+    if (!searchQuery) return items;
+
     const normalizedSearchQuery = normalizeString(searchQuery);
-    return normalizedItemName.includes(normalizedSearchQuery);
-  });
+    return items.filter((item) => {
+      const normalizedItemName = normalizeString(item.name);
+      return normalizedItemName.includes(normalizedSearchQuery);
+    });
+  }, [items, searchQuery]);
 
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm h-full lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 flex flex-col border border-gray-100">

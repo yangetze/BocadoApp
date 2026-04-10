@@ -3,7 +3,7 @@ import Builder from '../DragAndDrop/Builder';
 import { baseRecipeApi } from '../../api';
 import { toast } from 'react-hot-toast';
 
-export default function SuperRecipeBuilderWrapper() {
+export default function SuperRecipeBuilderWrapper({ initialData = null }) {
   const [baseRecipes, setBaseRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,5 +26,5 @@ export default function SuperRecipeBuilderWrapper() {
     return <div className="p-8 text-center text-gray-500">Cargando constructor de súper recetas...</div>;
   }
 
-  return <Builder mode="superRecipe" availableItems={baseRecipes} />;
+  return <Builder mode="superRecipe" availableItems={baseRecipes} initialData={initialData} />;
 }

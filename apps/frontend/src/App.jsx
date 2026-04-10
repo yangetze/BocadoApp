@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ExchangeRateManager from './components/ExchangeRateManager';
 import IngredientManager from './components/Ingredients/IngredientManager';
 import BaseRecipeManager from './components/BaseRecipes/BaseRecipeManager';
-import SuperRecipeBuilderWrapper from './components/SuperRecipes/SuperRecipeBuilderWrapper';
+import SuperRecipeManager from './components/SuperRecipes/SuperRecipeManager';
 import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper';
 
 // Protect App Routes
@@ -116,8 +116,8 @@ function MainApp() {
                         Tasas de Cambio
                       </button>
                       {user?.role === 'ADMIN' && (
-                        <a 
-                          href="/admin" 
+                        <a
+                          href="/admin"
                           className="w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-50"
                         >
                           <Settings className="w-4 h-4 text-gray-400" />
@@ -209,7 +209,7 @@ function MainApp() {
         {activeTab === 'baseRecipe' && <BaseRecipeManager />}
         {activeTab === 'settings' && <ExchangeRateManager />}
         {activeTab === 'superRecipe' && (
-          <SuperRecipeBuilderWrapper />
+          <SuperRecipeManager />
         )}
         {activeTab === 'budget' && (
           <BudgetBuilderWrapper />

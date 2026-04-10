@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Trash2 } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
@@ -207,26 +208,26 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3 mb-4">
                   <div className="flex gap-3">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Nombre Presentación</label>
-                      <input type="text" placeholder="Ej. Paquete 1Kg" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.presentationName} onChange={e => setCurrentPresentation({...currentPresentation, presentationName: e.target.value})} />
+                      <label htmlFor="presentationName" className="block text-xs font-medium text-gray-600 mb-1">Nombre Presentación</label>
+                      <input id="presentationName" type="text" placeholder="Ej. Paquete 1Kg" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.presentationName} onChange={e => setCurrentPresentation({...currentPresentation, presentationName: e.target.value})} />
                     </div>
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Marca (Opc.)</label>
-                      <input type="text" placeholder="Ej. Robin Hood" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.brand} onChange={e => setCurrentPresentation({...currentPresentation, brand: e.target.value})} />
+                      <label htmlFor="presentationBrand" className="block text-xs font-medium text-gray-600 mb-1">Marca (Opc.)</label>
+                      <input id="presentationBrand" type="text" placeholder="Ej. Robin Hood" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.brand} onChange={e => setCurrentPresentation({...currentPresentation, brand: e.target.value})} />
                     </div>
                   </div>
                   <div className="flex gap-3 items-end">
                     <div className="w-1/4">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Costo ($)</label>
-                      <input type="number" step="0.01" placeholder="0.00" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.cost} onChange={e => setCurrentPresentation({...currentPresentation, cost: e.target.value})} />
+                      <label htmlFor="presentationCost" className="block text-xs font-medium text-gray-600 mb-1">Costo ($)</label>
+                      <input id="presentationCost" type="number" step="0.01" placeholder="0.00" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.cost} onChange={e => setCurrentPresentation({...currentPresentation, cost: e.target.value})} />
                     </div>
                     <div className="w-1/4">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Cant.</label>
-                      <input type="number" step="0.01" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.unitQuantity} onChange={e => setCurrentPresentation({...currentPresentation, unitQuantity: e.target.value})} />
+                      <label htmlFor="presentationQuantity" className="block text-xs font-medium text-gray-600 mb-1">Cant.</label>
+                      <input id="presentationQuantity" type="number" step="0.01" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.unitQuantity} onChange={e => setCurrentPresentation({...currentPresentation, unitQuantity: e.target.value})} />
                     </div>
                     <div className="w-1/4">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Unidad</label>
-                      <select className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft bg-white" value={currentPresentation.measurementUnit} onChange={e => setCurrentPresentation({...currentPresentation, measurementUnit: e.target.value})}>
+                      <label htmlFor="presentationUnit" className="block text-xs font-medium text-gray-600 mb-1">Unidad</label>
+                      <select id="presentationUnit" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft bg-white" value={currentPresentation.measurementUnit} onChange={e => setCurrentPresentation({...currentPresentation, measurementUnit: e.target.value})}>
                         {UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
                       </select>
                     </div>
@@ -244,7 +245,15 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                           <div className="text-sm font-medium text-slate-gray">{p.presentationName} <span className="text-xs text-gray-400 font-normal">{p.brand && `(${p.brand})`}</span></div>
                           <div className="text-xs text-gray-500 mt-0.5">${p.cost} / ${p.unitQuantity}${p.measurementUnit}</div>
                         </div>
-                        <button type="button" onClick={() => removePresentation(idx)} className="text-red-400 hover:text-red-600 p-1">X</button>
+                        <button
+                          type="button"
+                          onClick={() => removePresentation(idx)}
+                          className="text-red-400 hover:text-red-600 p-1"
+                          aria-label="Eliminar presentación"
+                          title="Eliminar presentación"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                     ))}
                   </div>

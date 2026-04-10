@@ -56,6 +56,7 @@ describe('Base Recipe Routes', () => {
       };
 
       prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
+      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(2) };
       prisma.baseRecipe.create.mockResolvedValue(createdBaseRecipe);
 
       const res = await request(app)
@@ -65,6 +66,59 @@ describe('Base Recipe Routes', () => {
       expect(res.statusCode).toBe(201);
       expect(res.body).toEqual(createdBaseRecipe);
       expect(prisma.baseRecipe.create).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('PUT /api/base-recipes/:id', () => {
+    it('should update a base recipe and its ingredients if valid', async () => {
+      const existingRecipe = { id: '1', userId: 'user-default-1' };
+      const updatedRecipe = {
+        id: '1',
+        name: 'Ganache Updated',
+        baseYield: 600,
+        yieldUnit: 'gr',
+        ingredients: [{ id: 'link1', ingredientId: 'ing1', quantity: 300 }]
+      };
+
+      prisma.baseRecipe.findUnique.mockResolvedValueOnce(existingRecipe); // For authorization check
+      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(1) }; // Verify ingredient ownership
+      prisma.$transaction.mockResolvedValueOnce(updatedRecipe);
+
+      const res = await request(app)
+        .put('/api/base-recipes/1')
+        .send({
+          name: 'Ganache Updated',
+          baseYield: 600,
+          yieldUnit: 'gr',
+          items: [{ ingredientId: 'ing1', quantity: 300 }]
+        });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual(updatedRecipe);
+      expect(prisma.ingredient.count).toHaveBeenCalledWith({
+        where: { id: { in: ['ing1'] }, userId: 'user-default-1' }
+      });
+      expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return 404 if ingredient ownership check fails during update', async () => {
+      const existingRecipe = { id: '1', userId: 'user-default-1' };
+
+      prisma.baseRecipe.findUnique.mockResolvedValueOnce(existingRecipe); // For authorization check
+      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(0) }; // Simulate missing/unowned ingredient
+
+      const res = await request(app)
+        .put('/api/base-recipes/1')
+        .send({
+          items: [{ ingredientId: 'unowned-ing', quantity: 100 }]
+        });
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toEqual({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      expect(prisma.ingredient.count).toHaveBeenCalledWith({
+        where: { id: { in: ['unowned-ing'] }, userId: 'user-default-1' }
+      });
+      expect(prisma.$transaction).not.toHaveBeenCalled();
     });
   });
 

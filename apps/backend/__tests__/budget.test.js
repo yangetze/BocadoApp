@@ -80,4 +80,22 @@ describe('Budget Controller', () => {
     expect(res.body.length).toBe(2);
     expect(prisma.budget.findMany).toHaveBeenCalledTimes(1);
   });
+
+  it('should return 500 if budget creation fails', async () => {
+    const payload = {
+      customerName: 'John Doe',
+      profitMargin: 0.35,
+      superRecipes: [
+        { superRecipeId: 'sr-1', scaleQuantity: 2 }
+      ]
+    };
+
+    prisma.budget.create.mockRejectedValue(new Error('DB Error'));
+
+    const res = await request(app).post('/api/budgets').send(payload);
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe('Internal server error');
+    expect(prisma.budget.create).toHaveBeenCalledTimes(1);
+  });
 });
