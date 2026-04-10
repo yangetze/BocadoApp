@@ -15,8 +15,8 @@ export default function BudgetBuilderWrapper() {
     try {
       const data = await superRecipeApi.getAll();
       setSuperRecipes(data);
-    } catch {
-      toast.error('Error al cargar las súper recetas para los presupuestos');
+    } catch (error) {
+      toast.error(error.message || 'Error al cargar las súper recetas para los presupuestos');
     } finally {
       setLoading(false);
     }

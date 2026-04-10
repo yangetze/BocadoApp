@@ -6,6 +6,10 @@ export function useBuilder(mode, initialData = null) {
   const [canvasItems, setCanvasItems] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
+  const [superRecipeMetadata, setSuperRecipeMetadata] = useState({
+    name: initialData?.name || '',
+    description: initialData?.description || ''
+  });
   const [suggestedMargin, setSuggestedMargin] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [baseRecipeMetadata, setBaseRecipeMetadata] = useState({
@@ -123,7 +127,7 @@ export function useBuilder(mode, initialData = null) {
       setCanvasItems([]);
     } catch (error) {
       console.error(error);
-      toast.error('Hubo un error al guardar el presupuesto.');
+      toast.error(error.message || 'Hubo un error al guardar el presupuesto.');
     } finally {
       setIsSaving(false);
     }
@@ -152,15 +156,25 @@ export function useBuilder(mode, initialData = null) {
         setPendingBudgetPayload(payload);
         setIsBrandSelectionModalOpen(true);
       } else if (mode === 'superRecipe') {
+        // Group by baseRecipeId and sum quantities to avoid unique constraint errors
+        const groupedBaseRecipes = canvasItems.reduce((acc, item) => {
+          const baseRecipeId = item.id.replace(/^canvas-\d+-/, '') || item.id;
+          const quantity = parseFloat(item.quantity || 1);
+          if (acc[baseRecipeId]) {
+            acc[baseRecipeId].quantityNeeded += quantity;
+          } else {
+            acc[baseRecipeId] = { baseRecipeId, quantityNeeded: quantity };
+          }
+          return acc;
+        }, {});
+
         const payload = {
           name: 'Nueva Súper Receta ' + Date.now().toString().slice(-4),
-          baseRecipes: canvasItems.map(item => ({
-            baseRecipeId: item.id.replace(/^canvas-\d+-/, '') || item.id,
-            quantityNeeded: item.quantity || 1
-          }))
+          baseRecipes: Object.values(groupedBaseRecipes)
         };
         await superRecipeApi.create(payload);
         toast.success('Súper Receta guardada exitosamente');
+        setCanvasItems([]);
       } else if (mode === 'baseRecipe') {
         if (!baseRecipeMetadata.name || !baseRecipeMetadata.baseYield) {
           toast.error('Debes colocar nombre y rendimiento de la receta');
@@ -168,14 +182,23 @@ export function useBuilder(mode, initialData = null) {
           return;
         }
 
+        // Group by ingredientId and sum quantities to avoid unique constraint errors
+        const groupedIngredients = canvasItems.reduce((acc, item) => {
+          const ingredientId = item.id.replace(/^canvas-\d+-/, '') || item.id;
+          const quantity = parseFloat(item.quantity || 1);
+          if (acc[ingredientId]) {
+            acc[ingredientId].quantity += quantity;
+          } else {
+            acc[ingredientId] = { ingredientId, quantity };
+          }
+          return acc;
+        }, {});
+
         const payload = {
           name: baseRecipeMetadata.name,
           baseYield: parseFloat(baseRecipeMetadata.baseYield),
           yieldUnit: baseRecipeMetadata.yieldUnit,
-          ingredients: canvasItems.map(item => ({
-            ingredientId: item.id.replace(/^canvas-\d+-/, '') || item.id,
-            quantityNeeded: item.quantity || 1
-          }))
+          ingredients: Object.values(groupedIngredients)
         };
         if (initialData && initialData.id) {
           await baseRecipeApi.update(initialData.id, payload);
@@ -188,7 +211,7 @@ export function useBuilder(mode, initialData = null) {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Hubo un error al guardar. Verifica la consola.');
+      toast.error(error.message || 'Hubo un error al guardar. Verifica la consola.');
     } finally {
       setIsSaving(false);
     }
@@ -213,6 +236,8 @@ export function useBuilder(mode, initialData = null) {
   }, [mode, fetchMarginRecommendation]);
 
   return {
+    superRecipeMetadata,
+    setSuperRecipeMetadata,
     canvasItems,
     setCanvasItems,
     activeId,

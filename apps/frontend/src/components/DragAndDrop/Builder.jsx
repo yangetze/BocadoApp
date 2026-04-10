@@ -34,6 +34,8 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
   const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
 
   const {
+    superRecipeMetadata,
+    setSuperRecipeMetadata,
     canvasItems,
     setCanvasItems,
     activeId,
@@ -50,7 +52,10 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
     removeItem,
     updateItemQuantity,
     fetchMarginRecommendation,
-    ingredientTotals
+    ingredientTotals,
+    isBrandSelectionModalOpen,
+    setIsBrandSelectionModalOpen,
+    confirmBudgetSave
   } = useBuilder(mode, initialData);
 
   const sensors = useSensors(
@@ -189,7 +194,36 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
               <MarginRecommendationCard suggestedMargin={suggestedMargin} />
             )}
 
-            {mode === 'baseRecipe' && (
+            {mode === 'superRecipe' && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6 mb-6">
+          <h2 className="text-xl font-bold text-slate-gray mb-4">
+            {initialData ? 'Editar Súper Receta' : 'Nueva Súper Receta'}
+          </h2>
+          <div className="flex flex-col gap-4 max-w-2xl">
+             <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-slate-gray">Nombre de Súper Receta *</label>
+                <input
+                  type="text"
+                  placeholder="Ej: Pastel de bodas 3 pisos"
+                  value={superRecipeMetadata.name}
+                  onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, name: e.target.value })}
+                  className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all"
+                />
+             </div>
+             <div className="flex flex-col gap-2">
+                <label className="text-sm font-bold text-slate-gray">Descripción</label>
+                <textarea
+                  placeholder="Detalles adicionales..."
+                  value={superRecipeMetadata.description}
+                  onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, description: e.target.value })}
+                  className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all resize-none h-24"
+                />
+             </div>
+          </div>
+        </div>
+      )}
+
+      {mode === 'baseRecipe' && (
               <>
 
               <BaseRecipeMetadataForm

@@ -11,8 +11,6 @@ const fetchWithAuth = async (url, options = {}) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Si API_URL es '/api', esto creará peticiones a '/api/ruta'
-  // Si estamos en Vercel, Vercel reenviará '/api/ruta' a nuestra función serverless
   const fullUrl = API_URL.startsWith('http') ? `${API_URL}${url}` : `${API_URL}${url}`;
 
   const res = await fetch(fullUrl, {
@@ -27,7 +25,13 @@ const fetchWithAuth = async (url, options = {}) => {
       window.location.href = '/';
     }
     const errData = await res.json().catch(() => null);
-    throw { response: { data: errData, status: res.status } };
+
+    // Instead of throwing a raw object, let's create an Error object
+    // But keep the response property for backwards compatibility with parts of the app
+    // that read error.response.data.error
+    const error = new Error(errData?.error || `HTTP error! status: ${res.status}`);
+    error.response = { data: errData, status: res.status };
+    throw error;
   }
 
   return { data: await res.json() };
@@ -57,7 +61,7 @@ export const exchangeRateApi = {
       return res.data;
     } catch (error) {
       console.error(error);
-      throw error.response?.data?.error || 'Error al obtener las tasas de cambio';
+      throw new Error(error.response?.data?.error || 'Error al obtener las tasas de cambio');
     }
   },
 
@@ -85,7 +89,7 @@ export const exchangeRateApi = {
       return res.data;
     } catch (error) {
       console.error(error);
-      throw error.response?.data?.error || 'Error al obtener las monedas';
+      throw new Error(error.response?.data?.error || 'Error al obtener las monedas');
     }
   }
 };
@@ -98,7 +102,7 @@ export const ingredientApi = {
       return res.data;
     } catch (error) {
        console.error(error);
-       throw error.response?.data?.error || 'Error al obtener ingredientes';
+       throw new Error(error.response?.data?.error || 'Error al obtener ingredientes');
     }
   },
 
@@ -137,7 +141,7 @@ export const baseRecipeApi = {
            return res.data;
        } catch (error) {
             console.error(error);
-            throw error.response?.data?.error || 'Error al obtener recetas base';
+            throw new Error(error.response?.data?.error || 'Error al obtener recetas base');
        }
   },
 
@@ -185,7 +189,7 @@ export const superRecipeApi = {
       return res.data;
     } catch (error) {
       console.error(error);
-      throw error.response?.data?.error || 'Error al obtener súper recetas';
+      throw new Error(error.response?.data?.error || 'Error al obtener súper recetas');
     }
   },
 
@@ -195,6 +199,24 @@ export const superRecipeApi = {
       return res.data;
     } catch (error) {
       throw new Error(error.response?.data?.error || 'Error al crear súper receta');
+    }
+  },
+
+  update: async (id, data) => {
+    try {
+      const res = await api.put(`/super-recipes/${id}`, data);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al actualizar súper receta');
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const res = await api.delete(`/super-recipes/${id}`);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al eliminar súper receta');
     }
   }
 };
@@ -206,7 +228,7 @@ export const budgetApi = {
       return res.data;
     } catch (error) {
       console.error(error);
-      throw error.response?.data?.error || 'Error al obtener presupuestos';
+      throw new Error(error.response?.data?.error || 'Error al obtener presupuestos');
     }
   },
 
