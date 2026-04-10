@@ -23,8 +23,8 @@ export default function IngredientManager() {
       setLoading(true);
       const data = await ingredientApi.getAll(searchQuery);
       setIngredients(data);
-    } catch {
-      toast.error('Error al cargar los ingredientes');
+    } catch (error) {
+      toast.error(error.message || 'Error al cargar los ingredientes');
     } finally {
       setLoading(false);
     }
@@ -67,8 +67,8 @@ export default function IngredientManager() {
         toast.success('Ingrediente agregado');
       }
       setIsModalOpen(false);
-    } catch {
-      toast.error(editingItem ? 'Error al actualizar el ingrediente' : 'Error al agregar el ingrediente');
+    } catch (error) {
+      toast.error(error.message || (editingItem ? 'Error al actualizar el ingrediente' : 'Error al agregar el ingrediente'));
     }
   };
 
@@ -78,8 +78,8 @@ export default function IngredientManager() {
       await ingredientApi.delete(id);
       setIngredients(ingredients.filter(ing => ing.id !== id));
       toast.success('Ingrediente eliminado');
-    } catch {
-      toast.error('Error al eliminar el ingrediente');
+    } catch (error) {
+      toast.error(error.message || 'Error al eliminar el ingrediente');
     }
   };
 
