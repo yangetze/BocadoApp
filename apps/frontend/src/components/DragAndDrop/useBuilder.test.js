@@ -142,7 +142,7 @@ describe('useBuilder - edit baseRecipe', () => {
         name: 'Masa Madre Editada',
         baseYield: 1500,
         ingredients: [
-          { ingredientId: 'ing-1', quantityNeeded: 500 }
+          { ingredientId: 'ing-1', quantity: 500 }
         ]
       })
     );
