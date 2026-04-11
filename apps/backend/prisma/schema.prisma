@@ -232,6 +232,8 @@ enum ExchangeRateSource {
   PARALLEL
   EURO
   MANUAL
+  CRIPTOYA_BCV
+  CRIPTOYA_PARALELO
 }
 
 model ExchangeRate {
