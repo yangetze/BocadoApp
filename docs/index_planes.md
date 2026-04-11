@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Plan: Vista de Listado y Validación de Tasas en Presupuestos](plan_presupuestos_listado_y_tasas.md)
 - [Plan de Trabajo: Eliminar Recetas Base](plan_receta_base_eliminar.md)
 - [Plan de Trabajo: Editar Receta Base](plan_edit_base_recipe.md)
 - [🔒 Plan de Trabajo: Security Fix Base Recipe Update IDOR](plan_security_base_recipe_update.md)
@@ -21,7 +22,6 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 ## Backlog
 - [Plan de Trabajo: Tasas de Cambio Múltiples](plan_tasas_cambio_multiples.md)
 - [Plan: Exportación y Visualización de Presupuestos en PDF](plan_presupuestos_exportacion_pdf.md)
-- [Plan: Vista de Listado y Validación de Tasas en Presupuestos](plan_presupuestos_listado_y_tasas.md)
 - [Plan: Configuración Avanzada de Presupuestos](plan_presupuestos_configuracion.md)
 - [Plan de Trabajo: Equivalencias de Unidades y Resumen por Tipo](plan_equivalencias_unidades.md)
 - [Plan de Trabajo: Información de Ingredientes en Receta Base (3.2)](plan_receta_base_info_ingrediente.md)

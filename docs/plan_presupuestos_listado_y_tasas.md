@@ -1,10 +1,14 @@
 # Plan: Vista de Listado y Validación de Tasas en Presupuestos
 
-**Estado:** Backlog
-**Rama:** (Por definir)
+**Estado:** Completado
+**Rama:** feature/budget-crud-list
 
 
 ## 1. Listado de Presupuestos
+- [x] Crear la ruta y vista `/app/budgets`.
+- [x] **Ordenamiento:** Mostrar los presupuestos ordenados de forma descendente por fecha de creación.
+- [x] **Información a Mostrar por Fila/Tarjeta:** Nombre del Presupuesto, Fecha de Creación.
+- [x] **Acciones:** Botón primario prominente "Crear Presupuesto", Acciones (Editar, Eliminar).
 - **Objetivo:** Proveer un panel de control rápido para ver, buscar y gestionar los presupuestos emitidos.
 - **Implementación (Frontend):**
   - Crear la ruta y vista `/app/budgets`.
