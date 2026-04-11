@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 // Ensure we use the exact exported module which might be mocked in tests
 import prismaClient from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
+import logger from '../utils/logger.js';
 const prisma = prismaClient.default || prismaClient;
 
 let defaultCurrenciesVerified = false;
@@ -96,7 +97,7 @@ export const createOrUpdateManualRate = async (req, res) => {
 
     return res.status(200).json(exchangeRate);
   } catch (error) {
-    console.error('Error in createOrUpdateManualRate:', error);
+    logger.error('Error in createOrUpdateManualRate:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -210,7 +211,7 @@ export const fetchAndStoreApiRate = async (req, res) => {
     }
 
   } catch (error) {
-    console.error('Error in fetchAndStoreApiRate:', error);
+    logger.error('Error in fetchAndStoreApiRate:', error);
     if (res) {
         return res.status(500).json({ error: error.message || 'Internal server error' });
     } else {
@@ -312,7 +313,7 @@ export const getExchangeRates = async (req, res) => {
         totalPages
     });
   } catch (error) {
-    console.error('Error in getExchangeRates:', error);
+    logger.error('Error in getExchangeRates:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -329,7 +330,7 @@ export const getCurrencies = async (req, res) => {
         const currencies = await prisma.currency.findMany();
         return res.status(200).json(currencies);
     } catch (error) {
-        console.error('Error in getCurrencies:', error);
+        logger.error('Error in getCurrencies:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
