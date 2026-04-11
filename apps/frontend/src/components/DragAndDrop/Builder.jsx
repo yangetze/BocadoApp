@@ -7,33 +7,31 @@ import {
   useSensors,
   DragOverlay,
   defaultDropAnimationSideEffects,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  sortableKeyboardCoordinates,
-} from '@dnd-kit/sortable';
-import PropTypes from 'prop-types';
+} from "@dnd-kit/core";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import PropTypes from "prop-types";
 
-import { Palette } from './Palette';
-import { Canvas } from './Canvas';
-import { DraggableItem } from './DraggableItem';
-import { SortableItem } from './SortableItem';
+import { Palette } from "./Palette";
+import { Canvas } from "./Canvas";
+import { DraggableItem } from "./DraggableItem";
+import { SortableItem } from "./SortableItem";
 
-import { useCallback, useState } from 'react';
-import { MobilePaletteModal } from './MobilePaletteModal';
-import { Plus } from 'lucide-react';
+import { useCallback, useState } from "react";
+import { MobilePaletteModal } from "./MobilePaletteModal";
+import { Plus } from "lucide-react";
 
-import { useBuilder } from './useBuilder';
-import { BuilderHeader } from './BuilderHeader';
-import { MarginRecommendationCard } from './MarginRecommendationCard';
-import { BaseRecipeMetadataForm } from './BaseRecipeMetadataForm';
-import { IngredientsSummary } from './IngredientsSummary';
-import { BrandSelectionModal } from './BrandSelectionModal';
+import { useBuilder } from "./useBuilder";
+import { BuilderHeader } from "./BuilderHeader";
+import { MarginRecommendationCard } from "./MarginRecommendationCard";
+import { BaseRecipeMetadataForm } from "./BaseRecipeMetadataForm";
+import { IngredientsSummary } from "./IngredientsSummary";
 
-export default function Builder({ mode = 'superRecipe', availableItems = [], initialData = null }) {
+export default function Builder({ mode = "superRecipe", availableItems = [], editingItem, onSuccess, initialData }) {
   const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
 
   const {
+    isEditing,
+    handleDelete,
     superRecipeMetadata,
     setSuperRecipeMetadata,
     canvasItems,
@@ -53,10 +51,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
     updateItemQuantity,
     fetchMarginRecommendation,
     ingredientTotals,
-    isBrandSelectionModalOpen,
-    setIsBrandSelectionModalOpen,
-    confirmBudgetSave
-  } = useBuilder(mode, initialData);
+  } = useBuilder(mode, editingItem || initialData, onSuccess);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -66,7 +61,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragStart = (event) => {
@@ -84,11 +79,12 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
       return;
     }
 
-    const isSourcePalette = active.data.current?.source === 'palette';
+    const isSourcePalette = active.data.current?.source === "palette";
 
     // 1. Drop from palette into canvas (empty area OR over existing item)
     if (isSourcePalette) {
-      const isOverCanvas = over.id === 'canvas' || canvasItems.some(i => i.id === over.id);
+      const isOverCanvas =
+        over.id === "canvas" || canvasItems.some((i) => i.id === over.id);
       if (isOverCanvas) {
         const newItem = {
           ...active.data.current,
@@ -98,8 +94,8 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
         setCanvasItems((items) => {
           let newItems = [...items];
           // Si soltamos sobre un elemento existente, lo insertamos justo después de él
-          if (over.id !== 'canvas') {
-            const overIndex = items.findIndex(i => i.id === over.id);
+          if (over.id !== "canvas") {
+            const overIndex = items.findIndex((i) => i.id === over.id);
             if (overIndex !== -1) {
               newItems.splice(overIndex + 1, 0, newItem);
             } else {
@@ -109,13 +105,13 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
             newItems.push(newItem);
           }
 
-          if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
+          if (mode === "superRecipe") fetchMarginRecommendation(newItems);
           return newItems;
         });
       }
     }
     // 2. Reordering inside the canvas
-    else if (!isSourcePalette && over.id !== 'canvas') {
+    else if (!isSourcePalette && over.id !== "canvas") {
       const oldIndex = canvasItems.findIndex((i) => i.id === active.id);
       const newIndex = canvasItems.findIndex((i) => i.id === over.id);
 
@@ -132,7 +128,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
     sideEffects: defaultDropAnimationSideEffects({
       styles: {
         active: {
-          opacity: '0.4',
+          opacity: "0.4",
         },
       },
     }),
@@ -144,23 +140,35 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
     setSuggestedMargin(null);
   }, [setCanvasItems, setSuggestedMargin]);
 
+  const handleAddItem = useCallback(
+    (item) => {
+      setIsPaletteModalOpen(false);
+      const newItem = {
+        ...item,
+        id: `canvas-${Date.now()}-${item.id}`,
+        quantity: 1,
+      };
+      setCanvasItems((items) => {
+        const newItems = [...items, newItem];
+        if (mode === "superRecipe") fetchMarginRecommendation(newItems);
+        return newItems;
+      });
+    },
+    [setCanvasItems, mode, fetchMarginRecommendation],
+  );
 
-  const handleAddItem = useCallback((item) => {
-    setIsPaletteModalOpen(false);
-    const newItem = {
-      ...item,
-      id: `canvas-${Date.now()}-${item.id}`,
-      quantity: 1,
-    };
-    setCanvasItems((items) => {
-      const newItems = [...items, newItem];
-      if (mode === 'superRecipe') fetchMarginRecommendation(newItems);
-      return newItems;
-    });
-  }, [setCanvasItems, mode, fetchMarginRecommendation]);
-
-  const paletteTitle = mode === 'superRecipe' ? 'Recetas Base' : mode === 'baseRecipe' ? 'Ingredientes' : 'Súper Recetas';
-  const paletteDescription = mode === 'superRecipe' ? 'Arrastra para armar tu Súper Receta' : mode === 'baseRecipe' ? 'Arrastra ingredientes a la receta' : 'Arrastra para armar tu Presupuesto';
+  const paletteTitle =
+    mode === "superRecipe"
+      ? "Recetas Base"
+      : mode === "baseRecipe"
+        ? "Ingredientes"
+        : "Súper Recetas";
+  const paletteDescription =
+    mode === "superRecipe"
+      ? "Arrastra para armar tu Súper Receta"
+      : mode === "baseRecipe"
+        ? "Arrastra ingredientes a la receta"
+        : "Arrastra para armar tu Presupuesto";
 
   return (
     <DndContext
@@ -188,13 +196,15 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
               onClear={handleClear}
               onSave={handleSave}
               isSaving={isSaving}
+              isEditing={isEditing}
+              onDelete={handleDelete}
             />
 
-            {mode === 'superRecipe' && (
+            {mode === "superRecipe" && (
               <MarginRecommendationCard suggestedMargin={suggestedMargin} />
             )}
 
-            {mode === 'superRecipe' && (
+            {mode === "superRecipe" && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6 mb-6">
           <h2 className="text-xl font-bold text-slate-gray mb-4">
             {initialData ? 'Editar Súper Receta' : 'Nueva Súper Receta'}
@@ -205,7 +215,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
                 <input
                   type="text"
                   placeholder="Ej: Pastel de bodas 3 pisos"
-                  value={superRecipeMetadata.name}
+                  value={superRecipeMetadata?.name || ''}
                   onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, name: e.target.value })}
                   className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all"
                 />
@@ -214,7 +224,7 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
                 <label className="text-sm font-bold text-slate-gray">Descripción</label>
                 <textarea
                   placeholder="Detalles adicionales..."
-                  value={superRecipeMetadata.description}
+                  value={superRecipeMetadata?.description || ''}
                   onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, description: e.target.value })}
                   className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all resize-none h-24"
                 />
@@ -223,17 +233,15 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
         </div>
       )}
 
-      {mode === 'baseRecipe' && (
+      {mode === "baseRecipe" && (
               <>
-
-              <BaseRecipeMetadataForm
-                metadata={baseRecipeMetadata}
-                setMetadata={setBaseRecipeMetadata}
-                totalCost={totalBaseRecipeCost}
-              />
+                <BaseRecipeMetadataForm
+                  metadata={baseRecipeMetadata}
+                  setMetadata={setBaseRecipeMetadata}
+                  totalCost={totalBaseRecipeCost}
+                />
               </>
             )}
-
 
             {/* The Canvas Area */}
             <div className="flex-1 flex flex-col">
@@ -254,37 +262,41 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
                 Agregar elemento
               </button>
 
-              {(mode === 'baseRecipe' || mode === 'superRecipe') && (
+              {(mode === "baseRecipe" || mode === "superRecipe") && (
                 <IngredientsSummary totals={ingredientTotals} />
-            )}
+              )}
             </div>
-
           </div>
         </div>
       </div>
-
 
       <MobilePaletteModal
         isOpen={isPaletteModalOpen}
         onClose={() => setIsPaletteModalOpen(false)}
       >
         <div className="h-full">
-           <Palette
-             items={availableItems}
-             title={paletteTitle}
-             description={paletteDescription}
-             onAdd={handleAddItem}
-           />
+          <Palette
+            items={availableItems}
+            title={paletteTitle}
+            description={paletteDescription}
+            onAdd={handleAddItem}
+          />
         </div>
       </MobilePaletteModal>
 
       {/* Drag Overlay for smooth animations while dragging */}
       <DragOverlay dropAnimation={dropAnimationConfig}>
         {activeId ? (
-          activeItem?.source === 'palette' ? (
+          activeItem?.source === "palette" ? (
             <DraggableItem id={activeId} item={activeItem} isOverlay />
           ) : (
-            <SortableItem id={activeId} item={activeItem} mode={mode} onRemove={() => {}} onUpdateQuantity={() => {}} />
+            <SortableItem
+              id={activeId}
+              item={activeItem}
+              mode={mode}
+              onRemove={() => {}}
+              onUpdateQuantity={() => {}}
+            />
           )
         ) : null}
       </DragOverlay>
@@ -293,7 +305,9 @@ export default function Builder({ mode = 'superRecipe', availableItems = [], ini
 }
 
 Builder.propTypes = {
-  mode: PropTypes.oneOf(['superRecipe', 'baseRecipe', 'budget']),
+  mode: PropTypes.oneOf(["superRecipe", "baseRecipe", "budget"]),
   availableItems: PropTypes.array,
+  editingItem: PropTypes.object,
   initialData: PropTypes.object,
+  onSuccess: PropTypes.func,
 };

@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export function MarginRecommendationCard({ suggestedMargin }) {
   if (suggestedMargin === null) return null;
@@ -10,7 +10,9 @@ export function MarginRecommendationCard({ suggestedMargin }) {
           <span className="text-2xl">✨</span>
         </div>
         <div>
-          <h3 className="font-bold text-slate-gray text-lg">Recomendador de Margen (IA)</h3>
+          <h3 className="font-bold text-slate-gray text-lg">
+            Recomendador de Margen (IA)
+          </h3>
           <p className="text-slate-gray/80 text-sm">
             Basado en la complejidad de ensamblaje sugerimos un margen del:
           </p>

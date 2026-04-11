@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { baseRecipeApi } from '../../api';
-import toast from 'react-hot-toast';
-import BaseRecipeList from './BaseRecipeList';
-import BaseRecipeBuilderWrapper from './BaseRecipeBuilderWrapper';
-import { ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { baseRecipeApi } from "../../api";
+import toast from "react-hot-toast";
+import BaseRecipeList from "./BaseRecipeList";
+import BaseRecipeBuilderWrapper from "./BaseRecipeBuilderWrapper";
+import { ArrowLeft } from "lucide-react";
 
 export default function BaseRecipeManager() {
-  const [view, setView] = useState('list'); // 'list' or 'builder'
+  const [view, setView] = useState("list"); // 'list' or 'builder'
   const [editingRecipe, setEditingRecipe] = useState(null);
   const [baseRecipes, setBaseRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ export default function BaseRecipeManager() {
       const data = await baseRecipeApi.getAll();
       setBaseRecipes(data);
     } catch (error) {
-      toast.error(error.message || 'Error al cargar las recetas base');
+      toast.error(error.message || "Error al cargar las recetas base");
       console.error(error);
     } finally {
       setLoading(false);
@@ -25,22 +25,32 @@ export default function BaseRecipeManager() {
   };
 
   useEffect(() => {
-    if (view === 'list') {
+    if (view === "list") {
       fetchBaseRecipes();
     }
   }, [view]);
 
-  if (view === 'builder') {
+  if (view === "builder") {
     return (
       <div className="space-y-4">
         <button
-          onClick={() => { setView('list'); setEditingRecipe(null); }}
+          onClick={() => {
+            setView("list");
+            setEditingRecipe(null);
+          }}
           className="flex items-center gap-2 text-slate-gray hover:text-peach-soft transition-colors font-medium mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver a la lista
         </button>
-        <BaseRecipeBuilderWrapper initialData={editingRecipe} />
+        <BaseRecipeBuilderWrapper
+          editingRecipe={editingRecipe}
+          initialData={editingRecipe}
+          onSuccess={() => {
+            setView("list");
+            setEditingRecipe(null);
+          }}
+        />
       </div>
     );
   }
@@ -49,8 +59,14 @@ export default function BaseRecipeManager() {
     <BaseRecipeList
       recipes={baseRecipes}
       loading={loading}
-      onCreateNew={() => { setEditingRecipe(null); setView('builder'); }}
-      onEdit={(recipe) => { setEditingRecipe(recipe); setView('builder'); }}
+      onCreateNew={() => {
+        setEditingRecipe(null);
+        setView("builder");
+      }}
+      onEdit={(recipe) => {
+        setEditingRecipe(recipe);
+        setView("builder");
+      }}
     />
   );
 }

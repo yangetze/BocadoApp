@@ -1,21 +1,29 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Eraser, Save } from 'lucide-react';
+import PropTypes from "prop-types";
+import React from "react";
+import { Eraser, Save, Trash2 } from "lucide-react";
 
 // ⚡ Bolt: Wrapped BuilderHeader in React.memo to prevent unnecessary re-renders when parent state
 // (like dragging items in the canvas) updates. Since handlers are memoized via useCallback in the parent,
 // this ensures the header only re-renders when its specific props change.
-export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, onSave, isSaving }) {
+export const BuilderHeader = React.memo(function BuilderHeader({
+  mode,
+  onClear,
+  onSave,
+  isSaving,
+  isEditing,
+  onDelete,
+}) {
   const titles = {
-    superRecipe: 'Nueva Súper Receta',
-    baseRecipe: 'Nueva Receta Base',
-    budget: 'Nuevo Presupuesto',
+    superRecipe: "Nueva Súper Receta",
+    baseRecipe: "Nueva Receta Base",
+    budget: "Nuevo Presupuesto",
   };
 
   const descriptions = {
-    superRecipe: 'Construye tu producto final apilando recetas base.',
-    baseRecipe: 'Crea una receta combinando ingredientes y definiendo su rendimiento final.',
-    budget: 'Arma un pedido combinando múltiples súper recetas.',
+    superRecipe: "Construye tu producto final apilando recetas base.",
+    baseRecipe:
+      "Crea una receta combinando ingredientes y definiendo su rendimiento final.",
+    budget: "Arma un pedido combinando múltiples súper recetas.",
   };
 
   return (
@@ -24,9 +32,7 @@ export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, 
         <h1 className="text-3xl font-bold text-slate-gray mb-2">
           {titles[mode]}
         </h1>
-        <p className="text-gray-500">
-          {descriptions[mode]}
-        </p>
+        <p className="text-gray-500">{descriptions[mode]}</p>
       </div>
 
       <div className="flex gap-4 self-end md:self-auto w-full md:w-auto">
@@ -39,6 +45,17 @@ export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, 
           <Eraser size={20} />
           <span className="hidden sm:inline">Limpiar</span>
         </button>
+        {isEditing && onDelete && (
+          <button
+            onClick={onDelete}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-red-500 bg-red-50 hover:bg-red-100 font-medium transition-colors border border-red-200"
+            disabled={isSaving}
+            aria-label="Eliminar receta"
+          >
+            <Trash2 size={20} />
+            <span className="hidden sm:inline">Eliminar</span>
+          </button>
+        )}
         <button
           onClick={onSave}
           disabled={isSaving}
@@ -50,7 +67,9 @@ export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, 
           ) : (
             <Save size={20} />
           )}
-          <span className="hidden sm:inline">{isSaving ? 'Guardando...' : 'Guardar'}</span>
+          <span className="hidden sm:inline">
+            {isSaving ? "Guardando..." : "Guardar"}
+          </span>
         </button>
       </div>
     </div>
@@ -58,8 +77,10 @@ export const BuilderHeader = React.memo(function BuilderHeader({ mode, onClear, 
 });
 
 BuilderHeader.propTypes = {
-  mode: PropTypes.oneOf(['superRecipe', 'baseRecipe', 'budget']).isRequired,
+  mode: PropTypes.oneOf(["superRecipe", "baseRecipe", "budget"]).isRequired,
   onClear: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   isSaving: PropTypes.bool.isRequired,
+  isEditing: PropTypes.bool,
+  onDelete: PropTypes.func,
 };

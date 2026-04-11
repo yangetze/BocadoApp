@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Plan de Trabajo: Eliminar Recetas Base](plan_receta_base_eliminar.md)
 - [Plan de Trabajo: Editar Receta Base](plan_edit_base_recipe.md)
 - [🔒 Plan de Trabajo: Security Fix Base Recipe Update IDOR](plan_security_base_recipe_update.md)
 - [Plan de Trabajo: Corregir Error al Eliminar Ingrediente](plan_bug_eliminar_ingrediente.md)

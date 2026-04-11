@@ -126,7 +126,7 @@ describe('useBuilder - edit baseRecipe', () => {
 
     // Verify initialization
     expect(result.current.baseRecipeMetadata.name).toBe('Masa Madre Editada');
-    expect(result.current.baseRecipeMetadata.baseYield).toBe(1500);
+    expect(result.current.baseRecipeMetadata.baseYield).toBe('1500');
     expect(result.current.canvasItems).toHaveLength(1);
     expect(result.current.canvasItems[0].ingredientId).toBe('ing-1');
     expect(result.current.canvasItems[0].quantity).toBe(500);
@@ -141,8 +141,8 @@ describe('useBuilder - edit baseRecipe', () => {
       expect.objectContaining({
         name: 'Masa Madre Editada',
         baseYield: 1500,
-        ingredients: [
-          { ingredientId: 'ing-1', quantity: 500 }
+        items: [
+          { ingredientId: 'ing-1', quantityNeeded: 500 }
         ]
       })
     );
