@@ -48,3 +48,4 @@ Welcome to the BocadoApp monorepo! This document serves as a guide for AI assist
   1. Actualizar el estado del plan con todas sus tareas marcadas (`[x]`).
   2. Cambiar el `**Estado:**` del plan a `Completado`.
   3. Asegurarse de que el plan incluye el nombre de la rama en el campo `**Rama:**`.
+  4. El penúltimo paso antes de crear el PR, debes chequear con la rama main para ver si hubo cambios desde que se creo la rama al momento de hacer la solicitud del Pull Request. Si hay diferencias debe actualizarla, y verificar que la app compile y los tests pasen. Sino corregirlo.
