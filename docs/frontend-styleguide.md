@@ -115,6 +115,7 @@ Cada vez que se cree un nuevo módulo o vista principal en la aplicación, **deb
 1. **Listado Principal:** Una vista clara que muestre los elementos del módulo (ej. tabla, tarjetas o lista).
    - **Regla de Paginación (Novedad Feb 2025):** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario. El estándar es de **10 registros por página**.
 2. **Botón Principal de Acción:** Un botón prominente (generalmente "Crear" o "Agregar") que siga las reglas de botones primarios descritas arriba.
+   - **Regla Móvil:** En dispositivos móviles, este botón debe convertirse en un botón flotante (FAB) ubicado en la esquina inferior derecha (`md:hidden fixed bottom-20 right-4 z-40`), utilizando un icono (como `+`) para ahorrar espacio y mantener la coherencia en las listas principales.
 3. **Buscador (Search):** Como mínimo, debe existir una barra de búsqueda por texto que permita filtrar los resultados listados en función de los campos visibles en la interfaz.
 4. **Diseño Responsivo (Responsive Rules):** Se deben aplicar estrictamente las reglas definidas en la sección 7. La vista debe funcionar impecablemente en dispositivos móviles, adaptando la navegación, el listado y los botones de acción para interfaces táctiles.
 ### Listados y Paginación (Novedad Feb 2025)
