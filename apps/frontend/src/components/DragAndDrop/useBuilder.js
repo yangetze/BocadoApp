@@ -7,6 +7,10 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
   const [canvasItems, setCanvasItems] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
+  const [superRecipeMetadata, setSuperRecipeMetadata] = useState({
+    name: initialData?.name || '',
+    description: initialData?.description || ''
+  });
   const [suggestedMargin, setSuggestedMargin] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
