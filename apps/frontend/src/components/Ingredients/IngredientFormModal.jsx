@@ -232,7 +232,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                       </select>
                     </div>
                     <div className="w-1/4">
-                      <button type="button" onClick={addPresentation} className="w-full py-2 bg-slate-gray text-white text-sm font-medium rounded-lg hover:bg-opacity-90">Add</button>
+                      <button type="button" onClick={addPresentation} className="w-full py-2 bg-slate-gray text-white text-sm font-medium rounded-lg hover:bg-opacity-90">Agregar</button>
                     </div>
                   </div>
                 </div>
