@@ -104,6 +104,7 @@ export function BrandSelectionModal({
             </div>
             <button
               onClick={onClose}
+              aria-label="Cerrar modal"
               className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
             >
               <svg
