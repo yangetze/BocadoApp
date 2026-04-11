@@ -24,10 +24,12 @@ Welcome to the BocadoApp monorepo! This document serves as a guide for AI assist
 - **STOP ALL DEV**: Buscar y terminar todos los procesos activos de `npm run dev` en el monorepo y liberar puertos 3000/5173.
 
 ## 🤖 AI Workflow Instructions
-- **Creación de Planes**: **Obligatorio.** Cada vez que se cree una rama de trabajo nueva, se debe crear un plan de trabajo detallado en la ruta `docs/`.
+- **Creación de Planes**: **Obligatorio.** Cada vez que se cree una rama de trabajo nueva, o cuando el usuario indique "Crear un plan de trabajo" o "crea un plan .md", se debe crear un plan en la ruta `docs/`.
+  - **Enfoque inicial:** No se requiere programación ni análisis profundo en este punto, solo anotar la idea básica con lo mínimo indispensable.
+  - **Ejecución del plan:** Si el usuario indica "ejecuta", "procede" o "programa un plan", entonces sí se debe proceder con la programación y análisis profundo para implementar el plan.
   - Usar la nomenclatura: `plan_nombre_del_modulo_nombre_del_issue.md` para tareas específicas de un módulo.
   - Usar `plan_nombre_del_issue.md` para tareas que afecten a múltiples módulos o sean generales.
-  - Estructura: Los planes deben estructurarse con objetivos, tareas, y mencionar cómo se abordarán los tests (si se actualizarán o se agregarán nuevos).
+  - Estructura: Los planes deben incluir sus características estándar como **Objetivo**, **Estado**, tareas básicas, y mencionar cómo se abordarán los tests (si se actualizarán o se agregarán nuevos).
 - **Flujo Paso a Paso**: Si el usuario envía una lista de requerimientos o puntos, SIEMPRE se debe trabajar punto por punto (estilo sprint). Abordar el primer punto, confirmar con el usuario que está "ok" y luego proceder al siguiente. NO saturar la memoria intentando hacer todo a la vez.
 - **Read before writing:** Always read `schema.prisma` before writing any backend query.
 - **Verification:** Always write/run tests to verify math accuracy in `costController.js`.
