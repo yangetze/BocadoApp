@@ -10,7 +10,8 @@ export default function ExchangeRateManager() {
   const [rates, setRates] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
+  const [syncingBcv, setSyncingBcv] = useState(false);
+  const [syncingParalelo, setSyncingParalelo] = useState(false);
   const [savingManual, setSavingManual] = useState(false);
 
   // Form state
@@ -71,14 +72,16 @@ export default function ExchangeRateManager() {
 
   const handleSyncApi = async (type) => {
     try {
-      setSyncing(true);
+      if (type === 'bcv') setSyncingBcv(true);
+      else if (type === 'paralelo') setSyncingParalelo(true);
       await exchangeRateApi.syncAutomaticRate(type);
       toast.success(`¡Tasa ${type.toUpperCase()} actualizada con magia! ✨`);
       await loadData();
     } catch (error) {
       toast.error(error.message || 'Ocurrió un error al sincronizar la tasa.');
     } finally {
-      setSyncing(false);
+      if (type === 'bcv') setSyncingBcv(false);
+      else if (type === 'paralelo') setSyncingParalelo(false);
     }
   };
 
@@ -207,17 +210,18 @@ export default function ExchangeRateManager() {
           <div className="flex flex-col md:flex-row gap-4">
             <button
               onClick={() => handleSyncApi('bcv')}
-              disabled={syncing}
+              disabled={syncingBcv || syncingParalelo}
               className="flex-1 bg-slate-gray text-white py-3 px-4 rounded-xl hover:bg-opacity-90 transition-all font-medium flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {syncing ? <RefreshCw className="w-4 h-4 animate-spin" /> : null}
+              {syncingBcv ? <RefreshCw className="w-4 h-4 animate-spin" /> : null}
               Tasa Oficial
             </button>
             <button
               onClick={() => handleSyncApi('paralelo')}
-              disabled={syncing}
-              className="flex-1 border-2 border-peach-soft text-peach-soft py-3 px-4 rounded-xl hover:bg-peach-soft/10 transition-all font-medium disabled:opacity-50"
+              disabled={syncingParalelo}
+              className="flex-1 border-2 border-peach-soft text-peach-soft py-3 px-4 rounded-xl hover:bg-peach-soft/10 transition-all font-medium flex items-center justify-center gap-2 disabled:opacity-50"
             >
+              {syncingParalelo ? <RefreshCw className="w-4 h-4 animate-spin" /> : null}
               Tasa Paralelo
             </button>
           </div>
