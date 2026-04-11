@@ -17,7 +17,7 @@ export default function BaseRecipeManager() {
       const data = await baseRecipeApi.getAll();
       setBaseRecipes(data);
     } catch (error) {
-      toast.error("Error al cargar las recetas base");
+      toast.error(error.message || "Error al cargar las recetas base");
       console.error(error);
     } finally {
       setLoading(false);
@@ -45,6 +45,7 @@ export default function BaseRecipeManager() {
         </button>
         <BaseRecipeBuilderWrapper
           editingRecipe={editingRecipe}
+          initialData={editingRecipe}
           onSuccess={() => {
             setView("list");
             setEditingRecipe(null);

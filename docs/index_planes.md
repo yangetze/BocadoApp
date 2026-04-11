@@ -4,7 +4,9 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
 - [Plan de Trabajo: Eliminar Recetas Base](plan_receta_base_eliminar.md)
+- [Plan de Trabajo: Editar Receta Base](plan_edit_base_recipe.md)
 - [🔒 Plan de Trabajo: Security Fix Base Recipe Update IDOR](plan_security_base_recipe_update.md)
+- [Plan de Trabajo: Corregir Error al Eliminar Ingrediente](plan_bug_eliminar_ingrediente.md)
 - [Plan de Trabajo: Refactorización de Ingredientes y Marcas](plan_refactorizacion_ingredientes_marcas.md)
 - [Plan de Trabajo: Búsqueda de Ingredientes](plan_ingredientes_busqueda.md)
 - [🧁 Plan de Trabajo: Reajuste de Módulos Core (BocadoApp)](plan_core_modules.md)
@@ -12,9 +14,9 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Vista de Listado de Recetas Base (3.1)](plan_receta_base_vista_listado.md)
 - [Plan de Trabajo: Editor de Recetas Base (Drag & Drop, Columnas y Totales) (3.4 & 3.5)](plan_receta_base_editor_campos_totales.md)
 - [Plan de Trabajo: Búsqueda de Ingredientes en Receta Base (3.3)](plan_receta_base_busqueda_ingrediente.md)
+- [Plan de Trabajo: Corregir Error al Guardar Súper Recetas](plan_bug_super_receta.md)
 
 ## En desarrollo
-- [Plan de Trabajo: Corregir Error al Guardar Súper Recetas](plan_bug_super_receta.md)
 
 ## Backlog
 - [Plan de Trabajo: Tasas de Cambio Múltiples](plan_tasas_cambio_multiples.md)
@@ -29,3 +31,4 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Estandarización de Unidades de Medida](plan_estandarizacion_unidades.md)
 - [Plan: Resumen Total de Ingredientes](plan_resumen_total_ingredientes.md)
 - [Plan de Trabajo: Mejoras UX/UI Módulo Ingredientes - Marcas y Precios](plan_ingredientes_marcas.md)
+- [Plan de Trabajo: Listado de Súper Recetas](plan_super_recipe_list.md)

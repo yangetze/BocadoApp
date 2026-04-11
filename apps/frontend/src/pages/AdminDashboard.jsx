@@ -15,8 +15,8 @@ export default function AdminDashboard() {
     try {
       const response = await api.get('/users');
       setUsers(response.data);
-    } catch {
-      toast.error('Error al cargar la lista de usuarios');
+    } catch (error) {
+      toast.error(error.message || 'Error al cargar la lista de usuarios');
     } finally {
       setLoading(false);
     }
@@ -31,8 +31,8 @@ export default function AdminDashboard() {
       await api.put(`/users/${userId}`, { active: !currentStatus });
       toast.success(`Usuario ${!currentStatus ? 'activado' : 'desactivado'} con éxito`);
       setUsers(users.map(u => u.id === userId ? { ...u, active: !currentStatus } : u));
-    } catch {
-      toast.error('Error al actualizar el estado del usuario');
+    } catch (error) {
+      toast.error(error.message || 'Error al actualizar el estado del usuario');
     }
   };
 

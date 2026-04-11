@@ -20,3 +20,8 @@
 **Vulnerability:** The CORS configuration allowed requests with no `Origin` header (e.g., from `curl` or mobile apps) by explicitly returning `callback(null, true)` when the origin was undefined.
 **Learning:** While allowing no origin is often done to support non-browser clients, it creates a bypass that can be exploited if the API is intended to be restricted to specific web origins.
 **Prevention:** Always require an `Origin` header in production CORS policies unless non-browser access is explicitly required and secured by other means (like API keys).
+
+## 2026-04-10 - DolarAPI Integration Update and Defaults
+**Vulnerability:** A missing parameter default mapping led to a hardcoded assumption about the API responses of DolarAPI, previously trying to scrape for 'oficial' from a source when an unexpected type was provided.
+**Learning:** Default fallbacks when consuming external APIs with parameters should directly reflect the API's most robust or common endpoints natively. The new implementation cleanly evaluates whether a user wants parallel, euro or defaults to USD (CRIPTOYA_BCV).
+**Prevention:** Always provide defensive handling when parsing third party arrays (e.g. `const rateData = data.find(item => item.fuente === sourceName) || data[0];`) and default correctly.

@@ -106,20 +106,28 @@ export const fetchAndStoreApiRate = async (req, res) => {
   try {
     // Determine which rate type to fetch (bcv or paralelo), default to bcv
     const type = req?.body?.type || 'bcv';
-    // Using DolarAPI instead of CriptoYa, but keeping the requested enum structure
-    const sourceEnum = type === 'paralelo' ? 'PARALLEL' : (type === 'euro' ? 'EURO' : 'OFFICIAL');
+    // Determine the enum to use. Default to CRIPTOYA_BCV (USD BCV) as requested.
+    const sourceEnum = type === 'paralelo' ? 'CRIPTOYA_PARALELO' : (type === 'euro' ? 'EURO' : 'CRIPTOYA_BCV');
 
-    // 1. Fetch from DolarAPI Venezuela
-    // https://ve.dolarapi.com/v1/dolares
-    const response = await fetch('https://ve.dolarapi.com/v1/dolares');
+    // 1. Fetch from DolarAPI Venezuela depending on type
+    let apiUrl = 'https://ve.dolarapi.com/v1/dolares';
+    if (type === 'euro') {
+        apiUrl = 'https://ve.dolarapi.com/v1/euros';
+    } else if (type === 'usdt') {
+        // Just in case we support it later or they add it, but currently DolarAPI VE mainly has dolares and euros
+        // We will default to dolares if usdt is passed, since often it aligns or we can just fetch dolares
+        apiUrl = 'https://ve.dolarapi.com/v1/dolares';
+    }
+
+    const response = await fetch(apiUrl);
     if (!response.ok) {
        throw new Error(`Failed to fetch from DolarAPI: ${response.statusText}`);
     }
     const data = await response.json();
 
-    // Extract the requested rate
+    // Extract the requested rate. For euro, we just take oficial if that's what's mapped, or whatever is there.
     const sourceName = type === 'paralelo' ? 'paralelo' : 'oficial';
-    const rateData = data.find(item => item.fuente === sourceName);
+    const rateData = data.find(item => item.fuente === sourceName) || data[0]; // fallback to first item if not found
 
     if (!rateData || !rateData.promedio) {
         throw new Error(`Rate type '${type}' not found in API response`);

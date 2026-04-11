@@ -3,7 +3,7 @@ import Builder from "../DragAndDrop/Builder";
 import { ingredientApi } from "../../api";
 import { toast } from "react-hot-toast";
 
-export default function BaseRecipeBuilderWrapper({ editingRecipe, onSuccess }) {
+export default function BaseRecipeBuilderWrapper({ editingRecipe, initialData, onSuccess }) {
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,8 +15,8 @@ export default function BaseRecipeBuilderWrapper({ editingRecipe, onSuccess }) {
     try {
       const data = await ingredientApi.getAll();
       setIngredients(data);
-    } catch {
-      toast.error("Error al cargar los ingredientes para la receta base");
+    } catch (error) {
+      toast.error(error.message || "Error al cargar los ingredientes para la receta base");
     } finally {
       setLoading(false);
     }
@@ -34,7 +34,7 @@ export default function BaseRecipeBuilderWrapper({ editingRecipe, onSuccess }) {
     <Builder
       mode="baseRecipe"
       availableItems={ingredients}
-      editingItem={editingRecipe}
+      editingItem={editingRecipe || initialData}
       onSuccess={onSuccess}
     />
   );

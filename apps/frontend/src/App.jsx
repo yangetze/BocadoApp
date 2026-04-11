@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ExchangeRateManager from './components/ExchangeRateManager';
 import IngredientManager from './components/Ingredients/IngredientManager';
 import BaseRecipeManager from './components/BaseRecipes/BaseRecipeManager';
-import SuperRecipeBuilderWrapper from './components/SuperRecipes/SuperRecipeBuilderWrapper';
+import SuperRecipeManager from './components/SuperRecipes/SuperRecipeManager';
 import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper';
 
 // Protect App Routes
@@ -209,7 +209,7 @@ function MainApp() {
         {activeTab === 'baseRecipe' && <BaseRecipeManager />}
         {activeTab === 'settings' && <ExchangeRateManager />}
         {activeTab === 'superRecipe' && (
-          <SuperRecipeBuilderWrapper />
+          <SuperRecipeManager />
         )}
         {activeTab === 'budget' && (
           <BudgetBuilderWrapper />

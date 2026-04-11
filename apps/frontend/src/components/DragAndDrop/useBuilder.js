@@ -15,6 +15,10 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     baseYield: "",
     yieldUnit: "gr",
   });
+  const [superRecipeMetadata, setSuperRecipeMetadata] = useState({
+    name: "",
+    description: "",
+  });
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] =
     useState(false);
   const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
@@ -37,9 +41,25 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           })),
         );
       }
+    } else if (editingItem && mode === "superRecipe") {
+        setIsEditing(true);
+        setSuperRecipeMetadata({
+          name: editingItem.name || "",
+          description: editingItem.description || "",
+        });
+        if (editingItem.baseRecipes) {
+          setCanvasItems(
+            editingItem.baseRecipes.map((br) => ({
+              ...br.baseRecipe,
+              id: `canvas-${Date.now()}-${br.baseRecipeId}`,
+              quantity: br.quantityNeeded,
+            })),
+          );
+        }
     } else {
       setIsEditing(false);
       setBaseRecipeMetadata({ name: "", baseYield: "", yieldUnit: "gr" });
+      setSuperRecipeMetadata({ name: "", description: "" });
       setCanvasItems([]);
     }
   }, [editingItem, mode]);
@@ -141,7 +161,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
       setCanvasItems([]);
     } catch (error) {
       console.error(error);
-      toast.error("Hubo un error al guardar el presupuesto.");
+      toast.error(error.message || "Hubo un error al guardar el presupuesto.");
     } finally {
       setIsSaving(false);
     }
@@ -185,6 +205,8 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           setIsSaving(false);
           return;
         }
+
+
 
         const payload = {
           name: baseRecipeMetadata.name,
@@ -263,6 +285,8 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
   return {
     isEditing,
     handleDelete,
+    superRecipeMetadata,
+    setSuperRecipeMetadata,
     canvasItems,
     setCanvasItems,
     activeId,

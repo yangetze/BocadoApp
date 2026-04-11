@@ -32,7 +32,7 @@ export default function BaseRecipeList({
         </p>
         <button
           onClick={onCreateNew}
-          className="flex items-center gap-2 bg-peach-soft text-slate-gray px-6 py-3 rounded-xl font-bold hover:bg-peach-soft/90 transition-all shadow-sm"
+          className="flex items-center gap-2 bg-slate-gray text-white px-6 py-3 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm shadow-slate-gray/20"
         >
           <Plus className="w-5 h-5" />
           Agrega tu primera receta base
@@ -54,7 +54,7 @@ export default function BaseRecipeList({
         </div>
         <button
           onClick={onCreateNew}
-          className="flex items-center gap-2 bg-peach-soft text-slate-gray px-4 py-2 rounded-xl font-bold hover:bg-peach-soft/90 transition-all shadow-sm text-sm"
+          className="flex items-center gap-2 bg-slate-gray text-white px-4 py-2 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm shadow-slate-gray/20 text-sm"
         >
           <Plus className="w-4 h-4" />
           Nueva Receta Base
