@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
+import logger from '../utils/logger.js';
 
 export const createBudget = async (req, res) => {
   try {
@@ -64,7 +65,7 @@ export const createBudget = async (req, res) => {
 
     return res.status(201).json(budget);
   } catch (error) {
-    console.error('Error creating budget:', error);
+    logger.error('Error creating budget:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -97,7 +98,7 @@ export const getBudgets = async (req, res) => {
 
     return res.status(200).json(budgets);
   } catch (error) {
-    console.error('Error fetching budgets:', error);
+    logger.error('Error fetching budgets:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
