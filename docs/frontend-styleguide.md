@@ -44,6 +44,7 @@ El Dark Mode debe sentirse como entrar a una cocina profesional de noche: elegan
 ## 🔘 3. Componentes Clave
 
 ### Botones
+- **Builder UI Titles (Agregado):** Cuando se edita una entidad (ej. Súper Receta, Receta Base, Presupuesto), el título del constructor debe reflejar la acción (ej. "Modificar Receta Base") en lugar de usar un título de creación como "Nueva...".
 - **Mobile Action Buttons (Agregado):** En constructores complejos en dispositivos móviles, los botones de acción como "Guardar" y "Limpiar" pueden y deben utilizar íconos para ahorrar espacio, ubicándose preferiblemente en el Header para una fácil accesibilidad.
 
 - **Regla de Usabilidad (Agregada Feb 2025):** El botón primario ("Guardar", "Crear", etc.) debe tener **siempre un color fuerte y de alto contraste** (idealmente Slate Gray `#3E4A59`) para evitar que parezca bloqueado o deshabilitado. El uso de colores muy suaves (como Peach Soft sólido) para botones principales de acción ha demostrado ser confuso para los usuarios.
@@ -115,6 +116,7 @@ Cada vez que se cree un nuevo módulo o vista principal en la aplicación, **deb
 1. **Listado Principal:** Una vista clara que muestre los elementos del módulo (ej. tabla, tarjetas o lista).
    - **Regla de Paginación (Novedad Feb 2025):** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario. El estándar es de **10 registros por página**.
 2. **Botón Principal de Acción:** Un botón prominente (generalmente "Crear" o "Agregar") que siga las reglas de botones primarios descritas arriba.
+   - **Regla Móvil:** En dispositivos móviles, este botón debe convertirse en un botón flotante (FAB) ubicado en la esquina inferior derecha (`md:hidden fixed bottom-20 right-4 z-40`), utilizando un icono (como `+`) para ahorrar espacio y mantener la coherencia en las listas principales.
 3. **Buscador (Search):** Como mínimo, debe existir una barra de búsqueda por texto que permita filtrar los resultados listados en función de los campos visibles en la interfaz.
 4. **Diseño Responsivo (Responsive Rules):** Se deben aplicar estrictamente las reglas definidas en la sección 7. La vista debe funcionar impecablemente en dispositivos móviles, adaptando la navegación, el listado y los botones de acción para interfaces táctiles.
 ### Listados y Paginación (Novedad Feb 2025)
