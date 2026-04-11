@@ -19,10 +19,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     baseYield: "",
     yieldUnit: "gr",
   });
-  const [superRecipeMetadata, setSuperRecipeMetadata] = useState({
-    name: "",
-    description: "",
-  });
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] =
     useState(false);
   const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
