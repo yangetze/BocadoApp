@@ -103,7 +103,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -118,7 +118,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden"
+            className="relative bg-white rounded-none sm:rounded-2xl shadow-xl w-full sm:max-w-lg h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-hidden flex flex-col"
           >
             <div className="p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-slate-gray">
@@ -126,7 +126,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
               </h2>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleSubmit} className="flex flex-col h-full overflow-hidden">
+              <div className="p-6 space-y-4 flex-1 overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="name">Nombre *</label>
                 <input
@@ -140,7 +141,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 />
               </div>
 
-              <div className="flex gap-4 items-end">
+              <div className="flex flex-col sm:flex-row gap-4 sm:items-end">
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="globalPrice">Precio Global ($) *</label>
                   <div className="relative">
@@ -160,8 +161,9 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     />
                   </div>
                 </div>
-                <div className="w-24">
-                  <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="globalPriceQuantity">Por cada *</label>
+                <div className="flex gap-4 w-full sm:w-auto">
+                  <div className="w-24">
+                    <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="globalPriceQuantity">Por cada *</label>
                   <input
                     id="globalPriceQuantity"
                     type="number"
@@ -190,15 +192,16 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     ))}
                   </select>
                 </div>
-                <div>
-                   <button
-                     type="button"
-                     onClick={calculateAveragePrice}
-                     className="px-4 py-3 bg-gray-100 text-slate-gray rounded-lg hover:bg-gray-200 font-medium transition-colors text-sm"
-                     title="Calcular Precio Promedio de las Presentaciones"
-                   >
-                     Calcular
-                   </button>
+                  <div className="w-full sm:w-auto">
+                     <button
+                       type="button"
+                       onClick={calculateAveragePrice}
+                       className="w-full px-4 py-3 bg-gray-100 text-slate-gray rounded-lg hover:bg-gray-200 font-medium transition-colors text-sm"
+                       title="Calcular Precio Promedio de las Presentaciones"
+                     >
+                       Calcular
+                     </button>
+                  </div>
                 </div>
               </div>
 
@@ -260,7 +263,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 )}
               </div>
 
-              <div className="pt-4 flex justify-end gap-3">
+              </div>
+              <div className="p-4 sm:p-6 border-t border-gray-100 bg-white sticky bottom-0 flex justify-end gap-3 w-full mt-auto">
                 <button
                   type="button"
                   onClick={onClose}
