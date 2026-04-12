@@ -35,7 +35,7 @@ describe('IngredientFormModal', () => {
     fireEvent.change(costInput, { target: { value: '1.00' } });
     fireEvent.change(qtyInput, { target: { value: '1000' } });
 
-    fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByText('Agregar'));
 
     // We must manually click the calculate button now
     fireEvent.click(screen.getByText('Calcular'));
@@ -53,7 +53,7 @@ describe('IngredientFormModal', () => {
     fireEvent.change(costInput, { target: { value: '2.00' } });
     fireEvent.change(qtyInput, { target: { value: '1000' } });
 
-    fireEvent.click(screen.getByText('Add'));
+    fireEvent.click(screen.getByText('Agregar'));
     fireEvent.click(screen.getByText('Calcular'));
 
     // New average cost per unit:

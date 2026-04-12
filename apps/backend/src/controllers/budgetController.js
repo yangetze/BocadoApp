@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
+import logger from '../utils/logger.js';
 
 export const createBudget = async (req, res) => {
   try {
@@ -64,7 +65,7 @@ export const createBudget = async (req, res) => {
 
     return res.status(201).json(budget);
   } catch (error) {
-    console.error('Error creating budget:', error);
+    logger.error('Error creating budget:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -97,7 +98,163 @@ export const getBudgets = async (req, res) => {
 
     return res.status(200).json(budgets);
   } catch (error) {
-    console.error('Error fetching budgets:', error);
+    logger.error('Error fetching budgets:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+export const getBudgetById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    if (isTestMode()) {
+      const budget = mockData.budgets.find((b) => b.id === id && b.userId === userId);
+      if (!budget) return res.status(404).json({ error: 'Budget not found' });
+      return res.status(200).json(budget);
+    }
+
+    const budget = await prisma.budget.findUnique({
+      where: { id },
+      include: {
+        superRecipes: {
+          include: {
+            superRecipe: true
+          }
+        },
+        brandSelections: {
+           include: {
+              brandPresentation: true
+           }
+        }
+      }
+    });
+
+    if (!budget || budget.userId !== userId) {
+      return res.status(404).json({ error: 'Budget not found' });
+    }
+
+    return res.status(200).json(budget);
+  } catch (error) {
+    console.error('Error fetching budget by id:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const updateBudget = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { customerName, profitMargin, superRecipes, brandSelections } = req.body;
+    const userId = req.user.id;
+
+    if (!superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
+      return res.status(400).json({ error: 'Missing required fields or invalid superRecipes array' });
+    }
+
+    if (isTestMode()) {
+      const budgetIndex = mockData.budgets.findIndex((b) => b.id === id && b.userId === userId);
+      if (budgetIndex === -1) return res.status(404).json({ error: 'Budget not found' });
+
+      const updatedBudget = {
+        ...mockData.budgets[budgetIndex],
+        customerName: customerName || null,
+        profitMargin: parseFloat(profitMargin),
+        updatedAt: new Date(),
+        superRecipes: superRecipes.map((sr) => ({
+          id: `bsr-${crypto.randomUUID()}`,
+          budgetId: id,
+          superRecipeId: sr.superRecipeId,
+          scaleQuantity: sr.scaleQuantity || 1,
+          superRecipe: mockData.superRecipes.find((s) => s.id === sr.superRecipeId),
+        })),
+        brandSelections:
+          brandSelections?.map((bs) => ({
+            id: `bbs-${crypto.randomUUID()}`,
+            budgetId: id,
+            ingredientId: bs.ingredientId,
+            brandPresentationId: bs.brandPresentationId,
+          })) || [],
+      };
+      mockData.budgets[budgetIndex] = updatedBudget;
+      return res.status(200).json(updatedBudget);
+    }
+
+    // Verify ownership
+    const existingBudget = await prisma.budget.findUnique({
+      where: { id }
+    });
+
+    if (!existingBudget || existingBudget.userId !== userId) {
+      return res.status(404).json({ error: 'Budget not found' });
+    }
+
+    const budget = await prisma.$transaction(async (tx) => {
+      // Delete old relations
+      await tx.budgetSuperRecipe.deleteMany({ where: { budgetId: id } });
+      await tx.budgetBrandSelection.deleteMany({ where: { budgetId: id } });
+
+      // Create new relations
+      return await tx.budget.update({
+        where: { id },
+        data: {
+          customerName,
+          profitMargin,
+          superRecipes: {
+            create: superRecipes.map((sr) => ({
+              superRecipeId: sr.superRecipeId,
+              scaleQuantity: sr.scaleQuantity || 1,
+            })),
+          },
+          brandSelections: {
+            create:
+              brandSelections?.map((bs) => ({
+                ingredientId: bs.ingredientId,
+                brandPresentationId: bs.brandPresentationId,
+              })) || [],
+          },
+        },
+        include: {
+          superRecipes: true,
+          brandSelections: true,
+        },
+      });
+    });
+
+    return res.status(200).json(budget);
+  } catch (error) {
+    console.error('Error updating budget:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const deleteBudget = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    if (isTestMode()) {
+      const budgetIndex = mockData.budgets.findIndex((b) => b.id === id && b.userId === userId);
+      if (budgetIndex === -1) return res.status(404).json({ error: 'Budget not found' });
+      mockData.budgets.splice(budgetIndex, 1);
+      return res.status(200).json({ message: 'Budget deleted successfully' });
+    }
+
+    const existingBudget = await prisma.budget.findUnique({
+      where: { id }
+    });
+
+    if (!existingBudget || existingBudget.userId !== userId) {
+      return res.status(404).json({ error: 'Budget not found' });
+    }
+
+    await prisma.budget.delete({
+      where: { id }
+    });
+
+    return res.status(200).json({ message: 'Budget deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting budget:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

@@ -232,12 +232,39 @@ export const budgetApi = {
     }
   },
 
+  getById: async (id) => {
+    try {
+      const res = await api.get(`/budgets/${id}`);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al obtener el presupuesto');
+    }
+  },
+
   create: async (data) => {
     try {
       const res = await api.post('/budgets', data);
       return res.data;
     } catch (error) {
       throw new Error(error.response?.data?.error || 'Error al crear presupuesto');
+    }
+  },
+
+  update: async (id, data) => {
+    try {
+      const res = await api.put(`/budgets/${id}`, data);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al actualizar el presupuesto');
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const res = await api.delete(`/budgets/${id}`);
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || 'Error al eliminar el presupuesto');
     }
   }
 };

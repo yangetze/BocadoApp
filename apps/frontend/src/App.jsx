@@ -12,7 +12,7 @@ import ExchangeRateManager from './components/ExchangeRateManager';
 import IngredientManager from './components/Ingredients/IngredientManager';
 import BaseRecipeManager from './components/BaseRecipes/BaseRecipeManager';
 import SuperRecipeManager from './components/SuperRecipes/SuperRecipeManager';
-import BudgetBuilderWrapper from './components/Budgets/BudgetBuilderWrapper';
+import BudgetManager from './components/Budgets/BudgetManager';
 
 // Protect App Routes
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
@@ -212,7 +212,7 @@ function MainApp() {
           <SuperRecipeManager />
         )}
         {activeTab === 'budget' && (
-          <BudgetBuilderWrapper />
+          <BudgetManager />
         )}
       </main>
     </div>

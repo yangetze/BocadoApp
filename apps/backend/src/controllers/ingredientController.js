@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
+import logger from '../utils/logger.js';
 
 export const getIngredients = async (req, res) => {
   const userId = req.user.id;
@@ -36,7 +37,7 @@ export const getIngredients = async (req, res) => {
     });
     res.status(200).json(ingredients);
   } catch (error) {
-    console.error('Error fetching ingredients:', error);
+    logger.error('Error fetching ingredients:', error);
     res.status(500).json({ error: 'Error al obtener los ingredientes' });
   }
 };
@@ -86,7 +87,7 @@ export const createIngredient = async (req, res) => {
 
     res.status(201).json(newIngredient);
   } catch (error) {
-    console.error('Error creating ingredient:', error);
+    logger.error('Error creating ingredient:', error);
     res.status(500).json({ error: 'Error al crear el ingrediente' });
   }
 };
@@ -153,7 +154,7 @@ export const updateIngredient = async (req, res) => {
 
     res.status(200).json(updatedIngredient);
   } catch (error) {
-    console.error('Error updating ingredient:', error);
+    logger.error('Error updating ingredient:', error);
     res.status(500).json({ error: 'Error al actualizar el ingrediente' });
   }
 };
@@ -190,7 +191,7 @@ export const deleteIngredient = async (req, res) => {
 
     res.status(200).json({ message: 'Ingrediente eliminado exitosamente' });
   } catch (error) {
-    console.error('Error deleting ingredient:', error);
+    logger.error('Error deleting ingredient:', error);
     res.status(500).json({ error: 'Error al eliminar el ingrediente' });
   }
 };

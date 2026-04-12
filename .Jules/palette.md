@@ -15,3 +15,7 @@
 ## 2025-04-10 - Explicit Input-Label Association for Accessibility in Modals
 **Learning:** In dynamically generated forms like presentation inputs within modals, failing to link labels with inputs using `id` and `htmlFor` degrades accessibility and usability. Screen readers fail to announce the field name, and users cannot click the label to focus the input.
 **Action:** Ensure all dynamically rendered form inputs are correctly paired with their `label` elements using unique or clearly identifiable `id`s and `htmlFor`s.
+
+## 2025-04-11 - Accessible Icon Buttons for Modals
+**Learning:** Modal close buttons that use only an SVG icon without text or an accessible label (`aria-label`) are completely invisible to screen readers, leaving users stuck inside a modal without a clear way to dismiss it.
+**Action:** Ensure that all close buttons (`X` or custom SVG paths) in modals are equipped with `aria-label="Cerrar modal"` or similar to provide a semantic action for assistive technologies.
