@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Plus } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
@@ -122,7 +122,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
           >
             <div className="p-6 border-b border-gray-100">
               <h2 className="text-xl font-bold text-slate-gray">
-                {isEditing ? 'Editar Ingrediente' : 'Nuevo Ingrediente'}
+                {isEditing ? 'Modificar Ingrediente' : 'Nuevo Ingrediente'}
               </h2>
             </div>
 
@@ -161,8 +161,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     />
                   </div>
                 </div>
-                <div className="flex gap-4 w-full sm:w-auto">
-                  <div className="w-24">
+                <div className="grid grid-cols-2 sm:flex gap-4 w-full sm:w-auto">
+                  <div className="col-span-1 sm:w-24">
                     <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="globalPriceQuantity">Por cada *</label>
                   <input
                     id="globalPriceQuantity"
@@ -178,7 +178,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     }}
                   />
                 </div>
-                <div className="w-28">
+                <div className="col-span-1 sm:w-28">
                   <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="measurementUnit">Unidad *</label>
                   <select
                     id="measurementUnit"
@@ -192,7 +192,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     ))}
                   </select>
                 </div>
-                  <div className="w-full sm:w-auto">
+                  <div className="col-span-2 sm:w-auto mt-2 sm:mt-0">
                      <button
                        type="button"
                        onClick={calculateAveragePrice}
@@ -235,7 +235,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                       </select>
                     </div>
                     <div className="w-1/4">
-                      <button type="button" onClick={addPresentation} className="w-full py-2 bg-slate-gray text-white text-sm font-medium rounded-lg hover:bg-opacity-90">Agregar</button>
+                      <button type="button" onClick={addPresentation} className="w-full py-2 bg-slate-gray text-white text-sm font-medium rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-1" aria-label="Agregar"><Plus size={16} className="sm:hidden" /><span className="hidden sm:inline">Agregar</span></button>
                     </div>
                   </div>
                 </div>
