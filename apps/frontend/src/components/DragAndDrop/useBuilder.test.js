@@ -84,6 +84,7 @@ describe('useBuilder - handleSave', () => {
     const { result } = renderHook(() => useBuilder('superRecipe'));
 
     act(() => {
+      result.current.setSuperRecipeMetadata({ name: "Prueba SR", description: "" });
       result.current.setCanvasItems([
         { id: 'canvas-12345-br1', quantity: 500 }
       ]);
@@ -95,7 +96,7 @@ describe('useBuilder - handleSave', () => {
 
     expect(superRecipeApi.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        name: expect.any(String),
+        name: "Prueba SR",
         baseRecipes: [
           { baseRecipeId: 'br1', quantityNeeded: 500 }
         ]

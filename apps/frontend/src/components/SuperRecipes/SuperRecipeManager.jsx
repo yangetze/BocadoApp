@@ -60,7 +60,9 @@ export default function SuperRecipeManager() {
           <ArrowLeft className="w-4 h-4" />
           Volver a la lista
         </button>
-        <SuperRecipeBuilderWrapper initialData={editingRecipe} />
+        <SuperRecipeBuilderWrapper initialData={editingRecipe} onSuccess={() => {
+          setView('list');
+        }} />
       </div>
     );
   }

@@ -1,3 +1,4 @@
+/* global describe, it, expect, jest, beforeEach */
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import BudgetManager from '../BudgetManager';
@@ -29,7 +30,7 @@ jest.mock('../BudgetList', () => ({ budgets, onCreateNew, onEdit, onDelete }) =>
     ))}
   </div>
 ));
-jest.mock('../BudgetBuilderWrapper', () => ({ initialData, onSuccess }) => (
+jest.mock('../BudgetBuilderWrapper', () => ({ onSuccess }) => (
   <div data-testid="budget-builder">
     <button onClick={onSuccess}>Success</button>
   </div>

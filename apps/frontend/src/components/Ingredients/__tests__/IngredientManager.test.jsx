@@ -1,3 +1,4 @@
+/* global describe, it, expect, jest, beforeEach, beforeAll */
 beforeAll(() => {
   window.scrollTo = jest.fn();
 });
