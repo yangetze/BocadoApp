@@ -105,6 +105,7 @@ describe('Super Recipe Routes', () => {
 
       expect(res.statusCode).toBe(200);
       expect(res.body.message).toBe('Súper receta eliminada exitosamente');
+      expect(prisma.superRecipe.delete).toHaveBeenCalledWith({ where: { id: 'sr-1' } });
     });
 
     it('should error if used in budget', async () => {
@@ -115,6 +116,20 @@ describe('Super Recipe Routes', () => {
 
       expect(res.statusCode).toBe(400);
       expect(res.body.error).toContain('en uso');
+    });
+
+    it('should return 404 if super recipe does not exist', async () => {
+      prisma.superRecipe.findUnique.mockResolvedValue(null);
+      const res = await request(app).delete('/api/super-recipes/sr-nonexistent');
+      expect(res.statusCode).toBe(404);
+      expect(res.body.error).toContain('Súper receta no encontrada');
+    });
+
+    it('should return 404 if user does not own the super recipe', async () => {
+      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-other' });
+      const res = await request(app).delete('/api/super-recipes/sr-1');
+      expect(res.statusCode).toBe(404);
+      expect(res.body.error).toContain('no tienes permiso');
     });
   });
 });
