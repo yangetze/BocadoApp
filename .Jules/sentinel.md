@@ -25,3 +25,7 @@
 **Vulnerability:** A missing parameter default mapping led to a hardcoded assumption about the API responses of DolarAPI, previously trying to scrape for 'oficial' from a source when an unexpected type was provided.
 **Learning:** Default fallbacks when consuming external APIs with parameters should directly reflect the API's most robust or common endpoints natively. The new implementation cleanly evaluates whether a user wants parallel, euro or defaults to USD (CRIPTOYA_BCV).
 **Prevention:** Always provide defensive handling when parsing third party arrays (e.g. `const rateData = data.find(item => item.fuente === sourceName) || data[0];`) and default correctly.
+## 2026-04-11 - Replace `console.error` with `logger.error`
+**Vulnerability:** Use of `console.error` inside Express.js controllers and middleware can lead to accidental exposure of raw error stack traces, which may contain sensitive database information, API keys, or application internals when caught or unhandled depending on the setup. It also circumvents application log formatting, meaning logs aren't processed via Winston.
+**Learning:** Raw `console` methods break centralized logging strategies. Developers might rely on it for convenience but it misses the defense in depth an explicit structured logger affords.
+**Prevention:** Always use the dedicated application logger (e.g., `logger.error`) in production code instead of raw `console` methods to ensure proper formatting, redaction, and transmission of logs without exposing internals to the user or unmonitored consoles.

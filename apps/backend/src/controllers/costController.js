@@ -1,5 +1,6 @@
 import prisma from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
+import logger from '../utils/logger.js';
 
 export const calculateSuperRecipeCost = async (req, res) => {
   try {
@@ -152,7 +153,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error calculating cost:', error);
+    logger.error('Error calculating cost:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

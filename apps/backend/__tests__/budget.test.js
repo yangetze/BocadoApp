@@ -17,9 +17,58 @@ describe('Budget Controller', () => {
   app.use(mockAuthMiddleware);
   app.post('/api/budgets', budgetController.createBudget);
   app.get('/api/budgets', budgetController.getBudgets);
+  app.get('/api/budgets/:id', budgetController.getBudgetById);
+  app.put('/api/budgets/:id', budgetController.updateBudget);
+  app.delete('/api/budgets/:id', budgetController.deleteBudget);
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('should fetch budget by id successfully', async () => {
+    const mockBudget = { id: 'budget-1', userId: 'user-1' };
+    prisma.budget.findUnique.mockResolvedValue(mockBudget);
+
+    const res = await request(app).get('/api/budgets/budget-1');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.id).toBe('budget-1');
+    expect(prisma.budget.findUnique).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return 404 if budget not found or not owned by user', async () => {
+    prisma.budget.findUnique.mockResolvedValue({ id: 'budget-1', userId: 'other-user' });
+
+    const res = await request(app).get('/api/budgets/budget-1');
+    expect(res.statusCode).toBe(404);
+  });
+
+  it('should update budget successfully', async () => {
+    const mockExistingBudget = { id: 'budget-1', userId: 'user-1' };
+    const mockUpdatedBudget = { id: 'budget-1', userId: 'user-1', customerName: 'Updated Name' };
+    prisma.budget.findUnique.mockResolvedValue(mockExistingBudget);
+    prisma.$transaction.mockResolvedValue(mockUpdatedBudget);
+
+    const payload = {
+      customerName: 'Updated Name',
+      profitMargin: 0.40,
+      superRecipes: [
+        { superRecipeId: 'sr-1', scaleQuantity: 3 }
+      ]
+    };
+
+    const res = await request(app).put('/api/budgets/budget-1').send(payload);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.customerName).toBe('Updated Name');
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+  it('should delete budget successfully', async () => {
+    const mockExistingBudget = { id: 'budget-1', userId: 'user-1' };
+    prisma.budget.findUnique.mockResolvedValue(mockExistingBudget);
+    prisma.budget.delete.mockResolvedValue(mockExistingBudget);
+
+    const res = await request(app).delete('/api/budgets/budget-1');
+    expect(res.statusCode).toBe(200);
+    expect(prisma.budget.delete).toHaveBeenCalledTimes(1);
   });
 
   it('should create a budget successfully', async () => {

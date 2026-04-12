@@ -65,7 +65,7 @@ Todos los agentes y desarrolladores deben consultar y actualizar esta tabla al f
 | **MVP 1.5** | Nuevo Landing Page (Minimalismo Sensorial) | 🟢 Completado | Media | Equipo Frontend |
 | **MVP 1** | Presupuestos: Exportación PDF y Enlaces | 🟡 Por Hacer | Alta | Fullstack |
 | **MVP 1** | Presupuestos: Configuración de Moneda, Pagos y Logo | 🟡 Por Hacer | Alta | Fullstack |
-| **MVP 1** | Presupuestos: Gestión de Estados y Listado | 🟡 Por Hacer | Alta | Fullstack |
+| **MVP 1** | Presupuestos: Gestión de Estados y Listado | 🟢 Completado | Alta | Fullstack |
 | **MVP 1** | Presupuestos: Validación de Tasas del Día | 🟡 Por Hacer | Alta | Fullstack |
 | **MVP 2** | Constructor Visual Drag-and-Drop | 🟢 Completado | Media | Equipo Frontend |
 | **MVP 2** | Totales de Ingredientes en Constructor | 🟢 Completado | Media | Equipo Frontend |

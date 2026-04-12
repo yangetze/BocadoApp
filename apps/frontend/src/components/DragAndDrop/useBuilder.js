@@ -8,7 +8,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
   const [activeId, setActiveId] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
   const [superRecipeMetadata, setSuperRecipeMetadata] = useState({
-    name: editingItem?.name || '',
+    name: editingItem?.name || editingItem?.customerName || '',
     description: editingItem?.description || ''
   });
   const [suggestedMargin, setSuggestedMargin] = useState(null);
@@ -19,6 +19,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     baseYield: "",
     yieldUnit: "gr",
   });
+
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] =
     useState(false);
   const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
@@ -55,6 +56,21 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
               quantity: br.quantityNeeded,
             })),
           );
+        }
+    } else if (editingItem && mode === "budget") {
+        setIsEditing(true);
+        setSuperRecipeMetadata({
+            name: editingItem.customerName || "",
+            description: "",
+        });
+        if (editingItem.superRecipes) {
+            setCanvasItems(
+                editingItem.superRecipes.map((sr) => ({
+                    ...sr.superRecipe,
+                    id: `canvas-${Date.now()}-${sr.superRecipeId}`,
+                    quantity: sr.scaleQuantity,
+                }))
+            );
         }
     } else {
       setIsEditing(false);
@@ -154,11 +170,17 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
         ...pendingBudgetPayload,
         brandSelections,
       };
-      await budgetApi.create(payload);
-      toast.success("Presupuesto guardado exitosamente");
+      if (isEditing) {
+         await budgetApi.update(editingItem.id, payload);
+         toast.success("Presupuesto actualizado exitosamente");
+      } else {
+         await budgetApi.create(payload);
+         toast.success("Presupuesto guardado exitosamente");
+      }
       setIsBrandSelectionModalOpen(false);
       setPendingBudgetPayload(null);
       setCanvasItems([]);
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error(error);
       toast.error(error.message || "Hubo un error al guardar el presupuesto.");
@@ -177,9 +199,14 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
     try {
       if (mode === "budget") {
+        if (!superRecipeMetadata.name) {
+          toast.error("Debes colocar el nombre del cliente/presupuesto");
+          setIsSaving(false);
+          return;
+        }
         const payload = {
-          customerName: "Cliente " + Date.now().toString().slice(-4),
-          profitMargin: 0.35,
+          customerName: superRecipeMetadata.name,
+          profitMargin: 0.35, // This should ideally be editable later
           userId: "user-default-1",
           superRecipes: canvasItems.map((item) => ({
             superRecipeId: item.id.replace(/^canvas-\d+-/, "") || item.id,
