@@ -241,7 +241,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           yieldUnit: baseRecipeMetadata.yieldUnit,
           ingredients: canvasItems.map((item) => ({
             ingredientId: item.id.replace(/^canvas-\d+-/, "") || item.id,
-            quantityNeeded: item.quantity || 1,
+            quantity: item.quantity || 1,
           })),
         };
         if (isEditing) {

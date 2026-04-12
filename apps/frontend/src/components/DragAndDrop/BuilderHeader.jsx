@@ -14,9 +14,9 @@ export const BuilderHeader = React.memo(function BuilderHeader({
   onDelete,
 }) {
   const titles = {
-    superRecipe: "Nueva Súper Receta",
-    baseRecipe: "Nueva Receta Base",
-    budget: "Nuevo Presupuesto",
+    superRecipe: isEditing ? "Modificar Súper Receta" : "Nueva Súper Receta",
+    baseRecipe: isEditing ? "Modificar Receta Base" : "Nueva Receta Base",
+    budget: isEditing ? "Modificar Presupuesto" : "Nuevo Presupuesto",
   };
 
   const descriptions = {
