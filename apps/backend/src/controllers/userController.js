@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import prisma from '../prisma.js';
+import logger from '../utils/logger.js';
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -17,7 +18,7 @@ export const getAllUsers = async (req, res) => {
     });
     res.json(users);
   } catch (error) {
-    console.error('Error fetching users:', error);
+    logger.error('Error fetching users:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -56,7 +57,7 @@ export const createUser = async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (error) {
-    console.error('Error creating user:', error);
+    logger.error('Error creating user:', error);
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
     }
@@ -94,7 +95,7 @@ export const updateUser = async (req, res) => {
 
     res.json(updatedUser);
   } catch (error) {
-    console.error('Error updating user:', error);
+    logger.error('Error updating user:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -105,7 +106,7 @@ export const deleteUser = async (req, res) => {
     await prisma.user.delete({ where: { id } });
     res.json({ message: 'Usuario eliminado correctamente' });
   } catch (error) {
-    console.error('Error deleting user:', error);
+    logger.error('Error deleting user:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };

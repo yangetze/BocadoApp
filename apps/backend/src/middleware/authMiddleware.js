@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 import { JWT_SECRET } from '../config/auth.js';
+import logger from '../utils/logger.js';
 
 /**
  * Middleware para verificar si el usuario tiene un JWT válido.
@@ -26,7 +27,7 @@ export const verifyToken = (req, res, next) => {
     req.user = decoded; // Inyecta los datos del usuario (id, username, role)
     next();
   } catch (error) {
-    console.error('Auth Middleware Error:', error.message);
+    logger.error('Auth Middleware Error:', error.message);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Tu sesión ha expirado, por favor inicia sesión de nuevo' });
     }

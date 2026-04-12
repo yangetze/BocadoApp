@@ -54,7 +54,7 @@ export default function BaseRecipeList({
         </div>
         <button
           onClick={onCreateNew}
-          className="flex items-center gap-2 bg-slate-gray text-white px-4 py-2 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm shadow-slate-gray/20 text-sm"
+          className="hidden md:flex items-center gap-2 bg-slate-gray text-white px-4 py-2 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm shadow-slate-gray/20 text-sm"
         >
           <Plus className="w-4 h-4" />
           Nueva Receta Base
@@ -117,6 +117,17 @@ export default function BaseRecipeList({
             </div>
           </motion.div>
         ))}
+      </div>
+
+      {/* MOBILE FAB (Floating Action Button) */}
+      <div className="md:hidden fixed bottom-20 right-4 z-40">
+        <button
+          onClick={onCreateNew}
+          className="bg-slate-gray text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-90 active:scale-95 transition-all"
+          aria-label="Nueva Receta Base"
+        >
+          <Plus className="w-6 h-6" />
+        </button>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import prisma from '../prisma.js';
+import logger from '../utils/logger.js';
 
 export const getSuperRecipes = async (req, res) => {
   try {
@@ -17,7 +18,7 @@ export const getSuperRecipes = async (req, res) => {
     });
     res.status(200).json(superRecipes);
   } catch (error) {
-    console.error('Error fetching super recipes:', error);
+    logger.error('Error fetching super recipes:', error);
     res.status(500).json({ error: 'Error al obtener las súper recetas' });
   }
 };
@@ -80,7 +81,7 @@ export const createSuperRecipe = async (req, res) => {
 
     res.status(201).json(newSuperRecipe);
   } catch (error) {
-    console.error('Error creating super recipe:', error);
+    logger.error('Error creating super recipe:', error);
     res.status(500).json({ error: 'Error al crear la súper receta' });
   }
 };
@@ -173,7 +174,7 @@ export const updateSuperRecipe = async (req, res) => {
 
     res.status(200).json(updated);
   } catch (error) {
-    console.error('Error updating super recipe:', error);
+    logger.error('Error updating super recipe:', error);
     res.status(500).json({ error: 'Error al actualizar la súper receta' });
   }
 };
@@ -202,7 +203,7 @@ export const deleteSuperRecipe = async (req, res) => {
     });
     res.status(200).json({ message: 'Súper receta eliminada exitosamente' });
   } catch (error) {
-    console.error('Error deleting super recipe:', error);
+    logger.error('Error deleting super recipe:', error);
     res.status(500).json({ error: 'Error al eliminar la súper receta' });
   }
 };

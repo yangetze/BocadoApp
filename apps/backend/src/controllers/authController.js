@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '../prisma.js';
 
 import { JWT_SECRET } from '../config/auth.js';
+import logger from '../utils/logger.js';
 
 export const login = async (req, res) => {
   try {
@@ -58,7 +59,7 @@ export const login = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ ERROR EN LOGIN:', error);
+    logger.error('❌ ERROR EN LOGIN:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -107,7 +108,7 @@ export const register = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ ERROR EN REGISTRO:', error);
+    logger.error('❌ ERROR EN REGISTRO:', error);
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
     }
@@ -136,7 +137,7 @@ export const getMe = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('❌ ERROR EN GETME:', error);
+    logger.error('❌ ERROR EN GETME:', error);
     res.status(500).json({ error: 'Error al recuperar perfil de usuario' });
   }
 };
