@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Plan de Trabajo: Prevenir Duplicados en Builder](plan_builder_prevent_duplicate.md)
 - [Plan: Vista de Listado y Validación de Tasas en Presupuestos](plan_presupuestos_listado_y_tasas.md)
 - [Plan de Trabajo: Eliminar Recetas Base](plan_receta_base_eliminar.md)
 - [Plan de Trabajo: Editar Receta Base](plan_edit_base_recipe.md)
