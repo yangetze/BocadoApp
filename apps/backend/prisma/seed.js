@@ -20,7 +20,6 @@ async function main() {
     },
   });
 
-  console.log('Admin user seeded:', admin.username);
 }
 
 main()
