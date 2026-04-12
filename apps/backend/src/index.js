@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import dotenv from 'dotenv';
 import logger from './utils/logger.js';
 import costRoutes from './routes/costRoutes.js';
@@ -36,6 +37,7 @@ app.use(cors({
   },
   credentials: true
 }));
+app.use(helmet()); // Add various HTTP headers to improve security
 app.use(express.json());
 
 // Main API routes

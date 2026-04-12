@@ -213,7 +213,7 @@ export const fetchAndStoreApiRate = async (req, res) => {
   } catch (error) {
     logger.error('Error in fetchAndStoreApiRate:', error);
     if (res) {
-        return res.status(500).json({ error: error.message || 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     } else {
         throw error;
     }
