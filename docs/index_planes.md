@@ -4,6 +4,7 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
 - [Plan de Trabajo: Mejoras UX Modal Ingredientes](plan_edit_ingredient_modal.md)
+- [Plan de Trabajo: Prevenir Duplicados en Builder](plan_builder_prevent_duplicate.md)
 - [Plan: Vista de Listado y Validación de Tasas en Presupuestos](plan_presupuestos_listado_y_tasas.md)
 - [Plan de Trabajo: Eliminar Recetas Base](plan_receta_base_eliminar.md)
 - [Plan de Trabajo: Editar Receta Base](plan_edit_base_recipe.md)
@@ -35,4 +36,4 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Listado de Súper Recetas](plan_super_recipe_list.md)
 - [Plan de Trabajo: Agents PR Rule](plan_agents_pr_rule.md)
 
-- [Correcciones en Edición de Recetas Base](./plan_edit_base_recipe_title_and_quantity.md) - Completado
+- [Correcciones en Edición de Recetas Base](./plan_edit_base_recipe_title_and_quantity.md) - Completado- [🧹 Code Health Improvement: Remove console.log from Seed](plan_code_health_seed_console_log.md)
