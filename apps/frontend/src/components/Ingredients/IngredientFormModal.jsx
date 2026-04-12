@@ -231,7 +231,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                         {UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
                       </select>
                     </div>
-                    <div className="col-span-2 sm:col-span-1">
+                    <div className="w-1/4">
                       <button type="button" onClick={addPresentation} className="w-full py-2 bg-slate-gray text-white text-sm font-medium rounded-lg hover:bg-opacity-90">Agregar</button>
                     </div>
                   </div>

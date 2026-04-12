@@ -204,17 +204,17 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
               <MarginRecommendationCard suggestedMargin={suggestedMargin} />
             )}
 
-            {mode === "superRecipe" && (
+            {(mode === "superRecipe" || mode === "budget") && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6 mb-6">
           <h2 className="text-xl font-bold text-slate-gray mb-4">
-            {initialData ? 'Editar Súper Receta' : 'Nueva Súper Receta'}
+            {initialData ? (mode === "budget" ? 'Editar Presupuesto' : 'Editar Súper Receta') : (mode === "budget" ? 'Nuevo Presupuesto' : 'Nueva Súper Receta')}
           </h2>
           <div className="flex flex-col gap-4 max-w-2xl">
              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-slate-gray">Nombre de Súper Receta *</label>
+                <label className="text-sm font-bold text-slate-gray">{mode === "budget" ? 'Nombre del Cliente / Presupuesto *' : 'Nombre de Súper Receta *'}</label>
                 <input
                   type="text"
-                  placeholder="Ej: Pastel de bodas 3 pisos"
+                  placeholder={mode === "budget" ? 'Ej: Juan Pérez' : 'Ej: Pastel de bodas 3 pisos'}
                   value={superRecipeMetadata?.name || ''}
                   onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, name: e.target.value })}
                   className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all"

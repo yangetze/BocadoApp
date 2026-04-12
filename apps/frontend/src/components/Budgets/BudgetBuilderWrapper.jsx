@@ -3,7 +3,7 @@ import Builder from '../DragAndDrop/Builder';
 import { superRecipeApi } from '../../api';
 import { toast } from 'react-hot-toast';
 
-export default function BudgetBuilderWrapper() {
+export default function BudgetBuilderWrapper({ initialData, onSuccess }) {
   const [superRecipes, setSuperRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,5 +26,13 @@ export default function BudgetBuilderWrapper() {
     return <div className="p-8 text-center text-gray-500">Cargando constructor de presupuestos...</div>;
   }
 
-  return <Builder mode="budget" availableItems={superRecipes} />;
+  return (
+    <Builder
+      mode="budget"
+      availableItems={superRecipes}
+      editingItem={initialData}
+      initialData={initialData}
+      onSuccess={onSuccess}
+    />
+  );
 }
