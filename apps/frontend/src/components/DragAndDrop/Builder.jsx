@@ -20,6 +20,7 @@ import { useCallback, useState } from "react";
 import { MobilePaletteModal } from "./MobilePaletteModal";
 import { Plus } from "lucide-react";
 
+import { toast } from "react-hot-toast";
 import { useBuilder } from "./useBuilder";
 import { BuilderHeader } from "./BuilderHeader";
 import { MarginRecommendationCard } from "./MarginRecommendationCard";
@@ -83,6 +84,19 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
 
     // 1. Drop from palette into canvas (empty area OR over existing item)
     if (isSourcePalette) {
+      // Check for duplicates
+      const exists = canvasItems.some((canvasItem) => {
+        const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
+        return baseId === active.data.current.id;
+      });
+
+      if (exists) {
+        toast.error("Este elemento ya fue agregado. Puedes modificar su cantidad.");
+        setActiveId(null);
+        setActiveItem(null);
+        return;
+      }
+
       const isOverCanvas =
         over.id === "canvas" || canvasItems.some((i) => i.id === over.id);
       if (isOverCanvas) {
@@ -143,6 +157,18 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
   const handleAddItem = useCallback(
     (item) => {
       setIsPaletteModalOpen(false);
+
+      // Check for duplicates
+      const exists = canvasItems.some((canvasItem) => {
+        const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
+        return baseId === item.id;
+      });
+
+      if (exists) {
+        toast.error("Este elemento ya fue agregado. Puedes modificar su cantidad.");
+        return;
+      }
+
       const newItem = {
         ...item,
         id: `canvas-${Date.now()}-${item.id}`,
