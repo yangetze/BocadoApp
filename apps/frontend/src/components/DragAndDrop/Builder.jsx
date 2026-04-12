@@ -206,9 +206,6 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
 
             {(mode === "superRecipe" || mode === "budget") && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6 mb-6">
-          <h2 className="text-xl font-bold text-slate-gray mb-4">
-            {initialData ? (mode === "budget" ? 'Editar Presupuesto' : 'Editar Súper Receta') : (mode === "budget" ? 'Nuevo Presupuesto' : 'Nueva Súper Receta')}
-          </h2>
           <div className="flex flex-col gap-4 max-w-2xl">
              <div className="flex flex-col gap-2">
                 <label className="text-sm font-bold text-slate-gray">{mode === "budget" ? 'Nombre del Cliente / Presupuesto *' : 'Nombre de Súper Receta *'}</label>

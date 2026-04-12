@@ -1,3 +1,4 @@
+/* global describe, it, expect, jest */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BudgetList from '../BudgetList';

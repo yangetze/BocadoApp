@@ -63,10 +63,19 @@ export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete
         </div>
         <button
           onClick={onCreateNew}
-          className="flex items-center justify-center gap-2 bg-slate-gray text-white px-4 py-2 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm text-sm"
+          className="hidden sm:flex items-center justify-center gap-2 bg-slate-gray text-white px-4 py-2 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm text-sm"
         >
           <Plus className="w-4 h-4" />
           Nueva Súper Receta
+        </button>
+
+        {/* Mobile FAB */}
+        <button
+          onClick={onCreateNew}
+          className="sm:hidden fixed bottom-20 right-4 z-40 bg-slate-gray text-white p-4 rounded-full shadow-lg hover:bg-opacity-90 transition-all"
+          aria-label="Nueva Súper Receta"
+        >
+          <Plus className="w-6 h-6" />
         </button>
       </div>
 

@@ -217,15 +217,43 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
         setPendingBudgetPayload(payload);
         setIsBrandSelectionModalOpen(true);
       } else if (mode === "superRecipe") {
+        if (!superRecipeMetadata.name) {
+          toast.error("Debes colocar el nombre de la súper receta");
+          setIsSaving(false);
+          return;
+        }
+
+        // Group items by baseRecipeId to prevent unique constraint errors
+        const groupedBaseRecipes = canvasItems.reduce((acc, item) => {
+          const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
+          const existing = acc.find(x => x.baseRecipeId === id);
+          if (existing) {
+            existing.quantityNeeded += parseFloat(item.quantity || 1);
+          } else {
+            acc.push({
+              baseRecipeId: id,
+              quantityNeeded: parseFloat(item.quantity || 1),
+            });
+          }
+          return acc;
+        }, []);
+
         const payload = {
-          name: "Nueva Súper Receta " + Date.now().toString().slice(-4),
-          baseRecipes: canvasItems.map((item) => ({
-            baseRecipeId: item.id.replace(/^canvas-\d+-/, "") || item.id,
-            quantityNeeded: item.quantity || 1,
-          })),
+          name: superRecipeMetadata.name,
+          description: superRecipeMetadata.description,
+          baseRecipes: groupedBaseRecipes,
         };
-        await superRecipeApi.create(payload);
-        toast.success("Súper Receta guardada exitosamente");
+
+        if (isEditing) {
+          await superRecipeApi.update(editingItem.id, payload);
+          toast.success("Súper Receta actualizada exitosamente");
+        } else {
+          await superRecipeApi.create(payload);
+          toast.success("Súper Receta guardada exitosamente");
+        }
+
+        setCanvasItems([]);
+        if (onSuccess) onSuccess();
       } else if (mode === "baseRecipe") {
         if (!baseRecipeMetadata.name || !baseRecipeMetadata.baseYield) {
           toast.error("Debes colocar nombre y rendimiento de la receta");
