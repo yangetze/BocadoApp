@@ -33,3 +33,7 @@
 **Vulnerability:** Leaking stack traces or internal messages to the API client, along with missing security HTTP headers
 **Learning:** Developers should be careful not to output raw JS error object messages in express JSON response blocks. Missing default Express HTTP security headers means an attacker can use basic web exploitation.
 **Prevention:** We should default to `res.status(500).json({ error: 'Internal server error' });`, and utilize the `helmet` express middleware immediately during application setup.
+
+## 2024-04-13 - Overt Code Comments
+**Learning:** Avoid leaving overt, identifiable comments in the code such as `// Security: Verify ownership before linking` for standard security checks.
+**Action:** While code should be well-documented, loudly broadcasting security measures can inadvertently guide attackers to areas where similar checks might have been missed in older code. Self-documenting code and standard PR descriptions are a safer medium for this context.
