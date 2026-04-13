@@ -234,8 +234,9 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6 mb-6">
           <div className="flex flex-col gap-4 max-w-2xl">
              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-slate-gray">{mode === "budget" ? 'Nombre del Cliente / Presupuesto *' : 'Nombre de Súper Receta *'}</label>
+                <label htmlFor="metadataName" className="text-sm font-bold text-slate-gray">{mode === "budget" ? 'Nombre del Cliente / Presupuesto *' : 'Nombre de Súper Receta *'}</label>
                 <input
+                  id="metadataName"
                   type="text"
                   placeholder={mode === "budget" ? 'Ej: Juan Pérez' : 'Ej: Pastel de bodas 3 pisos'}
                   value={superRecipeMetadata?.name || ''}
@@ -244,8 +245,9 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
                 />
              </div>
              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-slate-gray">Descripción</label>
+                <label htmlFor="metadataDescription" className="text-sm font-bold text-slate-gray">Descripción</label>
                 <textarea
+                  id="metadataDescription"
                   placeholder="Detalles adicionales..."
                   value={superRecipeMetadata?.description || ''}
                   onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, description: e.target.value })}
