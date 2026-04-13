@@ -29,6 +29,10 @@ const allowedOrigins = process.env.FRONTEND_URL
 
 app.use(cors({
   origin: function (origin, callback) {
+    if (!origin) {
+      const msg = 'The CORS policy for this site does not allow access without an Origin header.';
+      return callback(new Error(msg), false);
+    }
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
