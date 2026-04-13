@@ -147,4 +147,37 @@ describe('Budget Controller', () => {
     expect(res.body.error).toBe('Internal server error');
     expect(prisma.budget.create).toHaveBeenCalledTimes(1);
   });
+
+  it('should return 500 if fetching budgets fails', async () => {
+    prisma.budget.findMany.mockRejectedValue(new Error('DB Error fetching budgets'));
+    const res = await request(app).get('/api/budgets');
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe('Internal server error');
+  });
+
+  it('should return 500 if fetching budget by id fails', async () => {
+    prisma.budget.findUnique.mockRejectedValue(new Error('DB Error fetching budget by id'));
+    const res = await request(app).get('/api/budgets/budget-1');
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe('Internal server error');
+  });
+
+  it('should return 500 if updating budget fails', async () => {
+    prisma.budget.findUnique.mockRejectedValue(new Error('DB Error updating budget'));
+    const payload = {
+      customerName: 'Updated Name',
+      profitMargin: 0.40,
+      superRecipes: [{ superRecipeId: 'sr-1', scaleQuantity: 3 }]
+    };
+    const res = await request(app).put('/api/budgets/budget-1').send(payload);
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe('Internal server error');
+  });
+
+  it('should return 500 if deleting budget fails', async () => {
+    prisma.budget.findUnique.mockRejectedValue(new Error('DB Error deleting budget'));
+    const res = await request(app).delete('/api/budgets/budget-1');
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe('Internal server error');
+  });
 });

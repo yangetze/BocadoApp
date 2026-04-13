@@ -137,7 +137,7 @@ export const getBudgetById = async (req, res) => {
 
     return res.status(200).json(budget);
   } catch (error) {
-    console.error('Error fetching budget by id:', error);
+    logger.error('Error fetching budget by id:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -223,7 +223,7 @@ export const updateBudget = async (req, res) => {
 
     return res.status(200).json(budget);
   } catch (error) {
-    console.error('Error updating budget:', error);
+    logger.error('Error updating budget:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -254,7 +254,7 @@ export const deleteBudget = async (req, res) => {
 
     return res.status(200).json({ message: 'Budget deleted successfully' });
   } catch (error) {
-    console.error('Error deleting budget:', error);
+    logger.error('Error deleting budget:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
