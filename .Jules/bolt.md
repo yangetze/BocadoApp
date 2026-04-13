@@ -23,3 +23,6 @@
 ## 2026-04-13 - [Optimized React Filtering Performance]
 **Learning:** Found an anti-pattern in the frontend filtering code where `.toLowerCase()` was executed multiple times inside an `O(N)` loop on every render, without memoization.
 **Action:** When filtering lists in React, especially based on a search term, always normalize the search term outside the loop and wrap the filtering logic in `useMemo` to prevent expensive recalculations and garbage collection churn.
+## 2024-04-13 - Redundant Code Changes (Already Mitigated)
+ **Learning:** If an assigned issue or vulnerability is found to already be mitigated or resolved in the existing codebase (e.g., removing a `console.log`), do not apply redundant or unnecessary code changes. Document the finding and conclude the task.
+ **Action:** Prioritize reviewing the codebase for existing fixes before applying new ones to avoid redundant commits.
