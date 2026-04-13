@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -36,11 +36,16 @@ export default function AdminDashboard() {
     }
   };
 
-  const filteredUsers = users.filter(u =>
-    u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.identificationNumber.includes(searchTerm)
-  );
+  // ⚡ Bolt: Memoized the filtered user list to prevent unnecessary O(n) recalculations
+  // on every render, and extracted the lowercased search term outside the loop.
+  const filteredUsers = useMemo(() => {
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    return users.filter(u =>
+      u.username.toLowerCase().includes(lowercasedSearchTerm) ||
+      u.email.toLowerCase().includes(lowercasedSearchTerm) ||
+      u.identificationNumber.includes(searchTerm)
+    );
+  }, [users, searchTerm]);
 
   return (
     <div className="min-h-screen bg-gray-50/50">
