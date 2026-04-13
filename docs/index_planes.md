@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [🧪 Plan: Testing Improvement para Base Recipe Creation](plan_testing_improvement.md)
 - [Plan de Trabajo: Mejoras UX Modal Ingredientes](plan_edit_ingredient_modal.md)
 - [Plan de Trabajo: Prevenir Duplicados en Builder](plan_builder_prevent_duplicate.md)
 - [Plan: Vista de Listado y Validación de Tasas en Presupuestos](plan_presupuestos_listado_y_tasas.md)

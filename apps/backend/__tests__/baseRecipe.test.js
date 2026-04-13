@@ -67,6 +67,26 @@ describe('Base Recipe Routes', () => {
       expect(res.body).toEqual(createdBaseRecipe);
       expect(prisma.baseRecipe.create).toHaveBeenCalledTimes(1);
     });
+
+    it('should return 500 if an internal error occurs during creation', async () => {
+      const newBaseRecipe = {
+        name: 'Ganache',
+        baseYield: 500,
+        yieldUnit: 'gr',
+        ingredients: [{ ingredientId: 'ing1', quantity: 250 }, { ingredientId: 'ing2', quantity: 250 }]
+      };
+
+      prisma.user.findUnique.mockResolvedValue({ id: 'user-default-1' });
+      prisma.ingredient = { ...prisma.ingredient, count: jest.fn().mockResolvedValue(2) };
+      prisma.baseRecipe.create.mockRejectedValue(new Error('Database error'));
+
+      const res = await request(app)
+        .post('/api/base-recipes')
+        .send(newBaseRecipe);
+
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toEqual({ error: 'Internal server error' });
+    });
   });
 
   describe('PUT /api/base-recipes/:id', () => {
