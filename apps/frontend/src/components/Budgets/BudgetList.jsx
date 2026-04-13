@@ -33,7 +33,7 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
         </div>
         <button
           onClick={onCreateNew}
-          className="bg-slate-gray text-white px-6 py-3 rounded-xl font-medium hover:bg-opacity-90 transition-all flex items-center gap-2"
+          className="hidden md:flex bg-slate-gray text-white px-6 py-3 rounded-xl font-medium hover:bg-opacity-90 transition-all items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Crear Presupuesto
@@ -142,6 +142,17 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
             </div>
           </div>
         )}
+      </div>
+
+      {/* MOBILE FAB (Floating Action Button) */}
+      <div className="md:hidden fixed bottom-20 right-4 z-40">
+        <button
+          onClick={onCreateNew}
+          className="bg-slate-gray text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-90 active:scale-95 transition-all"
+          aria-label="Crear Presupuesto"
+        >
+          <Plus className="w-6 h-6" />
+        </button>
       </div>
     </div>
   );
