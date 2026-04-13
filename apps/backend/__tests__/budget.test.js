@@ -47,6 +47,8 @@ describe('Budget Controller', () => {
     const mockUpdatedBudget = { id: 'budget-1', userId: 'user-1', customerName: 'Updated Name' };
     prisma.budget.findUnique.mockResolvedValue(mockExistingBudget);
     prisma.$transaction.mockResolvedValue(mockUpdatedBudget);
+    prisma.superRecipe.count.mockResolvedValue(1);
+    prisma.ingredient.count.mockResolvedValue(1);
 
     const payload = {
       customerName: 'Updated Name',
@@ -82,6 +84,8 @@ describe('Budget Controller', () => {
       ]
     };
 
+    prisma.superRecipe.count.mockResolvedValue(1);
+    prisma.ingredient.count.mockResolvedValue(1);
     prisma.budget.create.mockResolvedValue(mockBudget);
 
     const payload = {
@@ -139,6 +143,8 @@ describe('Budget Controller', () => {
       ]
     };
 
+    prisma.superRecipe.count.mockResolvedValue(1);
+    prisma.ingredient.count.mockResolvedValue(1);
     prisma.budget.create.mockRejectedValue(new Error('DB Error'));
 
     const res = await request(app).post('/api/budgets').send(payload);
