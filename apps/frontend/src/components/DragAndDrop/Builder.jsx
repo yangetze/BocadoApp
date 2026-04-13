@@ -84,7 +84,6 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
 
     // 1. Drop from palette into canvas (empty area OR over existing item)
     if (isSourcePalette) {
-      // Check for duplicates
       const exists = canvasItems.some((canvasItem) => {
         const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
         return baseId === active.data.current.id;
@@ -158,23 +157,23 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
     (item) => {
       setIsPaletteModalOpen(false);
 
-      // Check for duplicates
-      const exists = canvasItems.some((canvasItem) => {
-        const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
-        return baseId === item.id;
-      });
-
-      if (exists) {
-        toast.error("Este elemento ya fue agregado. Puedes modificar su cantidad.");
-        return;
-      }
-
-      const newItem = {
-        ...item,
-        id: `canvas-${Date.now()}-${item.id}`,
-        quantity: 1,
-      };
       setCanvasItems((items) => {
+        const exists = items.some((canvasItem) => {
+          const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
+          return baseId === item.id;
+        });
+
+        if (exists) {
+          toast.error("Este elemento ya fue agregado. Puedes modificar su cantidad.");
+          return items;
+        }
+
+        const newItem = {
+          ...item,
+          id: `canvas-${Date.now()}-${item.id}`,
+          quantity: 1,
+        };
+
         const newItems = [...items, newItem];
         if (mode === "superRecipe") fetchMarginRecommendation(newItems);
         return newItems;

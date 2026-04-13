@@ -10,3 +10,7 @@
 ## 2025-04-11 - Accessible Icon Buttons for Modals
 **Learning:** Modal close buttons that use only an SVG icon without text or an accessible label (`aria-label`) are completely invisible to screen readers, leaving users stuck inside a modal without a clear way to dismiss it.
 **Action:** Ensure that all close buttons (`X` or custom SVG paths) in modals are equipped with `aria-label="Cerrar modal"` or similar to provide a semantic action for assistive technologies.
+
+## 2025-04-13 - Mobile Floating Action Button (FAB) Consistency
+**Learning:** In list views meant for both mobile and desktop (e.g. BudgetList), failing to hide the desktop primary action button and failing to provide a Floating Action Button (FAB) negatively impacts mobile UX. Desktop buttons take up too much vertical space, while a FAB stays consistently accessible as the user scrolls.
+**Action:** Always verify that every list view module uses `hidden md:flex` for the primary "Create/Add" action on desktop, and include a corresponding mobile FAB (`md:hidden fixed bottom-20 right-4 z-40`) with an appropriate `aria-label`.

@@ -35,6 +35,5 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan: Resumen Total de Ingredientes](plan_resumen_total_ingredientes.md)
 - [Plan de Trabajo: Mejoras UX/UI Módulo Ingredientes - Marcas y Precios](plan_ingredientes_marcas.md)
 - [Plan de Trabajo: Listado de Súper Recetas](plan_super_recipe_list.md)
-- [Plan de Trabajo: Agents PR Rule](plan_agents_pr_rule.md)
 
 - [Correcciones en Edición de Recetas Base](./plan_edit_base_recipe_title_and_quantity.md) - Completado- [🧹 Code Health Improvement: Remove console.log from Seed](plan_code_health_seed_console_log.md)
