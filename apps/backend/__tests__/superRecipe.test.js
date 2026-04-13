@@ -131,5 +131,16 @@ describe('Super Recipe Routes', () => {
       expect(res.statusCode).toBe(404);
       expect(res.body.error).toContain('no tienes permiso');
     });
+
+    it('should return 500 if there is a server error', async () => {
+      prisma.superRecipe.findUnique.mockResolvedValue({ id: 'sr-1', userId: 'user-default-1' });
+      prisma.budgetSuperRecipe.findFirst.mockResolvedValue(null);
+      prisma.superRecipe.delete.mockRejectedValue(new Error('Database error'));
+
+      const res = await request(app).delete('/api/super-recipes/sr-1');
+
+      expect(res.statusCode).toBe(500);
+      expect(res.body.error).toBe('Error al eliminar la súper receta');
+    });
   });
 });
