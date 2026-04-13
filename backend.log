@@ -1,0 +1,5 @@
+
+> @bocadoapp/backend@1.0.0 start
+> node src/index.js
+
+[2026-04-13T04:15:04.211Z] [32minfo[39m: Server running on port 3000
