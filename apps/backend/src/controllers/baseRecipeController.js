@@ -89,7 +89,7 @@ export const createBaseRecipe = async (req, res) => {
     res.status(201).json(newRecipe);
   } catch (error) {
     logger.error('Error creating base recipe:', error);
-    res.status(500).json({ error: 'Error al crear la receta base' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
