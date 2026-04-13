@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -23,6 +22,7 @@ if (process.env.NODE_ENV === 'test') {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
     baseRecipe: {
       findUnique: jest.fn(),
@@ -30,6 +30,7 @@ if (process.env.NODE_ENV === 'test') {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
     baseRecipeIngredient: {
       findFirst: jest.fn(),
@@ -44,6 +45,7 @@ if (process.env.NODE_ENV === 'test') {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
     superRecipeBaseRecipe: {
       findFirst: jest.fn(),
@@ -91,6 +93,8 @@ if (process.env.NODE_ENV === 'test') {
     $transaction: jest.fn(async (callback) => await callback(prisma)),
   };
 } else {
+  // Use dynamic import so it's not evaluated in test mode causing module issues
+  const { PrismaClient } = await import('@prisma/client');
   prisma = new PrismaClient();
 }
 

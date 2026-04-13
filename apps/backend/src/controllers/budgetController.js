@@ -12,6 +12,62 @@ export const createBudget = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields or invalid superRecipes array' });
     }
 
+    // Security: Verify ownership of superRecipes before linking
+    if (superRecipes && superRecipes.length > 0) {
+      const superRecipeIds = [...new Set(superRecipes.map(sr => sr.superRecipeId))];
+      const validSuperRecipesCount = await prisma.superRecipe.count({
+        where: {
+          id: { in: superRecipeIds },
+          userId: userId
+        }
+      });
+      if (validSuperRecipesCount !== superRecipeIds.length) {
+        return res.status(404).json({ error: 'Una o más súper recetas no fueron encontradas o no tienes permiso' });
+      }
+    }
+
+    // Security: Verify ownership of ingredients before linking
+    if (brandSelections && brandSelections.length > 0) {
+      const ingredientIds = [...new Set(brandSelections.map(bs => bs.ingredientId))];
+      const validIngredientsCount = await prisma.ingredient.count({
+        where: {
+          id: { in: ingredientIds },
+          userId: userId
+        }
+      });
+      if (validIngredientsCount !== ingredientIds.length) {
+        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
+    }
+
+    // Security: Verify ownership of superRecipes before linking
+    if (superRecipes && superRecipes.length > 0) {
+      const superRecipeIds = [...new Set(superRecipes.map(sr => sr.superRecipeId))];
+      const validSuperRecipesCount = await prisma.superRecipe.count({
+        where: {
+          id: { in: superRecipeIds },
+          userId: userId
+        }
+      });
+      if (validSuperRecipesCount !== superRecipeIds.length) {
+        return res.status(404).json({ error: 'Una o más súper recetas no fueron encontradas o no tienes permiso' });
+      }
+    }
+
+    // Security: Verify ownership of ingredients before linking
+    if (brandSelections && brandSelections.length > 0) {
+      const ingredientIds = [...new Set(brandSelections.map(bs => bs.ingredientId))];
+      const validIngredientsCount = await prisma.ingredient.count({
+        where: {
+          id: { in: ingredientIds },
+          userId: userId
+        }
+      });
+      if (validIngredientsCount !== ingredientIds.length) {
+        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
+    }
+
     if (isTestMode()) {
       const budgetId = `bud-${crypto.randomUUID()}`;
       const newBudget = {
