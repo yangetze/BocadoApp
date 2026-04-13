@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect, useId } from 'react';
+import { useState, useEffect, useId, useCallback } from 'react';
 
 import { RefreshCw, Plus, Calendar, Coins, History, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -26,7 +26,7 @@ export default function ExchangeRateManager() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  const loadData = async (currentPage = page, start = startDate, end = endDate) => {
+  const loadData = useCallback(async (currentPage = page, start = startDate, end = endDate) => {
     try {
       setLoading(true);
 
@@ -64,11 +64,11 @@ export default function ExchangeRateManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, startDate, endDate]);
 
   useEffect(() => {
     loadData(page, startDate, endDate);
-  }, [page, startDate, endDate]);
+  }, [page, startDate, endDate, loadData]);
 
   const handleSyncApi = async (type) => {
     try {
