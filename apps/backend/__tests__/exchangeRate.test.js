@@ -51,6 +51,76 @@ describe('Exchange Rate API', () => {
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ error: 'Internal server error' });
     });
+    it('should apply targetCurrencyId filter', async () => {
+      process.env.TEST_MODE = 'false';
+      prisma.exchangeRate.count.mockResolvedValue(1);
+      prisma.exchangeRate.findMany.mockResolvedValue([]);
+
+      await request(app).get('/api/exchange-rates?targetCurrencyId=ves-id');
+
+      expect(prisma.exchangeRate.count).toHaveBeenCalledWith(expect.objectContaining({
+        where: { targetCurrencyId: 'ves-id' }
+      }));
+      expect(prisma.exchangeRate.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: { targetCurrencyId: 'ves-id' }
+      }));
+    });
+
+    it('should apply startDate and endDate filters', async () => {
+      process.env.TEST_MODE = 'false';
+      prisma.exchangeRate.count.mockResolvedValue(1);
+      prisma.exchangeRate.findMany.mockResolvedValue([]);
+
+      const startDate = '2023-01-01T00:00:00.000Z';
+      const endDate = '2023-01-31T23:59:59.999Z';
+
+      const expectedEnd = new Date(endDate);
+      expectedEnd.setUTCHours(23, 59, 59, 999);
+
+      await request(app).get(`/api/exchange-rates?startDate=${startDate}&endDate=${endDate}`);
+
+      const expectedWhere = {
+        effectiveDate: {
+          gte: new Date(startDate),
+          lte: expectedEnd
+        }
+      };
+
+      expect(prisma.exchangeRate.count).toHaveBeenCalledWith(expect.objectContaining({
+        where: expectedWhere
+      }));
+      expect(prisma.exchangeRate.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        where: expectedWhere
+      }));
+    });
+
+    it('should apply pagination parameters', async () => {
+      process.env.TEST_MODE = 'false';
+      prisma.exchangeRate.count.mockResolvedValue(10);
+      prisma.exchangeRate.findMany.mockResolvedValue([]);
+
+      await request(app).get('/api/exchange-rates?page=2&limit=5');
+
+      expect(prisma.exchangeRate.findMany).toHaveBeenCalledWith(expect.objectContaining({
+        skip: 5,
+        take: 5
+      }));
+    });
+
+    it('should handle test mode correctly', async () => {
+      process.env.TEST_MODE = 'true';
+      const response = await request(app).get('/api/exchange-rates?page=1&limit=10');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('data');
+      expect(response.body).toHaveProperty('total');
+      expect(response.body).toHaveProperty('page', 1);
+      expect(response.body).toHaveProperty('limit', 10);
+      expect(response.body).toHaveProperty('totalPages');
+
+      process.env.TEST_MODE = 'false'; // reset
+    });
+
   });
 
   describe('POST /api/exchange-rates/manual', () => {
