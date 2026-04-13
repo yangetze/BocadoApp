@@ -36,8 +36,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // ⚡ Bolt: Memoized the filtered user list to prevent unnecessary O(n) recalculations
-  // on every render, and extracted the lowercased search term outside the loop.
   const filteredUsers = useMemo(() => {
     const lowercasedSearchTerm = searchTerm.toLowerCase();
     return users.filter(u =>
