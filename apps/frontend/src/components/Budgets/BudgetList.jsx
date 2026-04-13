@@ -144,7 +144,6 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
         )}
       </div>
 
-      {/* MOBILE FAB (Floating Action Button) */}
       <div className="md:hidden fixed bottom-20 right-4 z-40">
         <button
           onClick={onCreateNew}

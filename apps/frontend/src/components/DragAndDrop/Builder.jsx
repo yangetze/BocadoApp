@@ -84,7 +84,6 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
 
     // 1. Drop from palette into canvas (empty area OR over existing item)
     if (isSourcePalette) {
-      // Check for duplicates
       const exists = canvasItems.some((canvasItem) => {
         const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
         return baseId === active.data.current.id;
@@ -159,7 +158,6 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
       setIsPaletteModalOpen(false);
 
       setCanvasItems((items) => {
-        // Check for duplicates within the state updater callback to avoid dependency on canvasItems
         const exists = items.some((canvasItem) => {
           const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
           return baseId === item.id;
