@@ -155,6 +155,11 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
               measurementUnit: brIng.ingredient?.measurementUnit || "gr",
             });
           });
+        } else if (item.ingredients) {
+            // Manejar ingredientes si vienen sin baseYield pero con un arreglo de ingredients
+            // Esto sucede si el editingItem viene de la BD pero no se populó baseYield (lo cual sí debe estar, pero por si acaso)
+            // O podemos ver que canvasItems[].ingredients no está llegando correctamente poblado
+        }
         }
       }
     });

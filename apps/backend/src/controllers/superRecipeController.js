@@ -8,7 +8,15 @@ export const getSuperRecipes = async (req, res) => {
       where: { userId },
       include: {
         baseRecipes: {
-          include: { baseRecipe: true }
+          include: {
+            baseRecipe: {
+              include: {
+                ingredients: {
+                  include: { ingredient: true }
+                }
+              }
+            }
+          }
         },
         directIngredients: {
           include: { ingredient: true }
@@ -74,7 +82,17 @@ export const createSuperRecipe = async (req, res) => {
         }
       },
       include: {
-        baseRecipes: { include: { baseRecipe: true } },
+        baseRecipes: {
+          include: {
+            baseRecipe: {
+              include: {
+                ingredients: {
+                  include: { ingredient: true }
+                }
+              }
+            }
+          }
+        },
         directIngredients: { include: { ingredient: true } }
       }
     });
@@ -166,7 +184,17 @@ export const updateSuperRecipe = async (req, res) => {
       return tx.superRecipe.findUnique({
         where: { id },
         include: {
-          baseRecipes: { include: { baseRecipe: true } },
+          baseRecipes: {
+            include: {
+              baseRecipe: {
+                include: {
+                  ingredients: {
+                    include: { ingredient: true }
+                  }
+                }
+              }
+            }
+          },
           directIngredients: { include: { ingredient: true } }
         }
       });
