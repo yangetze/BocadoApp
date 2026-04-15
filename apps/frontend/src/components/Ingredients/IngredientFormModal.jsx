@@ -14,6 +14,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
     presentations: []
   });
 
+  const [editingPresentationIndex, setEditingPresentationIndex] = useState(null);
+
   const [currentPresentation, setCurrentPresentation] = useState({
     presentationName: '',
     brand: '',
@@ -28,6 +30,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
         setFormData({ ...initialData, presentations: initialData.presentations || [] });
       } else {
         setFormData({ name: '', globalPrice: '', globalPriceQuantity: '1000', measurementUnit: 'gr', presentations: [] });
+        setEditingPresentationIndex(null);
         setCurrentPresentation({
           presentationName: '',
           brand: '',
@@ -72,11 +75,38 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
   const addPresentation = () => {
     if (!currentPresentation.presentationName || !currentPresentation.cost || !currentPresentation.unitQuantity) return;
 
-    setFormData(prev => ({
-      ...prev,
-      presentations: [...(prev.presentations || []), { ...currentPresentation }]
-    }));
+    if (editingPresentationIndex !== null) {
+      // Update existing presentation
+      setFormData(prev => {
+        const newPresentations = [...prev.presentations];
+        newPresentations[editingPresentationIndex] = { ...currentPresentation };
+        return { ...prev, presentations: newPresentations };
+      });
+      setEditingPresentationIndex(null);
+    } else {
+      // Add new presentation
+      setFormData(prev => ({
+        ...prev,
+        presentations: [...(prev.presentations || []), { ...currentPresentation }]
+      }));
+    }
 
+    setCurrentPresentation({
+      presentationName: '',
+      brand: '',
+      cost: '',
+      unitQuantity: '1',
+      measurementUnit: formData.measurementUnit || 'gr'
+    });
+  };
+
+  const editPresentation = (index) => {
+    setCurrentPresentation(formData.presentations[index]);
+    setEditingPresentationIndex(index);
+  };
+
+  const cancelEditPresentation = () => {
+    setEditingPresentationIndex(null);
     setCurrentPresentation({
       presentationName: '',
       brand: '',
@@ -212,11 +242,11 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                   <div className="flex flex-col sm:flex-row gap-3">
                     <div className="flex-1">
                       <label htmlFor="presentationName" className="block text-xs font-medium text-gray-600 mb-1">Nombre Presentación</label>
-                      <input id="presentationName" type="text" placeholder="Ej. Paquete 1Kg" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.presentationName} onChange={e => setCurrentPresentation({...currentPresentation, presentationName: e.target.value})} />
+                      <input id="presentationName" type="text" placeholder="Ej. Paquete 1Kg" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft disabled:bg-gray-100 disabled:text-gray-500" value={currentPresentation.presentationName} disabled={editingPresentationIndex !== null} onChange={e => setCurrentPresentation({...currentPresentation, presentationName: e.target.value})} />
                     </div>
                     <div className="flex-1">
                       <label htmlFor="presentationBrand" className="block text-xs font-medium text-gray-600 mb-1">Marca (Opc.)</label>
-                      <input id="presentationBrand" type="text" placeholder="Ej. Robin Hood" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.brand} onChange={e => setCurrentPresentation({...currentPresentation, brand: e.target.value})} />
+                      <input id="presentationBrand" type="text" placeholder="Ej. Robin Hood" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft disabled:bg-gray-100 disabled:text-gray-500" value={currentPresentation.brand} disabled={editingPresentationIndex !== null} onChange={e => setCurrentPresentation({...currentPresentation, brand: e.target.value})} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
@@ -226,16 +256,23 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     </div>
                     <div>
                       <label htmlFor="presentationQuantity" className="block text-xs font-medium text-gray-600 mb-1">Cant.</label>
-                      <input id="presentationQuantity" type="number" step="0.01" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.unitQuantity} onChange={e => setCurrentPresentation({...currentPresentation, unitQuantity: e.target.value})} />
+                      <input id="presentationQuantity" type="number" step="0.01" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft disabled:bg-gray-100 disabled:text-gray-500" value={currentPresentation.unitQuantity} disabled={editingPresentationIndex !== null} onChange={e => setCurrentPresentation({...currentPresentation, unitQuantity: e.target.value})} />
                     </div>
                     <div>
                       <label htmlFor="presentationUnit" className="block text-xs font-medium text-gray-600 mb-1">Unidad</label>
-                      <select id="presentationUnit" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft bg-white" value={currentPresentation.measurementUnit} onChange={e => setCurrentPresentation({...currentPresentation, measurementUnit: e.target.value})}>
+                      <select id="presentationUnit" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft bg-white disabled:bg-gray-100 disabled:text-gray-500" value={currentPresentation.measurementUnit} disabled={editingPresentationIndex !== null} onChange={e => setCurrentPresentation({...currentPresentation, measurementUnit: e.target.value})}>
                         {UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
                       </select>
                     </div>
                     <div className="w-1/4">
-                      <button type="button" onClick={addPresentation} className="w-full py-2 bg-slate-gray text-white text-sm font-medium rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-1" aria-label="Agregar"><Plus size={16} className="sm:hidden" /><span className="hidden sm:inline">Agregar</span></button>
+                      {editingPresentationIndex !== null ? (
+                        <div className="flex gap-2">
+                          <button type="button" onClick={addPresentation} className="w-full py-2 bg-peach-soft text-white text-sm font-medium rounded-lg hover:bg-opacity-90 flex items-center justify-center" aria-label="Actualizar">Actualizar</button>
+                          <button type="button" onClick={cancelEditPresentation} className="w-full py-2 bg-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-300 flex items-center justify-center" aria-label="Cancelar">X</button>
+                        </div>
+                      ) : (
+                        <button type="button" onClick={addPresentation} className="w-full py-2 bg-slate-gray text-white text-sm font-medium rounded-lg hover:bg-opacity-90 flex items-center justify-center gap-1" aria-label="Agregar"><Plus size={16} className="sm:hidden" /><span className="hidden sm:inline">Agregar</span></button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -243,14 +280,14 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 {formData.presentations.length > 0 && (
                   <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                     {formData.presentations.map((p, idx) => (
-                      <div key={idx} className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg">
+                      <div key={idx} className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" onClick={() => editPresentation(idx)} title="Haz clic para editar el costo">
                         <div>
                           <div className="text-sm font-medium text-slate-gray">{p.presentationName} <span className="text-xs text-gray-400 font-normal">{p.brand && `(${p.brand})`}</span></div>
                           <div className="text-xs text-gray-500 mt-0.5">${p.cost} / ${p.unitQuantity}${p.measurementUnit}</div>
                         </div>
                         <button
                           type="button"
-                          onClick={() => removePresentation(idx)}
+                          onClick={(e) => { e.stopPropagation(); removePresentation(idx); }}
                           className="text-red-400 hover:text-red-600 p-1"
                           aria-label="Eliminar presentación"
                           title="Eliminar presentación"
