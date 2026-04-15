@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { ingredientApi } from '../../api';
 import IngredientFormModal from './IngredientFormModal';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Plus } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
@@ -98,9 +99,10 @@ export default function IngredientManager() {
         {/* Desktop Add Button */}
         <button
           onClick={handleOpenAddModal}
-          className="hidden md:block bg-slate-gray text-white px-5 py-2.5 rounded-xl hover:bg-opacity-90 transition-all font-medium text-sm shadow-sm shadow-slate-gray/20 whitespace-nowrap"
+          className="hidden md:flex items-center justify-center gap-2 bg-slate-gray text-white px-5 py-2.5 rounded-xl font-medium hover:bg-opacity-90 transition-all shadow-sm text-sm"
         >
-          + Nuevo Ingrediente
+          <Plus className="w-4 h-4" />
+          Nuevo Ingrediente
         </button>
       </div>
 
@@ -236,10 +238,7 @@ export default function IngredientManager() {
           className="bg-slate-gray text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-90 active:scale-95 transition-all"
           aria-label="Agregar ingrediente"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+          <Plus className="w-6 h-6" />
         </button>
       </div>
 
