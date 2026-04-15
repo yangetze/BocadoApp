@@ -22,3 +22,7 @@
 ## 2025-04-15 - Disable Other Form Elements on Specific Edit Views
 **Learning:** In contexts where a user manages sub-items within a form (like editing a specific `Presentation` from a list of presentations within an `Ingredient`), if the business rule specifies that only one specific property (e.g. `cost`) should be editable once added, leaving all fields active can lead to data integrity confusion and unintended overwrites.
 **Action:** Use specific local state (e.g., `editingPresentationIndex`) to conditionally pass the `disabled` property to sub-form inputs. This directs the user's attention exactly to what can be edited. Apply appropriate disabled styling (`disabled:bg-gray-100 disabled:text-gray-500`) to reinforce the visual feedback.
+
+## 2025-04-16 - Accessible Icon Buttons and Links in Administrative Views
+**Learning:** Found that secondary navigation and actions such as "Back" (e.g. `Link` with `<ArrowLeft />`) and state toggles (e.g. user status `<button>` with `<CheckCircle2 />` or `<XCircle />`) were missing text and did not provide `aria-label`s, rendering them inaccessible to screen readers.
+**Action:** Added contextual `aria-label`s to all icon-only interactive elements in `AdminDashboard.jsx`. For elements like a status toggle, the `aria-label` explicitly indicates the action that will occur if pressed, rather than the current status (e.g. `Bloquear acceso` or `Permitir acceso`), helping users understand the consequence of the interaction. Also added `aria-label="Buscar usuarios"` to the search input.
