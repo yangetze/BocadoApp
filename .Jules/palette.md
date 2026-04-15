@@ -26,3 +26,7 @@
 ## 2025-04-16 - Accessible Icon Buttons and Links in Administrative Views
 **Learning:** Found that secondary navigation and actions such as "Back" (e.g. `Link` with `<ArrowLeft />`) and state toggles (e.g. user status `<button>` with `<CheckCircle2 />` or `<XCircle />`) were missing text and did not provide `aria-label`s, rendering them inaccessible to screen readers.
 **Action:** Added contextual `aria-label`s to all icon-only interactive elements in `AdminDashboard.jsx`. For elements like a status toggle, the `aria-label` explicitly indicates the action that will occur if pressed, rather than the current status (e.g. `Bloquear acceso` or `Permitir acceso`), helping users understand the consequence of the interaction. Also added `aria-label="Buscar usuarios"` to the search input.
+
+## 2026-04-15 - Responsive Button Container Width
+**Learning:** Tailwind width utilities like `w-1/4` on wrapper elements can override parent grid cell sizing, causing internal flex contents (like action buttons in modals) to truncate or break layout on smaller screens. 
+**Action:** Rely on CSS grid sizing at the parent level (e.g., `grid-cols-[...]`) to define column widths, and let internal containers fill the available space naturally without restrictive absolute or percentage widths.
