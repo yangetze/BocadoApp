@@ -14,6 +14,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { setupCronJobs } from './cronJobs.js';
 import { isTestMode } from './mockData.js';
+import { globalLimiter } from './middleware/rateLimitMiddleware.js';
 
 dotenv.config();
 
@@ -43,6 +44,9 @@ app.use(cors({
 }));
 app.use(helmet()); // Add various HTTP headers to improve security
 app.use(express.json());
+
+// Apply global rate limiter to all /api routes
+app.use('/api', globalLimiter);
 
 // Main API routes
 app.use('/api/auth', authRoutes);
