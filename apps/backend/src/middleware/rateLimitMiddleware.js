@@ -13,7 +13,7 @@ export const authLimiter = rateLimit({
 
 export const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per window
+  max: 1000, // Limit each IP to 1000 requests per window
   message: { error: 'Demasiadas solicitudes de esta IP, por favor inténtalo de nuevo después de 15 minutos' },
   standardHeaders: true,
   legacyHeaders: false,
