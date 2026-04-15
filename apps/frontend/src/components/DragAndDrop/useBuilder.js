@@ -160,7 +160,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
             // Esto sucede si el editingItem viene de la BD pero no se populó baseYield (lo cual sí debe estar, pero por si acaso)
             // O podemos ver que canvasItems[].ingredients no está llegando correctamente poblado
         }
-        }
       }
     });
 
