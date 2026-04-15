@@ -110,3 +110,41 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, defaultCurrency, companyLogo, policies, paymentMethods } = req.body;
+
+    const dataToUpdate = {};
+    if (name !== undefined) dataToUpdate.name = name;
+    if (defaultCurrency !== undefined) dataToUpdate.defaultCurrency = defaultCurrency;
+    if (companyLogo !== undefined) dataToUpdate.companyLogo = companyLogo;
+    if (policies !== undefined) dataToUpdate.policies = policies;
+    if (paymentMethods !== undefined) dataToUpdate.paymentMethods = paymentMethods;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: dataToUpdate,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        name: true,
+        identificationNumber: true,
+        active: true,
+        role: true,
+        defaultCurrency: true,
+        companyLogo: true,
+        policies: true,
+        paymentMethods: true,
+        createdAt: true
+      }
+    });
+
+    res.json(updatedUser);
+  } catch (error) {
+    logger.error('Error updating user profile:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};

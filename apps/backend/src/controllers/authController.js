@@ -55,7 +55,11 @@ export const login = async (req, res) => {
         email: user.email,
         name: user.name,
         role: user.role,
-        identificationNumber: user.identificationNumber
+        identificationNumber: user.identificationNumber,
+        defaultCurrency: user.defaultCurrency,
+        companyLogo: user.companyLogo,
+        policies: user.policies,
+        paymentMethods: user.paymentMethods
       }
     });
   } catch (error) {

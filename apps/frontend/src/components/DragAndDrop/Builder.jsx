@@ -253,6 +253,34 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
                   className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all resize-none h-24"
                 />
              </div>
+             {mode === "budget" && (
+                <>
+                  <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-100">
+                    <label className="text-sm font-bold text-slate-gray">Sobrescribir Moneda (Opcional)</label>
+                    <select
+                      value={superRecipeMetadata?.customCurrency || ''}
+                      onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, customCurrency: e.target.value })}
+                      className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all"
+                    >
+                      <option value="">Usar moneda por defecto del sistema</option>
+                      <option value="USD">USD ($)</option>
+                      <option value="VES">VES (Bs.)</option>
+                      <option value="EUR">EUR (€)</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-4">
+                    <label className="text-sm font-bold text-slate-gray">Términos y Políticas Específicas</label>
+                    <textarea
+                      placeholder="Sobrescribe las políticas globales para este presupuesto..."
+                      value={superRecipeMetadata?.customPolicies || ''}
+                      onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, customPolicies: e.target.value })}
+                      className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all resize-none h-24"
+                    />
+                    <p className="text-xs text-gray-500">Dejar en blanco para usar las políticas por defecto.</p>
+                  </div>
+                </>
+             )}
+
           </div>
         </div>
       )}

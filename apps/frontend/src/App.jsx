@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Settings, LogOut, TrendingUp, Menu, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import ExchangeRateManager from './components/ExchangeRateManager';
+import SettingsManager from './components/SettingsManager';
 import IngredientManager from './components/Ingredients/IngredientManager';
 import BaseRecipeManager from './components/BaseRecipes/BaseRecipeManager';
 import SuperRecipeManager from './components/SuperRecipes/SuperRecipeManager';
@@ -207,7 +207,7 @@ function MainApp() {
       <main className="max-w-6xl mx-auto px-6">
         {activeTab === 'ingredient' && <IngredientManager />}
         {activeTab === 'baseRecipe' && <BaseRecipeManager />}
-        {activeTab === 'settings' && <ExchangeRateManager />}
+        {activeTab === 'settings' && <SettingsManager />}
         {activeTab === 'superRecipe' && (
           <SuperRecipeManager />
         )}
