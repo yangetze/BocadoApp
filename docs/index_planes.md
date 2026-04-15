@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Plan de Trabajo: Editar Monto de Presentación](plan_ingredientes_editar_monto.md)
 - [🧪 Plan: Testing Improvement para Base Recipe Creation](plan_testing_improvement.md)
 - [Plan de Trabajo: Mejoras UX Modal Ingredientes](plan_edit_ingredient_modal.md)
 - [Plan de Trabajo: Prevenir Duplicados en Builder](plan_builder_prevent_duplicate.md)
@@ -43,4 +44,3 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Análisis: Selección de Presentaciones](plan_analisis_seleccion_presentacion.md)
 - [Plan de Trabajo: Crear y Modificar Presupuestos con Tests](plan_presupuestos_crear_modificar.md)
 - [Plan de Trabajo: Ordenar Presentaciones (Marcas Primero)](plan_ingredientes_marcas_orden.md)
-- [Plan de Trabajo: Editar Monto de Presentación](plan_ingredientes_editar_monto.md)
