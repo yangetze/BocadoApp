@@ -26,3 +26,6 @@
 ## 2024-04-13 - Redundant Code Changes (Already Mitigated)
  **Learning:** If an assigned issue or vulnerability is found to already be mitigated or resolved in the existing codebase (e.g., removing a `console.log`), do not apply redundant or unnecessary code changes. Document the finding and conclude the task.
  **Action:** Prioritize reviewing the codebase for existing fixes before applying new ones to avoid redundant commits.
+## 2026-04-15 - Unnecessary API fetches in useCallback
+**Learning:** Found a performance anti-pattern where a \`useCallback\` hook managing pagination and fetching (e.g. \`loadData\`) had its dependencies set to include pagination state variables (\`page\`, \`startDate\`, etc.). Because \`loadData\` was also passed as a dependency to the \`useEffect\` that called it, every pagination change re-created \`loadData\`, triggering the \`useEffect\` and unnecessarily fetching static data (like currencies) along with the paginated data.
+**Action:** Extract static data fetching (like currencies) into its own \`useEffect\` that runs only on mount. Refactor the pagination-dependent \`loadData\` to only accept pagination parameters as arguments, removing them from its dependency array to prevent it from being re-created and causing redundant API calls.

@@ -26,29 +26,10 @@ export default function ExchangeRateManager() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  const loadData = useCallback(async (currentPage = page, start = startDate, end = endDate) => {
+
+  const loadCurrencies = async () => {
     try {
-      setLoading(true);
-
-      let ratesData = { data: [], totalPages: 1 };
-      let currenciesData = [];
-
-      try {
-        ratesData = await exchangeRateApi.getRates({ page: currentPage, limit: 10, startDate: start, endDate: end });
-      } catch (err) {
-        console.error("Error fetching rates:", err);
-        toast.error('Error al cargar las tasas de cambio: ' + (err.message || ''));
-      }
-
-      try {
-        currenciesData = await exchangeRateApi.getCurrencies();
-      } catch (err) {
-        console.error("Error fetching currencies:", err);
-        toast.error('Error al cargar las monedas: ' + (err.message || ''));
-      }
-
-      setRates(ratesData.data || []);
-      setTotalPages(ratesData.totalPages || 1);
+      const currenciesData = await exchangeRateApi.getCurrencies();
       setCurrencies(currenciesData || []);
 
       if (currenciesData && currenciesData.length > 0) {
@@ -57,6 +38,32 @@ export default function ExchangeRateManager() {
         if (ves) setSelectedCurrency(ves.id);
         else setSelectedCurrency(currenciesData[0].id);
       }
+    } catch (err) {
+      console.error("Error fetching currencies:", err);
+      toast.error('Error al cargar las monedas: ' + (err.message || ''));
+    }
+  };
+
+  useEffect(() => {
+    loadCurrencies();
+  }, []);
+
+
+  const loadData = useCallback(async (currentPage, start, end) => {
+    try {
+      setLoading(true);
+
+      let ratesData = { data: [], totalPages: 1 };
+
+      try {
+        ratesData = await exchangeRateApi.getRates({ page: currentPage, limit: 10, startDate: start, endDate: end });
+      } catch (err) {
+        console.error("Error fetching rates:", err);
+        toast.error('Error al cargar las tasas de cambio: ' + (err.message || ''));
+      }
+
+      setRates(ratesData.data || []);
+      setTotalPages(ratesData.totalPages || 1);
 
     } catch (error) {
       toast.error('¡Ups! Ocurrió un error inesperado.');
@@ -64,7 +71,8 @@ export default function ExchangeRateManager() {
     } finally {
       setLoading(false);
     }
-  }, [page, startDate, endDate]);
+  }, []); // Remove page, startDate, endDate to prevent recreation
+
 
   useEffect(() => {
     loadData(page, startDate, endDate);
@@ -76,7 +84,7 @@ export default function ExchangeRateManager() {
       else if (type === 'paralelo') setSyncingParalelo(true);
       await exchangeRateApi.syncAutomaticRate(type);
       toast.success(`¡Tasa ${type.toUpperCase()} actualizada con magia! ✨`);
-      await loadData();
+      await loadData(page, startDate, endDate);
     } catch (error) {
       toast.error(error.message || 'Ocurrió un error al sincronizar la tasa.');
     } finally {
@@ -104,7 +112,7 @@ export default function ExchangeRateManager() {
       setManualRate('');
       setManualDate('');
       setManualSource('MANUAL');
-      await loadData();
+      await loadData(page, startDate, endDate);
     } catch (error) {
       toast.error(error.message || 'Ocurrió un error al guardar tu tasa manual.');
     } finally {
