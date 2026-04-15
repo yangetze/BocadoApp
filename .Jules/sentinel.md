@@ -42,3 +42,8 @@
 **Vulnerability:** The application had rate limiting on authentication routes (/login, /register) but lacked a global rate limiter for all other API endpoints, leaving it susceptible to general DoS attacks or aggressive scraping.
 **Learning:** While endpoint-specific rate limiting is crucial for sensitive routes (auth), a baseline global rate limiter is necessary as a defense-in-depth measure to protect server resources.
 **Prevention:** Added a globalLimiter middleware using express-rate-limit and applied it to all routes under /api in index.js. Always configure a baseline rate limiter for all public-facing APIs.
+
+## 2026-04-15 - Missing Input Validation on User Creation/Update
+**Vulnerability:** The `createUser` and `updateUser` endpoints in `apps/backend/src/controllers/userController.js` lacked strict validation for `email` format and `username` length, unlike the `register` endpoint.
+**Learning:** Security validations (like email format checks to prevent injection or malformed data, and minimum length checks) must be consistently applied across all endpoints that create or modify a resource, not just the public registration endpoint. An authenticated admin could inadvertently or maliciously submit invalid data.
+**Prevention:** Implement consistent input validation logic across all relevant controllers. Consider using a centralized validation library (like Zod or Joi) or sharing validation functions to ensure parity between public and admin endpoints.

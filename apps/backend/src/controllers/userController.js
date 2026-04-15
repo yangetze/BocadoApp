@@ -31,6 +31,15 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'El formato del correo electrónico no es válido' });
+    }
+
+    if (username.length < 3) {
+      return res.status(400).json({ error: 'El nombre de usuario debe tener al menos 3 caracteres' });
+    }
+
     const hashedPassword = await bcrypt.hash(identificationNumber, 10);
 
     const newUser = await prisma.user.create({
@@ -71,8 +80,22 @@ export const updateUser = async (req, res) => {
     const { username, email, identificationNumber, name, active, role } = req.body;
 
     const dataToUpdate = {};
-    if (username !== undefined) dataToUpdate.username = username;
-    if (email !== undefined) dataToUpdate.email = email;
+
+    if (email !== undefined) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'El formato del correo electrónico no es válido' });
+      }
+      dataToUpdate.email = email;
+    }
+
+    if (username !== undefined) {
+      if (username.length < 3) {
+        return res.status(400).json({ error: 'El nombre de usuario debe tener al menos 3 caracteres' });
+      }
+      dataToUpdate.username = username;
+    }
+
     if (identificationNumber !== undefined) dataToUpdate.identificationNumber = identificationNumber;
     if (name !== undefined) dataToUpdate.name = name;
     if (active !== undefined) dataToUpdate.active = active;
