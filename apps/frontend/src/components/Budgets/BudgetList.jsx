@@ -33,9 +33,9 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
         </div>
         <button
           onClick={onCreateNew}
-          className="hidden md:flex bg-slate-gray text-white px-6 py-3 rounded-xl font-medium hover:bg-opacity-90 transition-all items-center gap-2"
+          className="hidden md:flex items-center justify-center gap-2 bg-slate-gray text-white px-5 py-2.5 rounded-xl font-medium hover:bg-opacity-90 transition-all shadow-sm text-sm"
         >
-          <Plus className="w-5 h-5" />
+          <Plus className="w-4 h-4" />
           Crear Presupuesto
         </button>
       </div>

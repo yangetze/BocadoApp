@@ -54,7 +54,7 @@ export default function BaseRecipeList({
         </div>
         <button
           onClick={onCreateNew}
-          className="hidden md:flex items-center gap-2 bg-slate-gray text-white px-4 py-2 rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-sm shadow-slate-gray/20 text-sm"
+          className="hidden md:flex items-center justify-center gap-2 bg-slate-gray text-white px-5 py-2.5 rounded-xl font-medium hover:bg-opacity-90 transition-all shadow-sm text-sm"
         >
           <Plus className="w-4 h-4" />
           Nueva Receta Base
