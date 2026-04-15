@@ -50,7 +50,7 @@ export default function AdminDashboard() {
       <header className="bg-slate-gray py-4 px-6 mb-8 sticky top-0 z-10 shadow-md">
         <div className="max-w-6xl mx-auto flex items-center justify-between text-white">
           <div className="flex items-center gap-4">
-            <Link to="/app" className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+            <Link to="/app" aria-label="Volver al inicio" className="p-2 hover:bg-white/10 rounded-lg transition-colors">
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-3">
@@ -83,6 +83,7 @@ export default function AdminDashboard() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
+              aria-label="Buscar usuarios"
               placeholder="Buscar por usuario, email o cédula..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -159,6 +160,7 @@ export default function AdminDashboard() {
                                 : 'text-green-500 hover:bg-green-50'
                             }`}
                             title={u.active ? 'Bloquear acceso' : 'Permitir acceso'}
+                            aria-label={u.active ? 'Bloquear acceso' : 'Permitir acceso'}
                           >
                             {u.active ? <XCircle size={18} /> : <CheckCircle2 size={18} />}
                           </button>
