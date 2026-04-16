@@ -153,7 +153,7 @@ export default function ExchangeRateManager() {
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-gray">Ajustes del sistema</h1>
+          <h1 className="text-3xl font-bold text-slate-gray">Tasas de Cambio</h1>
           <p className="text-slate-gray/70 mt-1">
             Gestiona el valor de la moneda para tus recetas. Moneda base: USD.
           </p>
