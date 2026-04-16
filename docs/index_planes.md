@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Análisis: Selección de Presentaciones](plan_analisis_seleccion_presentacion.md)
 - [Plan de Trabajo: Ordenar Presentaciones (Marcas Primero)](plan_ingredientes_marcas_orden.md)
 - [Plan: Configuración Avanzada de Presupuestos](plan_presupuestos_configuracion.md)
 - [Plan de Trabajo: Tasas de Cambio Múltiples](plan_tasas_cambio_multiples.md)
@@ -42,5 +43,4 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Correcciones en Edición de Recetas Base](./plan_edit_base_recipe_title_and_quantity.md) - Completado- [🧹 Code Health Improvement: Remove console.log from Seed](plan_code_health_seed_console_log.md)
 - [Plan de Trabajo: Mejoras UX en Presentaciones de Ingredientes](plan_ingredientes_presentaciones_ux.md)
 - [Plan de Trabajo: Corregir Bug en Total Ingredientes de Súper Recetas](plan_super_receta_total_ingredientes_bug.md)
-- [Análisis: Selección de Presentaciones](plan_analisis_seleccion_presentacion.md)
 - [Plan de Trabajo: Crear y Modificar Presupuestos con Tests](plan_presupuestos_crear_modificar.md)
