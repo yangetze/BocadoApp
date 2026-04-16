@@ -99,7 +99,7 @@ export default function SettingsManager() {
               : 'bg-gray-50 text-slate-gray hover:bg-gray-100'
           }`}
         >
-          Tasas de Cambio
+          Ajustes del sistema
         </button>
         <button
           onClick={() => setActiveSubTab('profile')}
