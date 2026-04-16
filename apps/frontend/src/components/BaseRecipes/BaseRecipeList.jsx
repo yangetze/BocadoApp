@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus, Beaker, ChevronRight } from "lucide-react";
+import { Plus, Beaker, ChevronRight, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function BaseRecipeList({
@@ -7,6 +7,8 @@ export default function BaseRecipeList({
   onCreateNew,
   onEdit,
   loading,
+  searchQuery,
+  setSearchQuery
 }) {
   if (loading) {
     return (
@@ -17,7 +19,7 @@ export default function BaseRecipeList({
     );
   }
 
-  if (!recipes || recipes.length === 0) {
+  if ((!recipes || recipes.length === 0) && !searchQuery) {
     return (
       <div className="flex flex-col items-center justify-center p-16 text-center bg-white rounded-3xl border border-gray-100 shadow-sm">
         <div className="w-20 h-20 bg-peach-soft/20 rounded-full flex items-center justify-center mb-6">
@@ -43,7 +45,8 @@ export default function BaseRecipeList({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+
+      <div className="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-gray">
             Mis Recetas Base
@@ -52,6 +55,21 @@ export default function BaseRecipeList({
             Gestiona tus recetas base para usar en presupuestos y súper recetas.
           </p>
         </div>
+
+        {/* Search Bar */}
+        <div className="relative flex-1 w-full md:max-w-md mt-4 sm:mt-0">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-peach-soft focus:border-peach-soft sm:text-sm transition-all"
+            placeholder="Buscar receta base..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
         <button
           onClick={onCreateNew}
           className="hidden md:flex items-center justify-center gap-2 bg-slate-gray text-white px-5 py-2.5 rounded-xl font-medium hover:bg-opacity-90 transition-all shadow-sm text-sm"
