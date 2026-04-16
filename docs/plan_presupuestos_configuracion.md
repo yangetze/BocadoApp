@@ -1,6 +1,6 @@
 # Plan: Configuración Avanzada de Presupuestos
 
-**Estado:** Backlog
+**Estado:** Completado
 **Rama:** (Por definir)
 
 

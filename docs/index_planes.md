@@ -3,6 +3,8 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Plan: Configuración Avanzada de Presupuestos](plan_presupuestos_configuracion.md)
+- [Plan de Trabajo: Tasas de Cambio Múltiples](plan_tasas_cambio_multiples.md)
 - [Plan de Trabajo: Editar Monto de Presentación](plan_ingredientes_editar_monto.md)
 - [🧪 Plan: Testing Improvement para Base Recipe Creation](plan_testing_improvement.md)
 - [Plan de Trabajo: Mejoras UX Modal Ingredientes](plan_edit_ingredient_modal.md)
@@ -24,9 +26,7 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 ## En desarrollo
 
 ## Backlog
-- [Plan de Trabajo: Tasas de Cambio Múltiples](plan_tasas_cambio_multiples.md)
 - [Plan: Exportación y Visualización de Presupuestos en PDF](plan_presupuestos_exportacion_pdf.md)
-- [Plan: Configuración Avanzada de Presupuestos](plan_presupuestos_configuracion.md)
 - [Plan de Trabajo: Equivalencias de Unidades y Resumen por Tipo](plan_equivalencias_unidades.md)
 - [Plan de Trabajo: Información de Ingredientes en Receta Base (3.2)](plan_receta_base_info_ingrediente.md)
 - [Plan de Trabajo: Rendimiento y Unidad de Rendimiento (3.6)](plan_receta_base_rendimiento.md)
