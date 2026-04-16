@@ -45,3 +45,4 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Análisis: Selección de Presentaciones](plan_analisis_seleccion_presentacion.md)
 - [Plan de Trabajo: Crear y Modificar Presupuestos con Tests](plan_presupuestos_crear_modificar.md)
 - [Plan de Trabajo: Ordenar Presentaciones (Marcas Primero)](plan_ingredientes_marcas_orden.md)
+- [Plan de Trabajo: Remover Símbolo de Dólar en Presentaciones de Ingredientes](plan_ingredientes_remover_simbolo_dolar.md)
