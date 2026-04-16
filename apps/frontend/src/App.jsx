@@ -113,7 +113,7 @@ function MainApp() {
                         className="w-full text-left px-4 py-3 text-sm font-medium text-slate-gray hover:bg-peach-soft/10 flex items-center gap-3 transition-colors"
                       >
                         <TrendingUp className="w-4 h-4 text-peach-soft" />
-                        Tasas de Cambio
+                        Ajustes del sistema
                       </button>
                       {user?.role === 'ADMIN' && (
                         <a
