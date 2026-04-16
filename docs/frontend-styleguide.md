@@ -53,6 +53,9 @@ El Dark Mode debe sentirse como entrar a una cocina profesional de noche: elegan
 - **Botón Secundario:** Borde Peach Soft `#F7C5B2` con texto Peach Soft. Fondo transparente.
   - *Tailwind:* `border-2 border-[#F7C5B2] text-[#F7C5B2] hover:bg-[#F7C5B2]/10 transition-colors`
 
+
+- **Estado de Carga y Bloqueo (Action Button Loading & Blocking):** Al hacer clic en un botón de acción principal (ej. "Guardar", "Crear"), el botón debe mostrar un indicador visual de carga (loader/spinner) y **todos los botones de acción en la pantalla deben deshabilitarse (bloquearse)**. Esto informa claramente al usuario que hay un proceso en curso (ej. guardado de datos) y previene clics duplicados o interacciones conflictivas mientras se completa la operación.
+
 ### Empty States (Estados Vacíos)
 Cuando no hay datos (ej. "Aún no tienes recetas creadas"), no mostramos una pantalla vacía y aburrida.
 - **Visual:** Ilustraciones lineales que usen la combinación de Peach Soft `#F7C5B2` y Slate Gray `#3E4A59` con mucha ligereza y trazos finos (ej. un batidor de globo descansando sobre un bol vacío).
