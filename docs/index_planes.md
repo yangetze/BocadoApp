@@ -24,7 +24,7 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Corregir Error al Guardar Súper Recetas](plan_bug_super_receta.md)
 
 ## En desarrollo
-- [Plan: Acción de Carga de Botones](./plan_action_button_loading.md) - Completado
+- [Plan de Trabajo: Buscador de Ingredientes por Nombre y Marca](plan_ingredientes_buscador.md)
 
 ## Backlog
 - [Plan: Exportación y Visualización de Presupuestos en PDF](plan_presupuestos_exportacion_pdf.md)
@@ -39,7 +39,6 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Listado de Súper Recetas](plan_super_recipe_list.md)
 
 - [Correcciones en Edición de Recetas Base](./plan_edit_base_recipe_title_and_quantity.md) - Completado- [🧹 Code Health Improvement: Remove console.log from Seed](plan_code_health_seed_console_log.md)
-- [Plan de Trabajo: Buscador de Ingredientes por Nombre y Marca](plan_ingredientes_buscador.md)
 - [Plan de Trabajo: Mejoras UX en Presentaciones de Ingredientes](plan_ingredientes_presentaciones_ux.md)
 - [Plan de Trabajo: Corregir Bug en Total Ingredientes de Súper Recetas](plan_super_receta_total_ingredientes_bug.md)
 - [Análisis: Selección de Presentaciones](plan_analisis_seleccion_presentacion.md)

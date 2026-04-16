@@ -121,6 +121,9 @@ Cada vez que se cree un nuevo módulo o vista principal en la aplicación, **deb
 2. **Botón Principal de Acción:** Un botón prominente (generalmente "Crear" o "Agregar") que siga las reglas de botones primarios descritas arriba.
    - **Regla Móvil:** En dispositivos móviles, este botón debe convertirse en un botón flotante (FAB) ubicado en la esquina inferior derecha (`md:hidden fixed bottom-20 right-4 z-40`), utilizando un icono (como `+`) para ahorrar espacio y mantener la coherencia en las listas principales.
 3. **Buscador (Search):** Como mínimo, debe existir una barra de búsqueda por texto que permita filtrar los resultados listados en función de los campos visibles en la interfaz.
+   - **Estilo Obligatorio:** El buscador debe ser un `input` de texto que incluya un icono de lupa (`Search` de lucide-react) posicionado a la izquierda (absolute, pl-3).
+   - **Clases Tailwind Base:** `block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-peach-soft focus:border-peach-soft sm:text-sm transition-all`.
+   - **Ubicación:** Debe colocarse en la cabecera (header) de la vista de listado, generalmente alineado a la derecha o debajo del título en pantallas móviles.
 4. **Diseño Responsivo (Responsive Rules):** Se deben aplicar estrictamente las reglas definidas en la sección 7. La vista debe funcionar impecablemente en dispositivos móviles, adaptando la navegación, el listado y los botones de acción para interfaces táctiles.
 ### Listados y Paginación (Novedad Feb 2025)
 - **Regla de Paginación:** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario.
