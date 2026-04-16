@@ -9,7 +9,10 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
   const [activeItem, setActiveItem] = useState(null);
   const [superRecipeMetadata, setSuperRecipeMetadata] = useState({
     name: editingItem?.name || editingItem?.customerName || '',
-    description: editingItem?.description || ''
+    description: editingItem?.description || '',
+    customCurrency: editingItem?.customCurrency || '',
+    customPolicies: editingItem?.customPolicies || '',
+    customPaymentMethods: editingItem?.customPaymentMethods || []
   });
   const [suggestedMargin, setSuggestedMargin] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -211,6 +214,9 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
         const payload = {
           customerName: superRecipeMetadata.name,
           profitMargin: 0.35, // This should ideally be editable later
+          customCurrency: superRecipeMetadata.customCurrency || undefined,
+          customPolicies: superRecipeMetadata.customPolicies || undefined,
+          customPaymentMethods: superRecipeMetadata.customPaymentMethods || undefined,
           userId: "user-default-1",
           superRecipes: canvasItems.map((item) => ({
             superRecipeId: item.id.replace(/^canvas-\d+-/, "") || item.id,

@@ -5,7 +5,7 @@ import logger from '../utils/logger.js';
 
 export const createBudget = async (req, res) => {
   try {
-    const { customerName, profitMargin, superRecipes, brandSelections } = req.body;
+    const { customerName, profitMargin, superRecipes, brandSelections, customCurrency, customPolicies, customPaymentMethods } = req.body;
     const userId = req.user.id;
 
     if (!superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
@@ -171,7 +171,7 @@ export const getBudgetById = async (req, res) => {
 export const updateBudget = async (req, res) => {
   try {
     const { id } = req.params;
-    const { customerName, profitMargin, superRecipes, brandSelections } = req.body;
+    const { customerName, profitMargin, superRecipes, brandSelections, customCurrency, customPolicies, customPaymentMethods } = req.body;
     const userId = req.user.id;
 
     if (!superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
