@@ -53,6 +53,9 @@ El Dark Mode debe sentirse como entrar a una cocina profesional de noche: elegan
 - **Botón Secundario:** Borde Peach Soft `#F7C5B2` con texto Peach Soft. Fondo transparente.
   - *Tailwind:* `border-2 border-[#F7C5B2] text-[#F7C5B2] hover:bg-[#F7C5B2]/10 transition-colors`
 
+
+- **Estado de Carga y Bloqueo (Action Button Loading & Blocking):** Al hacer clic en un botón de acción principal (ej. "Guardar", "Crear"), el botón debe mostrar un indicador visual de carga (loader/spinner) y **todos los botones de acción en la pantalla deben deshabilitarse (bloquearse)**. Esto informa claramente al usuario que hay un proceso en curso (ej. guardado de datos) y previene clics duplicados o interacciones conflictivas mientras se completa la operación.
+
 ### Empty States (Estados Vacíos)
 Cuando no hay datos (ej. "Aún no tienes recetas creadas"), no mostramos una pantalla vacía y aburrida.
 - **Visual:** Ilustraciones lineales que usen la combinación de Peach Soft `#F7C5B2` y Slate Gray `#3E4A59` con mucha ligereza y trazos finos (ej. un batidor de globo descansando sobre un bol vacío).
@@ -118,6 +121,9 @@ Cada vez que se cree un nuevo módulo o vista principal en la aplicación, **deb
 2. **Botón Principal de Acción:** Un botón prominente (generalmente "Crear" o "Agregar") que siga las reglas de botones primarios descritas arriba.
    - **Regla Móvil:** En dispositivos móviles, este botón debe convertirse en un botón flotante (FAB) ubicado en la esquina inferior derecha (`md:hidden fixed bottom-20 right-4 z-40`), utilizando un icono (como `+`) para ahorrar espacio y mantener la coherencia en las listas principales.
 3. **Buscador (Search):** Como mínimo, debe existir una barra de búsqueda por texto que permita filtrar los resultados listados en función de los campos visibles en la interfaz.
+   - **Estilo Obligatorio:** El buscador debe ser un `input` de texto que incluya un icono de lupa (`Search` de lucide-react) posicionado a la izquierda (absolute, pl-3).
+   - **Clases Tailwind Base:** `block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-peach-soft focus:border-peach-soft sm:text-sm transition-all`.
+   - **Ubicación:** Debe colocarse en la cabecera (header) de la vista de listado, generalmente alineado a la derecha o debajo del título en pantallas móviles.
 4. **Diseño Responsivo (Responsive Rules):** Se deben aplicar estrictamente las reglas definidas en la sección 7. La vista debe funcionar impecablemente en dispositivos móviles, adaptando la navegación, el listado y los botones de acción para interfaces táctiles.
 ### Listados y Paginación (Novedad Feb 2025)
 - **Regla de Paginación:** Los listados principales (como Historial de Tasas, Listado de Recetas, Listado de Ingredientes) deben paginarse para optimizar el rendimiento y la experiencia del usuario.

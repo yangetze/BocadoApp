@@ -135,9 +135,10 @@ export const ingredientApi = {
 };
 
 export const baseRecipeApi = {
-  getAll: async () => {
+  getAll: async (search = '') => {
        try {
-           const res = await api.get('/base-recipes');
+           const url = search ? `/base-recipes?search=${encodeURIComponent(search)}` : '/base-recipes';
+           const res = await api.get(url);
            return res.data;
        } catch (error) {
             console.error(error);

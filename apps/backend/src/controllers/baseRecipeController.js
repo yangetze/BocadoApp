@@ -5,13 +5,24 @@ import logger from '../utils/logger.js';
 
 export const getBaseRecipes = async (req, res) => {
   const userId = req.user.id;
+  const { search } = req.query;
   
   if (isTestMode()) {
-    return res.status(200).json(mockData.baseRecipes.filter(r => r.userId === userId).sort((a, b) => b.createdAt - a.createdAt));
+    let result = mockData.baseRecipes.filter(r => r.userId === userId);
+    if (search) {
+      const lowerSearch = search.toLowerCase();
+      result = result.filter(r => r.name.toLowerCase().includes(lowerSearch));
+    }
+    return res.status(200).json(result.sort((a, b) => b.createdAt - a.createdAt));
   }
   try {
+    const whereClause = { userId };
+    if (search) {
+      whereClause.name = { contains: search, mode: 'insensitive' };
+    }
+
     const baseRecipes = await prisma.baseRecipe.findMany({
-      where: { userId },
+      where: whereClause,
       include: {
         ingredients: {
           include: { ingredient: true }

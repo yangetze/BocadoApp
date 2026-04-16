@@ -3,14 +3,14 @@ import { toast } from 'react-hot-toast';
 import { ingredientApi } from '../../api';
 import IngredientFormModal from './IngredientFormModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
 export default function IngredientManager() {
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,6 +95,20 @@ export default function IngredientManager() {
           <h1 className="text-2xl md:text-3xl font-bold text-slate-gray mb-1 md:mb-2">Ingredientes</h1>
           <p className="text-sm md:text-base text-gray-500">Administra tu inventario base de ingredientes y sus costos en USD.</p>
         </div>
+        {/* Search Bar */}
+        <div className="relative flex-1 w-full md:max-w-md mt-4 sm:mt-0">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-peach-soft focus:border-peach-soft sm:text-sm transition-all"
+            placeholder="Buscar por nombre o marca..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
 
         {/* Desktop Add Button */}
         <button
