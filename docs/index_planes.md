@@ -3,6 +3,7 @@
 Este documento centraliza el estado de todos los planes de la aplicación.
 
 ## Completado
+- [Corregir Loader en Lista de Recetas Base](plan_fix_loader_base_recipe.md)
 - [Análisis: Selección de Presentaciones](plan_analisis_seleccion_presentacion.md)
 - [Plan de Trabajo: Ordenar Presentaciones (Marcas Primero)](plan_ingredientes_marcas_orden.md)
 - [Plan: Configuración Avanzada de Presupuestos](plan_presupuestos_configuracion.md)
