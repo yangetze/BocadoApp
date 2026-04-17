@@ -1,20 +1,27 @@
 import React, { useState, useMemo } from 'react';
 import { Plus, ChefHat, ChevronRight, Search, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { normalizeString } from '../../utils/stringUtils';
 
 export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete, loading }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // ⚡ Bolt: Pre-calculate normalized names when recipes change, not on every keystroke
+  const normalizedRecipes = useMemo(() => {
+    if (!recipes) return [];
+    return recipes.map(recipe => ({
+      ...recipe,
+      _normalizedName: normalizeString(recipe.name)
+    }));
+  }, [recipes]);
+
   const filteredRecipes = useMemo(() => {
-    if (!searchTerm) return recipes;
-    const normalizedSearch = searchTerm.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    return recipes.filter(recipe => {
-      const normalizedName = recipe.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      return normalizedName.includes(normalizedSearch);
-    });
-  }, [recipes, searchTerm]);
+    if (!searchTerm) return normalizedRecipes;
+    const normalizedSearch = normalizeString(searchTerm);
+    return normalizedRecipes.filter(recipe => recipe._normalizedName.includes(normalizedSearch));
+  }, [normalizedRecipes, searchTerm]);
 
   const totalPages = Math.ceil((filteredRecipes?.length || 0) / itemsPerPage);
 
