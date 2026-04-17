@@ -63,6 +63,7 @@ model Ingredient {
   budgetSelections   BudgetBrandSelection[]
 
   @@index([userId, createdAt(sort: Desc)])
+  @@index([name])
 }
 
 model BrandPresentation {
@@ -79,6 +80,8 @@ model BrandPresentation {
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
 
   budgetSelections BudgetBrandSelection[]
+
+  @@index([brand])
 }
 
 model BaseRecipe {
@@ -99,6 +102,7 @@ model BaseRecipe {
   usedInSuperRecipes SuperRecipeBaseRecipe[]
 
   @@index([userId, createdAt(sort: Desc)])
+  @@index([name])
 }
 
 // Junction table: Ingredients inside a Base Recipe
@@ -134,6 +138,7 @@ model SuperRecipe {
   budgetItems BudgetSuperRecipe[]
 
   @@index([userId, createdAt(sort: Desc)])
+  @@index([name])
 }
 
 // Junction table: Base Recipes inside a Super Recipe (e.g. Sponge cake, Filling)

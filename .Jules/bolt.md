@@ -32,3 +32,6 @@
 ## 2024-11-20 - Group Payload Arrays Before Submitting to Prevent O(N) Redundant Inserts and Constraint Violations
 **Learning:** When submitting drag-and-drop arrays to the backend where multiple identical items are allowed on the canvas (e.g., adding two "Eggs" to a recipe), submitting them as separate objects can cause unique constraint DB violations (like `P2002` on `[baseRecipeId, ingredientId]`) and leads to redundant insert statements.
 **Action:** Always pre-aggregate identical item IDs into a grouped payload using `.reduce()` on the frontend before saving. This converts $O(N)$ repeated records into an $O(1)$ group, shrinking payload size and preventing DB constraint crashes.
+## 2026-04-17 - [Database Search Optimization]
+**Learning:** In Prisma schema design, performing `contains: search, mode: 'insensitive'` queries on unindexed text fields (like `name` or `brand`) across large datasets like Ingredients and Recipes creates significant CPU overhead and slow response times because it forces full table scans.
+**Action:** Always add `@@index([fieldName])` in the Prisma schema for columns that are frequently used in `contains` or `startsWith` text-search operations (e.g., search bars in the frontend) to improve database lookup performance and prevent unnecessary application-side filtering.
