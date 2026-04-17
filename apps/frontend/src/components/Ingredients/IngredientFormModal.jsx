@@ -283,7 +283,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                       <div key={idx} className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" onClick={() => editPresentation(idx)} title="Haz clic para editar el costo">
                         <div>
                           <div className="text-sm font-medium text-slate-gray">{p.brand ? p.brand + ' - ' : ''}{p.presentationName}</div>
-                          <div className="text-xs text-gray-500 mt-0.5">${p.cost} / ${p.unitQuantity}${p.measurementUnit}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">${p.cost} / {p.unitQuantity}{p.measurementUnit}</div>
                         </div>
                         <button
                           type="button"
