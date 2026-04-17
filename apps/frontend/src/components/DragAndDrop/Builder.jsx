@@ -256,8 +256,9 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
              {mode === "budget" && (
                 <>
                   <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-100">
-                    <label className="text-sm font-bold text-slate-gray">Sobrescribir Moneda (Opcional)</label>
+                    <label htmlFor="customCurrency" className="text-sm font-bold text-slate-gray">Sobrescribir Moneda (Opcional)</label>
                     <select
+                      id="customCurrency"
                       value={superRecipeMetadata?.customCurrency || ''}
                       onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, customCurrency: e.target.value })}
                       className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all"
@@ -269,8 +270,9 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
                     </select>
                   </div>
                   <div className="flex flex-col gap-2 mt-4">
-                    <label className="text-sm font-bold text-slate-gray">Términos y Políticas Específicas</label>
+                    <label htmlFor="customPolicies" className="text-sm font-bold text-slate-gray">Términos y Políticas Específicas</label>
                     <textarea
+                      id="customPolicies"
                       placeholder="Sobrescribe las políticas globales para este presupuesto..."
                       value={superRecipeMetadata?.customPolicies || ''}
                       onChange={(e) => setSuperRecipeMetadata({ ...superRecipeMetadata, customPolicies: e.target.value })}
