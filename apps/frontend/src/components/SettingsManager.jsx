@@ -122,9 +122,8 @@ export default function SettingsManager() {
             <h3 className="text-lg font-semibold text-slate-gray mb-4">Preferencias Globales</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="defaultCurrency" className="block text-sm font-medium text-slate-gray mb-1">Moneda Principal por Defecto</label>
+                <label className="block text-sm font-medium text-slate-gray mb-1">Moneda Principal por Defecto</label>
                 <select
-                  id="defaultCurrency"
                   value={formData.defaultCurrency}
                   onChange={e => setFormData({...formData, defaultCurrency: e.target.value})}
                   className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-peach-soft"
@@ -185,17 +184,14 @@ export default function SettingsManager() {
                     <button
                       type="button"
                       onClick={() => handleRemovePaymentMethod(index)}
-                      className="absolute top-4 right-4 text-gray-400 hover:text-red-500"
-                      aria-label="Eliminar método de pago"
-                    >
+                      className="absolute top-4 right-4 text-gray-400 hover:text-red-500">
                       <Trash2 className="w-4 h-4" />
                     </button>
 
                     <div className="grid grid-cols-2 gap-4 mb-4 pr-8">
                       <div>
-                        <label htmlFor={`method-${index}-type`} className="block text-xs text-gray-500 mb-1">Tipo de Pago</label>
+                        <label className="block text-xs text-gray-500 mb-1">Tipo de Pago</label>
                         <input
-                          id={`method-${index}-type`}
                           type="text"
                           value={method.type}
                           onChange={(e) => handlePaymentMethodChange(index, 'type', e.target.value)}
@@ -204,9 +200,8 @@ export default function SettingsManager() {
                         />
                       </div>
                       <div>
-                        <label htmlFor={`method-${index}-currency`} className="block text-xs text-gray-500 mb-1">Moneda</label>
+                        <label className="block text-xs text-gray-500 mb-1">Moneda</label>
                         <select
-                          id={`method-${index}-currency`}
                           value={method.currency}
                           onChange={(e) => handlePaymentMethodChange(index, 'currency', e.target.value)}
                           className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white"
@@ -221,7 +216,7 @@ export default function SettingsManager() {
                     <div className="bg-gray-50 rounded-lg p-3">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-xs font-semibold text-slate-gray">Detalles (Clave - Valor)</span>
-                        <button type="button" aria-label="Añadir detalle de pago" onClick={() => handleAddPaymentDetail(index)} className="text-xs text-blue-500 hover:underline">
+                        <button type="button" onClick={() => handleAddPaymentDetail(index)} className="text-xs text-blue-500 hover:underline">
                           + Añadir campo
                         </button>
                       </div>
@@ -230,7 +225,6 @@ export default function SettingsManager() {
                         <div key={detailIndex} className="flex gap-2 mb-2">
                           <input
                             type="text"
-                            aria-label="Clave del detalle de pago"
                             defaultValue={key}
                             onBlur={(e) => {
                               const newKey = e.target.value;
@@ -247,13 +241,12 @@ export default function SettingsManager() {
                           />
                           <input
                             type="text"
-                            aria-label="Valor del detalle de pago"
                             value={value}
                             onChange={(e) => handlePaymentDetailChange(index, key, e.target.value)}
                             className="flex-1 border border-gray-200 rounded text-xs px-2 py-1"
                             placeholder="Valor"
                           />
-                          <button type="button" aria-label="Eliminar detalle de pago" onClick={() => handleRemovePaymentDetail(index, key)} className="text-gray-400 hover:text-red-500 px-1">
+                          <button type="button" onClick={() => handleRemovePaymentDetail(index, key)} className="text-gray-400 hover:text-red-500 px-1">
                             &times;
                           </button>
                         </div>
