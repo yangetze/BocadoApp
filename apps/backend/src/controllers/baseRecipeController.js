@@ -219,6 +219,11 @@ export const deleteBaseRecipe = async (req, res) => {
     const { id } = req.params;
 
     if (isTestMode()) {
+      const existingBaseRecipe = mockData.baseRecipes.find(br => br.id === id);
+      if (!existingBaseRecipe || existingBaseRecipe.userId !== req.user.id) {
+        return res.status(404).json({ error: 'Receta base no encontrada' });
+      }
+
       const usedInSuper = mockData.superRecipes.some(sr => sr.baseRecipes.some(br => br.baseRecipeId === id));
 
       if (usedInSuper) {
@@ -227,6 +232,11 @@ export const deleteBaseRecipe = async (req, res) => {
 
       mockData.baseRecipes = mockData.baseRecipes.filter(br => br.id !== id);
       return res.status(200).json({ message: 'Receta base eliminada exitosamente' });
+    }
+
+    const existingBaseRecipe = await prisma.baseRecipe.findUnique({ where: { id } });
+    if (!existingBaseRecipe || existingBaseRecipe.userId !== req.user.id) {
+       return res.status(404).json({ error: 'Receta base no encontrada' });
     }
 
     const usedInSuper = await prisma.superRecipeBaseRecipe.findFirst({ where: { baseRecipeId: id } });

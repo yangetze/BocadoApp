@@ -144,6 +144,7 @@ describe('Base Recipe Routes', () => {
 
   describe('DELETE /api/base-recipes/:id', () => {
     it('should delete a base recipe if not used', async () => {
+      prisma.baseRecipe.findUnique.mockResolvedValue({ id: '1', userId: 'user-default-1' });
       prisma.superRecipeBaseRecipe.findFirst.mockResolvedValue(null);
       prisma.baseRecipe.delete.mockResolvedValue({ id: '1' });
 
@@ -155,11 +156,22 @@ describe('Base Recipe Routes', () => {
     });
 
     it('should not delete a base recipe if it is used', async () => {
+      prisma.baseRecipe.findUnique.mockResolvedValue({ id: '1', userId: 'user-default-1' });
       prisma.superRecipeBaseRecipe.findFirst.mockResolvedValue({ id: 'use1' });
 
       const res = await request(app).delete('/api/base-recipes/1');
 
       expect(res.statusCode).toBe(400);
+      expect(prisma.baseRecipe.delete).not.toHaveBeenCalled();
+    });
+
+    it('should return 404 if base recipe is not found or user is not the owner', async () => {
+      prisma.baseRecipe.findUnique.mockResolvedValue(null);
+
+      const res = await request(app).delete('/api/base-recipes/1');
+
+      expect(res.statusCode).toBe(404);
+      expect(prisma.superRecipeBaseRecipe.findFirst).not.toHaveBeenCalled();
       expect(prisma.baseRecipe.delete).not.toHaveBeenCalled();
     });
   });
