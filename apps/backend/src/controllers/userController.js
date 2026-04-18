@@ -36,8 +36,20 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ error: 'El formato del correo electrónico no es válido' });
     }
 
-    if (username.length < 3) {
-      return res.status(400).json({ error: 'El nombre de usuario debe tener al menos 3 caracteres' });
+    if (username?.length < 3 || username?.length > 50) {
+      return res.status(400).json({ error: 'El nombre de usuario debe tener entre 3 y 50 caracteres' });
+    }
+
+    if (email?.length > 255) {
+      return res.status(400).json({ error: 'El correo electrónico no debe exceder 255 caracteres' });
+    }
+
+    if (identificationNumber?.length > 50) {
+      return res.status(400).json({ error: 'La cédula/identificación no debe exceder 50 caracteres' });
+    }
+
+    if (name && name?.length > 100) {
+      return res.status(400).json({ error: 'El nombre no debe exceder 100 caracteres' });
     }
 
     const hashedPassword = await bcrypt.hash(identificationNumber, 10);
@@ -82,6 +94,9 @@ export const updateUser = async (req, res) => {
     const dataToUpdate = {};
 
     if (email !== undefined) {
+      if (typeof email !== 'string' || email.length > 255) {
+        return res.status(400).json({ error: 'El correo electrónico no es válido o es muy largo' });
+      }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return res.status(400).json({ error: 'El formato del correo electrónico no es válido' });
@@ -90,14 +105,26 @@ export const updateUser = async (req, res) => {
     }
 
     if (username !== undefined) {
-      if (username.length < 3) {
-        return res.status(400).json({ error: 'El nombre de usuario debe tener al menos 3 caracteres' });
+      if (typeof username !== 'string' || username.length < 3 || username.length > 50) {
+        return res.status(400).json({ error: 'El nombre de usuario debe tener entre 3 y 50 caracteres' });
       }
       dataToUpdate.username = username;
     }
 
-    if (identificationNumber !== undefined) dataToUpdate.identificationNumber = identificationNumber;
-    if (name !== undefined) dataToUpdate.name = name;
+    if (identificationNumber !== undefined) {
+      if (typeof identificationNumber !== 'string' || identificationNumber.length > 50) {
+        return res.status(400).json({ error: 'La cédula/identificación no debe exceder 50 caracteres' });
+      }
+      dataToUpdate.identificationNumber = identificationNumber;
+    }
+
+    if (name !== undefined) {
+      if (typeof name !== 'string' || name.length > 100) {
+        return res.status(400).json({ error: 'El nombre no debe exceder 100 caracteres' });
+      }
+      dataToUpdate.name = name;
+    }
+
     if (active !== undefined) dataToUpdate.active = active;
     if (role !== undefined) dataToUpdate.role = role;
 
@@ -140,7 +167,12 @@ export const updateProfile = async (req, res) => {
     const { name, defaultCurrency, companyLogo, policies, paymentMethods } = req.body;
 
     const dataToUpdate = {};
-    if (name !== undefined) dataToUpdate.name = name;
+    if (name !== undefined) {
+      if (typeof name !== 'string' || name.length > 100) {
+        return res.status(400).json({ error: 'El nombre no debe exceder 100 caracteres' });
+      }
+      dataToUpdate.name = name;
+    }
     if (defaultCurrency !== undefined) dataToUpdate.defaultCurrency = defaultCurrency;
     if (companyLogo !== undefined) dataToUpdate.companyLogo = companyLogo;
     if (policies !== undefined) dataToUpdate.policies = policies;

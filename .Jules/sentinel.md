@@ -60,3 +60,8 @@
 **Vulnerability:** Prisma query failed because `brand` was queried directly on `Ingredient` but it belongs to the nested relation `BrandPresentation`.
 **Learning:** Nested relational fields must be filtered using relation filters like `some`, `every`, or `none` (e.g. `{ presentations: { some: { brand: { contains: search } } } }`).
 **Prevention:** Check Prisma schema relations before querying nested fields.
+
+## 2024-05-24 - Maximum Input Length Validations
+**Vulnerability:** Missing maximum length constraints on user inputs (e.g., username, email, name, identification number) during registration and profile updates.
+**Learning:** While minimum length limits and format checks (e.g., regex for emails) were present, the absence of upper bounds could allow an attacker to send disproportionately large payload strings (Denial of Service risk) or cause unpredictable database string truncation exceptions.
+**Prevention:** Always enforce both minimum and maximum length bounds on user-supplied strings at the application boundary, specifically within creation and modification endpoints. Utilize optional chaining (`?.`) when assessing the `.length` of fields that might be absent or `undefined` to prevent Unhandled Promise Rejections and Internal Server Errors (500) during updates.
