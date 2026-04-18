@@ -88,7 +88,6 @@ export default function IngredientManager() {
     setExpandedId(prev => (prev === id ? null : id));
   }, []);
 
-  // ⚡ Bolt: Memoize desktop list to prevent O(N) DOM re-rendering on every search keystroke
   const desktopListContent = useMemo(() => {
     if (loading) {
       return (
@@ -130,7 +129,6 @@ export default function IngredientManager() {
     ));
   }, [ingredients, loading, handleOpenEditModal, handleDelete]);
 
-  // ⚡ Bolt: Memoize mobile list to prevent re-renders on search input typing
   const mobileListContent = useMemo(() => {
     if (loading) {
       return <div className="py-8 text-center text-gray-500">Cargando ingredientes...</div>;
