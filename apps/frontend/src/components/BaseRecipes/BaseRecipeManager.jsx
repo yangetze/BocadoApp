@@ -33,7 +33,7 @@ export default function BaseRecipeManager() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [view, fetchBaseRecipes]);
+  }, [view, searchQuery]);
 
   if (view === "builder") {
     return (
