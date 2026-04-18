@@ -13,7 +13,7 @@ export const getIngredients = async (req, res) => {
       const lowerSearch = search.toLowerCase();
       result = result.filter(i =>
         i.name.toLowerCase().includes(lowerSearch) ||
-        (i.brand && i.brand.toLowerCase().includes(lowerSearch))
+        (i.presentations && i.presentations.some(p => p.brand && p.brand.toLowerCase().includes(lowerSearch)))
       );
     }
     return res.status(200).json(result.sort((a, b) => b.createdAt - a.createdAt));
@@ -24,7 +24,7 @@ export const getIngredients = async (req, res) => {
     if (search) {
       whereClause.OR = [
         { name: { contains: search, mode: 'insensitive' } },
-        { brand: { contains: search, mode: 'insensitive' } }
+        { presentations: { some: { brand: { contains: search, mode: 'insensitive' } } } }
       ];
     }
 
@@ -164,6 +164,11 @@ export const deleteIngredient = async (req, res) => {
     const { id } = req.params;
 
     if (isTestMode()) {
+      const ingredient = mockData.ingredients.find(i => i.id === id);
+      if (!ingredient || ingredient.userId !== req.user.id) {
+        return res.status(404).json({ error: 'Ingrediente no encontrado' });
+      }
+
       const usedInBase = mockData.baseRecipes.some(br => br.ingredients.some(i => i.ingredientId === id));
       const usedInSuper = mockData.superRecipes.some(sr => sr.directIngredients.some(di => di.ingredientId === id));
 
@@ -175,6 +180,12 @@ export const deleteIngredient = async (req, res) => {
       return res.status(200).json({ message: 'Ingrediente eliminado exitosamente' });
     }
 
+    // Validate ownership
+    const existingIngredient = await prisma.ingredient.findUnique({ where: { id } });
+    if (!existingIngredient || existingIngredient.userId !== req.user.id) {
+       return res.status(404).json({ error: 'Ingrediente no encontrado' });
+    }
+
     const usedInBase = await prisma.baseRecipeIngredient.findFirst({ where: { ingredientId: id } });
     const usedInSuper = await prisma.superRecipeDirectIngredient.findFirst({ where: { ingredientId: id } });
 
@@ -183,10 +194,7 @@ export const deleteIngredient = async (req, res) => {
     }
 
     await prisma.ingredient.delete({ 
-      where: { 
-        id,
-        userId: req.user.id // Verificamos propiedad 
-      } 
+      where: { id }
     });
 
     res.status(200).json({ message: 'Ingrediente eliminado exitosamente' });

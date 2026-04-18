@@ -249,7 +249,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                       <input id="presentationBrand" type="text" placeholder="Ej. Robin Hood" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft disabled:bg-gray-100 disabled:text-gray-500" value={currentPresentation.brand} disabled={editingPresentationIndex !== null} onChange={e => setCurrentPresentation({...currentPresentation, brand: e.target.value})} />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+                  <div className="grid grid-cols-2 sm:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-end">
                     <div>
                       <label htmlFor="presentationCost" className="block text-xs font-medium text-gray-600 mb-1">Costo ($)</label>
                       <input id="presentationCost" type="number" step="0.01" placeholder="0.00" className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 outline-none focus:border-peach-soft" value={currentPresentation.cost} onChange={e => setCurrentPresentation({...currentPresentation, cost: e.target.value})} />
@@ -264,9 +264,9 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                         {UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
                       </select>
                     </div>
-                    <div className="w-1/4">
+                    <div>
                       {editingPresentationIndex !== null ? (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto">
                           <button type="button" onClick={addPresentation} className="w-full py-2 bg-peach-soft text-white text-sm font-medium rounded-lg hover:bg-opacity-90 flex items-center justify-center" aria-label="Actualizar">Actualizar</button>
                           <button type="button" onClick={cancelEditPresentation} className="w-full py-2 bg-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-300 flex items-center justify-center" aria-label="Cancelar">X</button>
                         </div>
@@ -282,8 +282,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     {formData.presentations.map((p, idx) => (
                       <div key={idx} className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" onClick={() => editPresentation(idx)} title="Haz clic para editar el costo">
                         <div>
-                          <div className="text-sm font-medium text-slate-gray">{p.presentationName} <span className="text-xs text-gray-400 font-normal">{p.brand && `(${p.brand})`}</span></div>
-                          <div className="text-xs text-gray-500 mt-0.5">${p.cost} / ${p.unitQuantity}${p.measurementUnit}</div>
+                          <div className="text-sm font-medium text-slate-gray">{p.brand ? p.brand + ' - ' : ''}{p.presentationName}</div>
+                          <div className="text-xs text-gray-500 mt-0.5">${p.cost} / {p.unitQuantity}{p.measurementUnit}</div>
                         </div>
                         <button
                           type="button"

@@ -82,9 +82,21 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: 'El formato del correo electrónico no es válido' });
     }
 
-    // Validación de longitud mínima
-    if (username.length < 3) {
-      return res.status(400).json({ error: 'El nombre de usuario debe tener al menos 3 caracteres' });
+    // Validación de longitud
+    if (username?.length < 3 || username?.length > 50) {
+      return res.status(400).json({ error: 'El nombre de usuario debe tener entre 3 y 50 caracteres' });
+    }
+
+    if (email?.length > 255) {
+      return res.status(400).json({ error: 'El correo electrónico no debe exceder 255 caracteres' });
+    }
+
+    if (identificationNumber?.length > 50) {
+      return res.status(400).json({ error: 'La cédula/identificación no debe exceder 50 caracteres' });
+    }
+
+    if (name && name?.length > 100) {
+      return res.status(400).json({ error: 'El nombre no debe exceder 100 caracteres' });
     }
 
     // Default password for users is their identification number

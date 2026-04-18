@@ -42,3 +42,31 @@
 **Vulnerability:** The application had rate limiting on authentication routes (/login, /register) but lacked a global rate limiter for all other API endpoints, leaving it susceptible to general DoS attacks or aggressive scraping.
 **Learning:** While endpoint-specific rate limiting is crucial for sensitive routes (auth), a baseline global rate limiter is necessary as a defense-in-depth measure to protect server resources.
 **Prevention:** Added a globalLimiter middleware using express-rate-limit and applied it to all routes under /api in index.js. Always configure a baseline rate limiter for all public-facing APIs.
+
+## 2026-04-15 - Missing Input Validation on User Creation/Update
+**Vulnerability:** The `createUser` and `updateUser` endpoints in `apps/backend/src/controllers/userController.js` lacked strict validation for `email` format and `username` length, unlike the `register` endpoint.
+**Learning:** Security validations (like email format checks to prevent injection or malformed data, and minimum length checks) must be consistently applied across all endpoints that create or modify a resource, not just the public registration endpoint. An authenticated admin could inadvertently or maliciously submit invalid data.
+**Prevention:** Implement consistent input validation logic across all relevant controllers. Consider using a centralized validation library (like Zod or Joi) or sharing validation functions to ensure parity between public and admin endpoints.
+## 2026-04-16 - Prevent Public Exposure of Database via Supabase PostgREST
+ **Vulnerability:** `rls_disabled_in_public` and `sensitive_columns_exposed` warnings in Supabase, leading to potential unauthorized direct access to Prisma-managed tables via the generic auto-generated PostgREST API when `anon` key or project URL is known.
+ **Learning:** Even when the primary architecture relies entirely on a custom backend (Express + Prisma) for security, hosting on Supabase exposes a secondary attack surface because the built-in Data API (PostgREST) maps the `public` schema directly and relies on RLS. If RLS is disabled, data is exposed bypassing the custom backend completely.
+ **Prevention:** For architectures where Supabase is strictly used as a raw Postgres host (accessed via connection strings by a trusted backend like Prisma), always run `ALTER TABLE "<schema>"."<table_name>" ENABLE ROW LEVEL SECURITY;` on all public tables without defining any policies. This ensures PostgREST defaults to completely blocking all external `anon` / `authenticated` access, while allowing Prisma (using the `postgres` admin role) to bypass RLS and operate normally.
+
+## 2025-04-16 - Missing Authorization on Global Configurations
+**Vulnerability:** The endpoints to manually set or sync global exchange rates (`POST /api/exchange-rates/manual` and `POST /api/exchange-rates/sync-api`) were protected by `verifyToken` but missing the `isAdmin` check, allowing any authenticated regular user to modify application-wide settings.
+**Learning:** It is crucial to verify not only that a user is authenticated, but that they have the appropriate role (Authorization) for endpoints that mutate global state or administrative configurations that lack tenant boundaries.
+**Prevention:** Always apply the `isAdmin` (or equivalent role-based) middleware to endpoints handling global resources. Routinely audit route definitions to ensure POST/PUT/DELETE actions on shared resources are restricted to administrators.
+## 2026-04-17 - Prisma Nested Filtering Error
+**Vulnerability:** Prisma query failed because `brand` was queried directly on `Ingredient` but it belongs to the nested relation `BrandPresentation`.
+**Learning:** Nested relational fields must be filtered using relation filters like `some`, `every`, or `none` (e.g. `{ presentations: { some: { brand: { contains: search } } } }`).
+**Prevention:** Check Prisma schema relations before querying nested fields.
+
+## 2024-05-24 - Maximum Input Length Validations
+**Vulnerability:** Missing maximum length constraints on user inputs (e.g., username, email, name, identification number) during registration and profile updates.
+**Learning:** While minimum length limits and format checks (e.g., regex for emails) were present, the absence of upper bounds could allow an attacker to send disproportionately large payload strings (Denial of Service risk) or cause unpredictable database string truncation exceptions.
+**Prevention:** Always enforce both minimum and maximum length bounds on user-supplied strings at the application boundary, specifically within creation and modification endpoints. Utilize optional chaining (`?.`) when assessing the `.length` of fields that might be absent or `undefined` to prevent Unhandled Promise Rejections and Internal Server Errors (500) during updates.
+
+## 2024-05-25 - [Insecure Direct Object Reference (IDOR) on Deletion Information Leakage]
+**Vulnerability:** The `deleteBaseRecipe` and potentially other controllers evaluated constraints (like "is this recipe used elsewhere?") before verifying if the current user actually owned the target resource.
+**Learning:** If a foreign user attempts to delete a resource they don't own, the system might return a 400 error ("cannot be deleted because it is in use") instead of a generic 404 ("not found"). This allows attackers to map out whether internal IDs exist and are active in other parts of the application.
+**Prevention:** Always verify ownership (using `findUnique` comparing `userId`) and return a 404 immediately before performing any relational checks or executing transactions, regardless of whether you're about to use Prisma or `mockData`.

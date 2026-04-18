@@ -136,8 +136,9 @@ export default function SettingsManager() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-gray mb-1">URL Logo de la Empresa</label>
+                <label htmlFor="companyLogo" className="block text-sm font-medium text-slate-gray mb-1">URL Logo de la Empresa</label>
                 <input
+                  id="companyLogo"
                   type="url"
                   value={formData.companyLogo}
                   onChange={e => setFormData({...formData, companyLogo: e.target.value})}
@@ -150,8 +151,9 @@ export default function SettingsManager() {
 
           <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
             <h3 className="text-lg font-semibold text-slate-gray mb-4">Términos y Políticas</h3>
-            <label className="block text-sm font-medium text-slate-gray mb-1">Políticas Generales del Presupuesto</label>
+            <label htmlFor="policies" className="block text-sm font-medium text-slate-gray mb-1">Políticas Generales del Presupuesto</label>
             <textarea
+              id="policies"
               value={formData.policies}
               onChange={e => setFormData({...formData, policies: e.target.value})}
               rows="4"
@@ -182,8 +184,7 @@ export default function SettingsManager() {
                     <button
                       type="button"
                       onClick={() => handleRemovePaymentMethod(index)}
-                      className="absolute top-4 right-4 text-gray-400 hover:text-red-500"
-                    >
+                      className="absolute top-4 right-4 text-gray-400 hover:text-red-500">
                       <Trash2 className="w-4 h-4" />
                     </button>
 

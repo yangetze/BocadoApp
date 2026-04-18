@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { baseRecipeApi } from "../../api";
 import toast from "react-hot-toast";
 import BaseRecipeList from "./BaseRecipeList";
@@ -10,11 +10,12 @@ export default function BaseRecipeManager() {
   const [editingRecipe, setEditingRecipe] = useState(null);
   const [baseRecipes, setBaseRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchBaseRecipes = async () => {
+  const fetchBaseRecipes = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await baseRecipeApi.getAll();
+      const data = await baseRecipeApi.getAll(searchQuery);
       setBaseRecipes(data);
     } catch (error) {
       toast.error(error.message || "Error al cargar las recetas base");
@@ -22,13 +23,17 @@ export default function BaseRecipeManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery]);
 
   useEffect(() => {
-    if (view === "list") {
-      fetchBaseRecipes();
-    }
-  }, [view]);
+    const delayDebounceFn = setTimeout(() => {
+      if (view === "list") {
+        fetchBaseRecipes();
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [view, searchQuery]);
 
   if (view === "builder") {
     return (
@@ -58,6 +63,8 @@ export default function BaseRecipeManager() {
   return (
     <BaseRecipeList
       recipes={baseRecipes}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
       loading={loading}
       onCreateNew={() => {
         setEditingRecipe(null);

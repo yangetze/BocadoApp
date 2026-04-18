@@ -80,9 +80,6 @@ describe('Auth Middleware', () => {
       });
 
       it('should return 401 when header is present but malformed (missing Bearer)', () => {
-        // According to the code:
-        // const token = authHeader && authHeader.split(' ')[1];
-        // If header is "validtoken", split(' ')[1] will be undefined
         mockReq.headers['authorization'] = 'validtoken';
 
         verifyToken(mockReq, mockRes, mockNext);

@@ -178,7 +178,7 @@ export function BrandSelectionModal({
                           <div className="ml-3 flex-1 flex justify-between items-center">
                             <div>
                               <span className="font-medium text-sm text-slate-gray">
-                                {p.presentationName} {p.brand && `(${p.brand})`}
+                                {p.brand ? p.brand + ' - ' : ''}{p.presentationName}
                               </span>
                             </div>
                             <div className="text-right">

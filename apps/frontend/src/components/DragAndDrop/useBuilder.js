@@ -273,14 +273,28 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
 
 
+        // ⚡ Bolt: Group ingredients by ID before sending to backend.
+        // This converts O(N) duplicate inserts into O(1) grouped updates,
+        // reducing payload size and avoiding unique constraint violations.
+        const groupedIngredients = canvasItems.reduce((acc, item) => {
+          const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
+          const existing = acc.find(x => x.ingredientId === id);
+          if (existing) {
+            existing.quantity += parseFloat(item.quantity || 1);
+          } else {
+            acc.push({
+              ingredientId: id,
+              quantity: parseFloat(item.quantity || 1),
+            });
+          }
+          return acc;
+        }, []);
+
         const payload = {
           name: baseRecipeMetadata.name,
           baseYield: parseFloat(baseRecipeMetadata.baseYield),
           yieldUnit: baseRecipeMetadata.yieldUnit,
-          ingredients: canvasItems.map((item) => ({
-            ingredientId: item.id.replace(/^canvas-\d+-/, "") || item.id,
-            quantity: item.quantity || 1,
-          })),
+          ingredients: groupedIngredients,
         };
         if (isEditing) {
           await baseRecipeApi.update(editingItem.id, {

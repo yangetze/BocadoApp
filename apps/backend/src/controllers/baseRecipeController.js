@@ -5,13 +5,24 @@ import logger from '../utils/logger.js';
 
 export const getBaseRecipes = async (req, res) => {
   const userId = req.user.id;
+  const { search } = req.query;
   
   if (isTestMode()) {
-    return res.status(200).json(mockData.baseRecipes.filter(r => r.userId === userId).sort((a, b) => b.createdAt - a.createdAt));
+    let result = mockData.baseRecipes.filter(r => r.userId === userId);
+    if (search) {
+      const lowerSearch = search.toLowerCase();
+      result = result.filter(r => r.name.toLowerCase().includes(lowerSearch));
+    }
+    return res.status(200).json(result.sort((a, b) => b.createdAt - a.createdAt));
   }
   try {
+    const whereClause = { userId };
+    if (search) {
+      whereClause.name = { contains: search, mode: 'insensitive' };
+    }
+
     const baseRecipes = await prisma.baseRecipe.findMany({
-      where: { userId },
+      where: whereClause,
       include: {
         ingredients: {
           include: { ingredient: true }
@@ -208,6 +219,11 @@ export const deleteBaseRecipe = async (req, res) => {
     const { id } = req.params;
 
     if (isTestMode()) {
+      const existingBaseRecipe = mockData.baseRecipes.find(br => br.id === id);
+      if (!existingBaseRecipe || existingBaseRecipe.userId !== req.user.id) {
+        return res.status(404).json({ error: 'Receta base no encontrada' });
+      }
+
       const usedInSuper = mockData.superRecipes.some(sr => sr.baseRecipes.some(br => br.baseRecipeId === id));
 
       if (usedInSuper) {
@@ -216,6 +232,11 @@ export const deleteBaseRecipe = async (req, res) => {
 
       mockData.baseRecipes = mockData.baseRecipes.filter(br => br.id !== id);
       return res.status(200).json({ message: 'Receta base eliminada exitosamente' });
+    }
+
+    const existingBaseRecipe = await prisma.baseRecipe.findUnique({ where: { id } });
+    if (!existingBaseRecipe || existingBaseRecipe.userId !== req.user.id) {
+       return res.status(404).json({ error: 'Receta base no encontrada' });
     }
 
     const usedInSuper = await prisma.superRecipeBaseRecipe.findFirst({ where: { baseRecipeId: id } });

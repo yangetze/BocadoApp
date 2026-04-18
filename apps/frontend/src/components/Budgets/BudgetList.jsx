@@ -1,19 +1,27 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Plus, Trash2, Edit2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { normalizeString } from '../../utils/stringUtils';
 
 export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDelete }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // ⚡ Bolt: Pre-calculate normalized customer names when budgets change, not on every keystroke
+  const normalizedBudgets = useMemo(() => {
+    if (!budgets) return [];
+    return budgets.map(budget => ({
+      ...budget,
+      _normalizedName: budget.customerName ? normalizeString(budget.customerName) : ''
+    }));
+  }, [budgets]);
+
   const filteredBudgets = useMemo(() => {
-    const term = searchTerm.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    return budgets.filter((budget) => {
-      const nameMatch = budget.customerName && budget.customerName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(term);
-      return nameMatch;
-    });
-  }, [budgets, searchTerm]);
+    if (!searchTerm) return normalizedBudgets;
+    const term = normalizeString(searchTerm);
+    return normalizedBudgets.filter(budget => budget._normalizedName.includes(term));
+  }, [normalizedBudgets, searchTerm]);
 
   const totalPages = Math.ceil(filteredBudgets.length / itemsPerPage) || 1;
   const paginatedBudgets = filteredBudgets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -92,7 +100,10 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => onEdit(budget)}
+                          onClick={() => {
+                            const { _normalizedName, ...originalBudget } = budget;
+                            onEdit(originalBudget);
+                          }}
                           className="p-2 text-slate-gray hover:bg-gray-100 rounded-lg transition-colors"
                           title="Editar Presupuesto"
                         >
