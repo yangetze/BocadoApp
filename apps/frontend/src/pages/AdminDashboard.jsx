@@ -36,14 +36,25 @@ export default function AdminDashboard() {
     }
   };
 
+  // ⚡ Bolt: Pre-calculate normalized fields when users change, not on every keystroke
+  const normalizedUsers = useMemo(() => {
+    if (!users) return [];
+    return users.map(u => ({
+      ...u,
+      _normalizedUsername: u.username.toLowerCase(),
+      _normalizedEmail: u.email.toLowerCase()
+    }));
+  }, [users]);
+
   const filteredUsers = useMemo(() => {
+    if (!searchTerm) return normalizedUsers;
     const lowercasedSearchTerm = searchTerm.toLowerCase();
-    return users.filter(u =>
-      u.username.toLowerCase().includes(lowercasedSearchTerm) ||
-      u.email.toLowerCase().includes(lowercasedSearchTerm) ||
+    return normalizedUsers.filter(u =>
+      u._normalizedUsername.includes(lowercasedSearchTerm) ||
+      u._normalizedEmail.includes(lowercasedSearchTerm) ||
       u.identificationNumber.includes(searchTerm)
     );
-  }, [users, searchTerm]);
+  }, [normalizedUsers, searchTerm]);
 
   return (
     <div className="min-h-screen bg-gray-50/50">
