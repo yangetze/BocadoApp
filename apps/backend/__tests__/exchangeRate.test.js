@@ -6,6 +6,9 @@ jest.unstable_mockModule('../src/middleware/authMiddleware.js', () => ({
   verifyToken: (req, res, next) => {
     req.user = { id: 'user-default-1' };
     next();
+  },
+  isAdmin: (req, res, next) => {
+    next();
   }
 }));
 

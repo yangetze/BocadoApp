@@ -30,3 +30,9 @@
 ## 2026-04-15 - Responsive Button Container Width
 **Learning:** Tailwind width utilities like `w-1/4` on wrapper elements can override parent grid cell sizing, causing internal flex contents (like action buttons in modals) to truncate or break layout on smaller screens. 
 **Action:** Rely on CSS grid sizing at the parent level (e.g., `grid-cols-[...]`) to define column widths, and let internal containers fill the available space naturally without restrictive absolute or percentage widths.
+## 2026-04-16 - Action Button Loading and Blocking State Documentation
+**Learning:** We need standard rules across the frontend to prevent users from clicking primary action buttons (like "Save") multiple times when an asynchronous process is running, as this can lead to data duplication and a poor UX with lack of feedback.
+**Action:** Updated the `docs/frontend-styleguide.md` to formally document that upon clicking a primary action button, it must display a loading spinner and **all** action buttons on the screen must be disabled to block conflicting interactions.
+## 2025-04-16 - Accessible Add/Delete Detail Icon Buttons
+**Learning:** Icon buttons dynamically generated for adding or deleting form inputs (like payment details) that only use characters like `&times;` or `+` are confusing for screen reader users when missing an `aria-label`. The user loses the context of what they are deleting or adding.
+**Action:** Always add descriptive `aria-label` attributes to dynamically generated action buttons in form mappings.

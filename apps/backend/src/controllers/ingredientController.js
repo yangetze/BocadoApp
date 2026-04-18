@@ -13,7 +13,7 @@ export const getIngredients = async (req, res) => {
       const lowerSearch = search.toLowerCase();
       result = result.filter(i =>
         i.name.toLowerCase().includes(lowerSearch) ||
-        (i.brand && i.brand.toLowerCase().includes(lowerSearch))
+        (i.presentations && i.presentations.some(p => p.brand && p.brand.toLowerCase().includes(lowerSearch)))
       );
     }
     return res.status(200).json(result.sort((a, b) => b.createdAt - a.createdAt));
@@ -24,7 +24,7 @@ export const getIngredients = async (req, res) => {
     if (search) {
       whereClause.OR = [
         { name: { contains: search, mode: 'insensitive' } },
-        { brand: { contains: search, mode: 'insensitive' } }
+        { presentations: { some: { brand: { contains: search, mode: 'insensitive' } } } }
       ];
     }
 
