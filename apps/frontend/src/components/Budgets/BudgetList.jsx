@@ -100,7 +100,10 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => onEdit(budget)}
+                          onClick={() => {
+                            const { _normalizedName, ...originalBudget } = budget;
+                            onEdit(originalBudget);
+                          }}
                           className="p-2 text-slate-gray hover:bg-gray-100 rounded-lg transition-colors"
                           title="Editar Presupuesto"
                         >

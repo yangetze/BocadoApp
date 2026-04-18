@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { baseRecipeApi } from "../../api";
 import toast from "react-hot-toast";
 import BaseRecipeList from "./BaseRecipeList";
@@ -12,7 +12,7 @@ export default function BaseRecipeManager() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchBaseRecipes = async () => {
+  const fetchBaseRecipes = useCallback(async () => {
     setLoading(true);
     try {
       const data = await baseRecipeApi.getAll(searchQuery);
@@ -23,7 +23,7 @@ export default function BaseRecipeManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -33,7 +33,7 @@ export default function BaseRecipeManager() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [view, searchQuery]);
+  }, [view, fetchBaseRecipes]);
 
   if (view === "builder") {
     return (

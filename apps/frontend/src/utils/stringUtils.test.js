@@ -1,3 +1,4 @@
+/* global describe, it, expect */
 import { normalizeString } from './stringUtils';
 
 describe('normalizeString', () => {
