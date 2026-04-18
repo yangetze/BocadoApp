@@ -41,3 +41,6 @@
 ## 2026-04-18 - [Avoid Cross-Boundary String Matching]
 **Learning:** When optimizing React filtering performance by pre-computing search strings for multiple fields, concatenating them into a single `_searchString` (e.g., `_searchString: ${u.username} ${u.email}`) introduces a bug where a search term could unintentionally match across boundaries (e.g., matching the space you intentionally injected).
 **Action:** When pre-computing normalized fields for list filtering, keep the fields separate (e.g., `_normalizedUsername`, `_normalizedEmail`) and maintain the distinct logical `||` checks during filtering to ensure accurate results.
+## 2024-05-19 - Frontend O(N) DOM Re-rendering During Debounced Search
+**Learning:** Even if an API search is debounced, capturing the raw input value into React state (e.g., `setSearchQuery(e.target.value)`) triggers a render on every keystroke. If a large list maps over its data array during this render without memoization, it causes O(N) DOM reconciliations per keystroke, leading to severe input lag.
+**Action:** Always wrap the list-rendering logic (e.g., `items.map(...)`) in a `useMemo` hook that depends on the `items` array rather than the `searchQuery`, and ensure event handlers passed to the list items are wrapped in `useCallback`. This safely bypasses list re-renders during active typing.
