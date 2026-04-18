@@ -208,7 +208,7 @@ describe('Auth Routes', () => {
         .send({ username: 'ab', email: 'valid@example.com', identificationNumber: '123' });
 
       expect(res.statusCode).toBe(400);
-      expect(res.body.error).toBe('El nombre de usuario debe tener al menos 3 caracteres');
+      expect(res.body.error).toBe('El nombre de usuario debe tener entre 3 y 50 caracteres');
     });
 
     it('should return 400 if user already exists (Prisma P2002)', async () => {
