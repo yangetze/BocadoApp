@@ -35,3 +35,7 @@
 ## 2026-04-17 - [Database Search Optimization]
 **Learning:** In Prisma schema design, performing `contains: search, mode: 'insensitive'` queries on unindexed text fields (like `name` or `brand`) across large datasets like Ingredients and Recipes creates significant CPU overhead and slow response times because it forces full table scans.
 **Action:** Always add `@@index([fieldName])` in the Prisma schema for columns that are frequently used in `contains` or `startsWith` text-search operations (e.g., search bars in the frontend) to improve database lookup performance and prevent unnecessary application-side filtering.
+
+## 2025-04-17 - Loop Optimization in Cost Calculations
+**Learning:** For performance-critical code in Node.js, standard indexed `for` loops can be measurably faster than `for...of` loops, especially when dealing with nested iterations over large datasets (e.g., ingredients within base recipes within super recipes). The overhead of the iteration protocol in `for...of` adds up.
+**Action:** Use standard indexed `for` loops in hot paths like `calculateSuperRecipeCost` to minimize execution time.

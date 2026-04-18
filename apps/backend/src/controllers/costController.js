@@ -71,7 +71,11 @@ export const calculateSuperRecipeCost = async (req, res) => {
     const baseRecipeCache = new Map();
 
     // 1. Calculate cost from nested Base Recipes
-    for (const srBaseRecipe of superRecipe.baseRecipes) {
+    const superRecipeBaseRecipes = superRecipe.baseRecipes;
+    const srBrLen = superRecipeBaseRecipes.length;
+
+    for (let i = 0; i < srBrLen; i++) {
+      const srBaseRecipe = superRecipeBaseRecipes[i];
       const { quantityNeeded, baseRecipe } = srBaseRecipe;
 
       let cachedData = baseRecipeCache.get(baseRecipe.id);
@@ -80,7 +84,11 @@ export const calculateSuperRecipeCost = async (req, res) => {
         let baseRecipeCostPerUnit = 0;
         // Calculate the cost of the base recipe based on its ingredients
         const baseRecipeIngredientsBreakdown = [];
-        for (const brIngredient of baseRecipe.ingredients) {
+        const ingredients = baseRecipe.ingredients;
+        const ingredientsLen = ingredients.length;
+
+        for (let j = 0; j < ingredientsLen; j++) {
+          const brIngredient = ingredients[j];
           const { quantity, ingredient } = brIngredient;
           // Cost of this ingredient for the base recipe's default yield
           const cost = quantity * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1));
@@ -114,7 +122,11 @@ export const calculateSuperRecipeCost = async (req, res) => {
     }
 
     // 2. Calculate cost from Direct Ingredients (e.g. Box, Cake board)
-    for (const srDirectIngredient of superRecipe.directIngredients) {
+    const superRecipeDirectIngredients = superRecipe.directIngredients;
+    const srDiLen = superRecipeDirectIngredients.length;
+
+    for (let i = 0; i < srDiLen; i++) {
+      const srDirectIngredient = superRecipeDirectIngredients[i];
       const { quantityNeeded, ingredient } = srDirectIngredient;
       const finalCost = quantityNeeded * (ingredient.globalPrice / (ingredient.globalPriceQuantity || 1)) * scaleMultiplier;
       totalBaseCost += finalCost;
