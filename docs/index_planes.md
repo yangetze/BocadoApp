@@ -28,6 +28,7 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Corregir Error al Guardar Súper Recetas](plan_bug_super_receta.md)
 
 ## En desarrollo
+- [Plan de Trabajo: Buscador de Ingredientes por Nombre y Marca](plan_ingredientes_buscador.md)
 
 ## Backlog
 - [Plan: Exportación y Visualización de Presupuestos en PDF](plan_presupuestos_exportacion_pdf.md)

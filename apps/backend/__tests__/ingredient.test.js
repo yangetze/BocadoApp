@@ -112,5 +112,16 @@ describe('Ingredient Routes', () => {
       expect(res.statusCode).toBe(400);
       expect(prisma.ingredient.delete).not.toHaveBeenCalled();
     });
+
+    it('should return 404 if the ingredient belongs to another user', async () => {
+      const otherUserIngredient = { id: '1', name: 'Other Flour', userId: 'user-other' };
+      prisma.ingredient.findUnique.mockResolvedValue(otherUserIngredient);
+
+      const res = await request(app).delete('/api/ingredients/1');
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body.error).toBe('Ingrediente no encontrado');
+      expect(prisma.ingredient.delete).not.toHaveBeenCalled();
+    });
   });
 });
