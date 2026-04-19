@@ -47,3 +47,4 @@ Este documento centraliza el estado de todos los planes de la aplicación.
 - [Plan de Trabajo: Mejoras UX en Presentaciones de Ingredientes](plan_ingredientes_presentaciones_ux.md)
 - [Plan de Trabajo: Corregir Bug en Total Ingredientes de Súper Recetas](plan_super_receta_total_ingredientes_bug.md)
 - [Plan de Trabajo: Crear y Modificar Presupuestos con Tests](plan_presupuestos_crear_modificar.md)
+- [Marca Favorita por Ingrediente](./plan_ingredientes_marcas_favorita.md) - Completado - Rama: `feature/favorite-ingredient-brand`

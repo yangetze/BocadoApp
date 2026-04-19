@@ -44,3 +44,6 @@
 ## 2024-05-19 - Frontend O(N) DOM Re-rendering During Debounced Search
 **Learning:** Even if an API search is debounced, capturing the raw input value into React state (e.g., `setSearchQuery(e.target.value)`) triggers a render on every keystroke. If a large list maps over its data array during this render without memoization, it causes O(N) DOM reconciliations per keystroke, leading to severe input lag.
 **Action:** Always wrap the list-rendering logic (e.g., `items.map(...)`) in a `useMemo` hook that depends on the `items` array rather than the `searchQuery`, and ensure event handlers passed to the list items are wrapped in `useCallback`. This safely bypasses list re-renders during active typing.
+## 2026-04-19 - Added Favorite Brand Presentation feature
+**Learning:** Adding a boolean indicator correctly toggles in a list by using `map` array function and updating state.
+**Action:** Always maintain UI representation syncing with database scheme correctly when managing inner lists inside modal.

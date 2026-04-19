@@ -70,6 +70,7 @@ model BrandPresentation {
   id               String   @id @default(uuid())
   brand            String?
   presentationName String
+  isFavorite       Boolean @default(false)
   cost             Float // Cost in base currency (e.g. USD)
   unitQuantity     Float // e.g. 1000, 30
   measurementUnit  String // e.g. "gr", "u"
