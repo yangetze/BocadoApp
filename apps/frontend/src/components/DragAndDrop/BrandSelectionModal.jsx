@@ -212,7 +212,7 @@ export function BrandSelectionModal({
               onClick={handleConfirm}
               className="px-6 py-2.5 rounded-xl text-sm font-medium bg-slate-gray text-white hover:bg-opacity-90 shadow-sm transition-all"
             >
-              Confirmar y Guardar Presupuesto
+              Guardar
             </button>
           </div>
         </motion.div>

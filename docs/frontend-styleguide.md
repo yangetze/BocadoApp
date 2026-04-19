@@ -44,6 +44,7 @@ El Dark Mode debe sentirse como entrar a una cocina profesional de noche: elegan
 ## 🔘 3. Componentes Clave
 
 ### Botones
+- **Nomenclatura de Botones de Guardado (Agregado):** Todo botón destinado a guardar información (ya sea para crear un nuevo registro o para modificar/editar uno existente) debe decir estrictamente **"Guardar"**. Evitar frases compuestas como "Guardar cambios", "Crear nuevo", etc., para mantener la consistencia y la simplicidad en la interfaz.
 - **Builder UI Titles (Agregado):** Cuando se edita una entidad (ej. Súper Receta, Receta Base, Presupuesto), el título del constructor debe reflejar la acción (ej. "Modificar Receta Base") en lugar de usar un título de creación como "Nueva...".
 - **Mobile Action Buttons (Agregado):** En constructores complejos en dispositivos móviles, los botones de acción como "Guardar" y "Limpiar" pueden y deben utilizar íconos para ahorrar espacio, ubicándose preferiblemente en el Header para una fácil accesibilidad.
 

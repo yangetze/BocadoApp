@@ -311,7 +311,7 @@ export default function ExchangeRateManager() {
               disabled={savingManual}
               className="w-full bg-slate-gray text-white py-3 px-4 rounded-xl hover:bg-opacity-90 transition-all font-medium disabled:opacity-50"
             >
-              {savingManual ? 'Guardando...' : 'Guardar Tasa Manual'}
+              {savingManual ? 'Guardando...' : 'Guardar'}
             </button>
           </form>
         </motion.div>

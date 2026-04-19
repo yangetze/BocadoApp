@@ -265,7 +265,7 @@ export default function SettingsManager() {
                 className="bg-slate-gray text-white px-8 py-3 rounded-xl hover:bg-opacity-90 font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
              >
                 <Save className="w-5 h-5" />
-                {loading ? 'Guardando...' : 'Guardar Preferencias'}
+                {loading ? 'Guardando...' : 'Guardar'}
              </button>
           </div>
 

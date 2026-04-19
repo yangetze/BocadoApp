@@ -42,3 +42,7 @@
 ## 2025-04-18 - Action Button Loading and Blocking State in Modals
 **Learning:** Form modals without visual feedback during asynchronous submission (like `IngredientFormModal`) leave users guessing if their action registered. This leads to duplicate clicks or user frustration.
 **Action:** Consistently pass an `isSaving` prop to modals, use it to disable both "Submit" and "Cancel" buttons, and replace the submit button's text with an `animate-spin` loading indicator.
+
+## 2025-02-24 - Nomenclatura de Botones de Guardado
+**Learning:** Mantener la consistencia en la interfaz es clave. A veces, usar frases como "Guardar cambios" para edición o "Crear" para elementos nuevos causa variaciones innecesarias que pueden confundir en listados o formularios.
+**Action:** La regla de la guía de estilos dicta que todo botón destinado a guardar información debe decir estrictamente "Guardar", independientemente de si es edición o creación. Se debe evitar frases compuestas.
