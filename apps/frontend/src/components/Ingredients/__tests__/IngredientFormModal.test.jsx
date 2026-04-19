@@ -67,3 +67,58 @@ describe('IngredientFormModal', () => {
     });
   });
 });
+
+  it('toggles favorite presentation correctly', async () => {
+    const handleSave = jest.fn();
+    render(
+      <IngredientFormModal
+        isOpen={true}
+        onClose={() => {}}
+        onSave={handleSave}
+      />
+    );
+
+    // Add first presentation
+    const presentationNameInput = screen.getByPlaceholderText('Ej. Paquete 1Kg');
+    const brandInput = screen.getByPlaceholderText('Ej. Robin Hood');
+    const costInput = screen.getAllByRole('spinbutton')[2];
+    const qtyInput = screen.getAllByRole('spinbutton')[3];
+
+    fireEvent.change(presentationNameInput, { target: { value: 'P1' } });
+    fireEvent.change(brandInput, { target: { value: 'B1' } });
+    fireEvent.change(costInput, { target: { value: '1.00' } });
+    fireEvent.change(qtyInput, { target: { value: '1000' } });
+    fireEvent.click(screen.getByText('Agregar'));
+
+    // First one should be favorite by default
+    await waitFor(() => {
+      const favButtons = screen.getAllByRole('button', { name: /favorito/i });
+      expect(favButtons[0]).toHaveAttribute('aria-label', 'Quitar favorito');
+    });
+
+    // Add second presentation
+    fireEvent.change(presentationNameInput, { target: { value: 'P2' } });
+    fireEvent.change(brandInput, { target: { value: 'B2' } });
+    fireEvent.change(costInput, { target: { value: '2.00' } });
+    fireEvent.change(qtyInput, { target: { value: '1000' } });
+    fireEvent.click(screen.getByText('Agregar'));
+
+    // Second one should NOT be favorite by default
+    await waitFor(() => {
+      const favButtons = screen.getAllByRole('button', { name: /favorito/i });
+      expect(favButtons).toHaveLength(2);
+      expect(favButtons[0]).toHaveAttribute('aria-label', 'Quitar favorito');
+      expect(favButtons[1]).toHaveAttribute('aria-label', 'Marcar como favorito');
+    });
+
+    // Click the second one to make it favorite
+    const favButtons = screen.getAllByRole('button', { name: /favorito/i });
+    fireEvent.click(favButtons[1]);
+
+    // Verify the state is updated: first is not favorite, second is favorite
+    await waitFor(() => {
+      const updatedFavButtons = screen.getAllByRole('button', { name: /favorito/i });
+      expect(updatedFavButtons[0]).toHaveAttribute('aria-label', 'Marcar como favorito');
+      expect(updatedFavButtons[1]).toHaveAttribute('aria-label', 'Quitar favorito');
+    });
+  });

@@ -74,6 +74,7 @@ export const createIngredient = async (req, res) => {
           create: presentations?.map(p => ({
             brand: p.brand,
             presentationName: p.presentationName,
+            isFavorite: Boolean(p.isFavorite),
             cost: parseFloat(p.cost),
             unitQuantity: parseFloat(p.unitQuantity),
             measurementUnit: p.measurementUnit
@@ -138,6 +139,7 @@ export const updateIngredient = async (req, res) => {
                     ingredientId: id,
                     brand: p.brand,
                     presentationName: p.presentationName,
+                    isFavorite: Boolean(p.isFavorite),
                     cost: parseFloat(p.cost),
                     unitQuantity: parseFloat(p.unitQuantity),
                     measurementUnit: p.measurementUnit

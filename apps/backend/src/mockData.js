@@ -20,7 +20,7 @@ export const mockData = {
 export const initMockData = () => {
   // Add some ingredients
   mockData.ingredients.push(
-    { id: 'ing-1', name: 'Harina de Trigo', globalPrice: 2.5, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
+    { id: 'ing-1', name: 'Harina de Trigo', globalPrice: 2.5, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [{ brand: 'Robin Hood', presentationName: 'Paquete 1kg', cost: 2.5, unitQuantity: 1000, measurementUnit: 'gr', isFavorite: true }], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
     { id: 'ing-2', name: 'Azúcar Refinada', globalPrice: 1.8, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
     { id: 'ing-3', name: 'Huevos', globalPrice: 5.0, globalPriceQuantity: 1, measurementUnit: 'u', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },
     { id: 'ing-4', name: 'Mantequilla', globalPrice: 4.2, globalPriceQuantity: 1, measurementUnit: 'gr', presentations: [], budgetSelections: [], userId: 'user-default-1', createdAt: new Date() },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Heart } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
@@ -21,7 +21,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
     brand: '',
     cost: '',
     unitQuantity: '1',
-    measurementUnit: 'gr'
+    measurementUnit: 'gr',
+    isFavorite: false
   });
 
   useEffect(() => {
@@ -36,7 +37,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
           brand: '',
           cost: '',
           unitQuantity: '1',
-          measurementUnit: 'gr'
+          measurementUnit: 'gr',
+          isFavorite: false
         });
       }
     }
@@ -85,10 +87,13 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
       setEditingPresentationIndex(null);
     } else {
       // Add new presentation
-      setFormData(prev => ({
-        ...prev,
-        presentations: [...(prev.presentations || []), { ...currentPresentation }]
-      }));
+      setFormData(prev => {
+        const isFirst = !(prev.presentations && prev.presentations.length > 0);
+        return {
+          ...prev,
+          presentations: [...(prev.presentations || []), { ...currentPresentation, isFavorite: isFirst }]
+        };
+      });
     }
 
     setCurrentPresentation({
@@ -96,7 +101,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
       brand: '',
       cost: '',
       unitQuantity: '1',
-      measurementUnit: formData.measurementUnit || 'gr'
+      measurementUnit: formData.measurementUnit || 'gr',
+      isFavorite: false
     });
   };
 
@@ -112,7 +118,8 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
       brand: '',
       cost: '',
       unitQuantity: '1',
-      measurementUnit: formData.measurementUnit || 'gr'
+      measurementUnit: formData.measurementUnit || 'gr',
+      isFavorite: false
     });
   };
 
@@ -121,6 +128,22 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
       ...prev,
       presentations: prev.presentations.filter((_, i) => i !== index)
     }));
+    if (editingPresentationIndex === index) {
+      cancelEditPresentation();
+    } else if (editingPresentationIndex !== null && editingPresentationIndex > index) {
+      setEditingPresentationIndex(editingPresentationIndex - 1);
+    }
+  };
+
+  const toggleFavorite = (e, index) => {
+    e.stopPropagation();
+    setFormData(prev => {
+      const newPresentations = prev.presentations.map((p, i) => ({
+        ...p,
+        isFavorite: i === index
+      }));
+      return { ...prev, presentations: newPresentations };
+    });
   };
 
   if (!isOpen) return null;
@@ -282,7 +305,18 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     {formData.presentations.map((p, idx) => (
                       <div key={idx} className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" onClick={() => editPresentation(idx)} title="Haz clic para editar el costo">
                         <div>
-                          <div className="text-sm font-medium text-slate-gray">{p.brand ? p.brand + ' - ' : ''}{p.presentationName}</div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={(e) => toggleFavorite(e, idx)}
+                              className={`p-1 rounded-full transition-colors ${p.isFavorite ? 'text-red-500 hover:text-red-600' : 'text-gray-300 hover:text-red-400'}`}
+                              aria-label={p.isFavorite ? 'Quitar favorito' : 'Marcar como favorito'}
+                              title={p.isFavorite ? 'Quitar favorito' : 'Marcar como favorito'}
+                            >
+                              <Heart size={16} fill={p.isFavorite ? 'currentColor' : 'none'} />
+                            </button>
+                            <div className="text-sm font-medium text-slate-gray">{p.brand ? p.brand + ' - ' : ''}{p.presentationName}</div>
+                          </div>
                           <div className="text-xs text-gray-500 mt-0.5">${p.cost} / {p.unitQuantity}{p.measurementUnit}</div>
                         </div>
                         <button
