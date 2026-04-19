@@ -313,7 +313,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                   type="submit"
                   className="px-5 py-2.5 bg-slate-gray text-white rounded-lg hover:bg-opacity-90 font-medium shadow-sm transition-colors"
                 >
-                  {isEditing ? 'Guardar Cambios' : 'Guardar'}
+                  Guardar
                 </button>
               </div>
             </form>
