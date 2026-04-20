@@ -106,6 +106,7 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
                           }}
                           className="p-2 text-slate-gray hover:bg-gray-100 rounded-lg transition-colors"
                           title="Editar Presupuesto"
+                          aria-label={`Editar presupuesto de ${budget.customerName || 'Sin Nombre'}`}
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
@@ -117,6 +118,7 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
                           }}
                           className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                           title="Eliminar Presupuesto"
+                          aria-label={`Eliminar presupuesto de ${budget.customerName || 'Sin Nombre'}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

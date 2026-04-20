@@ -35,14 +35,26 @@ export default function BaseRecipeManager() {
     return () => clearTimeout(delayDebounceFn);
   }, [view, searchQuery]);
 
+  const handleCreateNew = useCallback(() => {
+    setEditingRecipe(null);
+    setView("builder");
+  }, []);
+
+  const handleEdit = useCallback((recipe) => {
+    setEditingRecipe(recipe);
+    setView("builder");
+  }, []);
+
+  const handleBackToList = useCallback(() => {
+    setView("list");
+    setEditingRecipe(null);
+  }, []);
+
   if (view === "builder") {
     return (
       <div className="space-y-4">
         <button
-          onClick={() => {
-            setView("list");
-            setEditingRecipe(null);
-          }}
+          onClick={handleBackToList}
           className="flex items-center gap-2 text-slate-gray hover:text-peach-soft transition-colors font-medium mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -51,10 +63,7 @@ export default function BaseRecipeManager() {
         <BaseRecipeBuilderWrapper
           editingRecipe={editingRecipe}
           initialData={editingRecipe}
-          onSuccess={() => {
-            setView("list");
-            setEditingRecipe(null);
-          }}
+          onSuccess={handleBackToList}
         />
       </div>
     );
@@ -66,14 +75,8 @@ export default function BaseRecipeManager() {
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
       loading={loading}
-      onCreateNew={() => {
-        setEditingRecipe(null);
-        setView("builder");
-      }}
-      onEdit={(recipe) => {
-        setEditingRecipe(recipe);
-        setView("builder");
-      }}
+      onCreateNew={handleCreateNew}
+      onEdit={handleEdit}
     />
   );
 }

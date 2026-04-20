@@ -36,6 +36,19 @@ export const createBudget = async (req, res) => {
       if (validIngredientsCount !== ingredientIds.length) {
         return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
       }
+
+      const brandPresentationIds = [...new Set(brandSelections.map(bs => bs.brandPresentationId))];
+      const validBrandPresentationsCount = await prisma.brandPresentation.count({
+        where: {
+          id: { in: brandPresentationIds },
+          ingredient: {
+            userId: userId
+          }
+        }
+      });
+      if (validBrandPresentationsCount !== brandPresentationIds.length) {
+        return res.status(404).json({ error: 'Una o más presentaciones de marca no fueron encontradas o no tienes permiso' });
+      }
     }
 
     if (isTestMode()) {
@@ -201,6 +214,19 @@ export const updateBudget = async (req, res) => {
       });
       if (validIngredientsCount !== ingredientIds.length) {
         return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+      }
+
+      const brandPresentationIds = [...new Set(brandSelections.map(bs => bs.brandPresentationId))];
+      const validBrandPresentationsCount = await prisma.brandPresentation.count({
+        where: {
+          id: { in: brandPresentationIds },
+          ingredient: {
+            userId: userId
+          }
+        }
+      });
+      if (validBrandPresentationsCount !== brandPresentationIds.length) {
+        return res.status(404).json({ error: 'Una o más presentaciones de marca no fueron encontradas o no tienes permiso' });
       }
     }
 
