@@ -46,3 +46,6 @@
 ## 2025-02-24 - Nomenclatura de Botones de Guardado
 **Learning:** Mantener la consistencia en la interfaz es clave. A veces, usar frases como "Guardar cambios" para edición o "Crear" para elementos nuevos causa variaciones innecesarias que pueden confundir en listados o formularios.
 **Action:** La regla de la guía de estilos dicta que todo botón destinado a guardar información debe decir estrictamente "Guardar", independientemente de si es edición o creación. Se debe evitar frases compuestas.
+## 2024-05-19 - Accessible dynamically generated lists
+**Learning:** Icon-only buttons used for deletion operations within dynamically generated configuration lists (such as payment details or custom forms) are a common pattern that lacks inherent screen-reader support.
+**Action:** Always ensure that inline action buttons containing only icons (like Trash or cross/close icons) receive explicit `aria-label` attributes (e.g. `aria-label="Eliminar detalle"`) to maintain accessibility context for assistive technologies.
