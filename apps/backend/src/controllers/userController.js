@@ -91,6 +91,11 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
     const { username, email, identificationNumber, name, active, role } = req.body;
 
+    const existingUser = await prisma.user.findUnique({ where: { id } });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
     const dataToUpdate = {};
 
     if (email !== undefined) {
@@ -153,6 +158,12 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const existingUser = await prisma.user.findUnique({ where: { id } });
+    if (!existingUser) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
     await prisma.user.delete({ where: { id } });
     res.json({ message: 'Usuario eliminado correctamente' });
   } catch (error) {
