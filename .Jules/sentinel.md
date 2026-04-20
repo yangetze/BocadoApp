@@ -70,6 +70,10 @@
 **Vulnerability:** The `deleteBaseRecipe` and potentially other controllers evaluated constraints (like "is this recipe used elsewhere?") before verifying if the current user actually owned the target resource.
 **Learning:** If a foreign user attempts to delete a resource they don't own, the system might return a 400 error ("cannot be deleted because it is in use") instead of a generic 404 ("not found"). This allows attackers to map out whether internal IDs exist and are active in other parts of the application.
 **Prevention:** Always verify ownership (using `findUnique` comparing `userId`) and return a 404 immediately before performing any relational checks or executing transactions, regardless of whether you're about to use Prisma or `mockData`.
+## 2024-04-20 - Prevent P2025 Information Leakage in Controller Deletions/Updates
+ **Vulnerability:** Unhandled Prisma `P2025` errors during `delete` and `update` operations trigger generic `500 Internal Server Error` responses, leaking information about whether a resource exists to potential attackers.
+ **Learning:** Prisma's `.delete` and `.update` methods throw an error if the targeted `where` clause (like an ID) does not exist, rather than failing silently or returning null. Relying on the global `catch` block for missing resources bypasses explicit 404 handling.
+ **Prevention:** Always prefix destructive or state-changing operations with a `findUnique` query to verify existence (and ownership) explicitly, and return a semantic `404 Not Found` before executing the actual update/delete command.
 
 ## 2025-05-20 - [Insecure Direct Object Reference (IDOR) on Nested Brand Presentation Relation]
 **Vulnerability:** The `createBudget` and `updateBudget` controllers only verified the ownership of the `ingredientId` when a user linked a `BrandPresentation` to a budget (`BudgetBrandSelection`). It did not verify the ownership of the `brandPresentationId` itself.
