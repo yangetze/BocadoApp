@@ -25,6 +25,7 @@ import { useBuilder } from "./useBuilder";
 import { BuilderHeader } from "./BuilderHeader";
 import { MarginRecommendationCard } from "./MarginRecommendationCard";
 import { BaseRecipeMetadataForm } from "./BaseRecipeMetadataForm";
+import { BrandSelectionModal } from "./BrandSelectionModal";
 import { IngredientsSummary } from "./IngredientsSummary";
 
 export default function Builder({ mode = "superRecipe", availableItems = [], editingItem, onSuccess, initialData }) {
@@ -52,6 +53,9 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
     updateItemQuantity,
     fetchMarginRecommendation,
     ingredientTotals,
+    isBrandSelectionModalOpen,
+    setIsBrandSelectionModalOpen,
+    confirmBudgetSave,
   } = useBuilder(mode, editingItem || initialData, onSuccess);
 
   const sensors = useSensors(
@@ -354,6 +358,14 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
           )
         ) : null}
       </DragOverlay>
+      {mode === "budget" && (
+        <BrandSelectionModal
+          isOpen={isBrandSelectionModalOpen}
+          onClose={() => setIsBrandSelectionModalOpen(false)}
+          onConfirm={confirmBudgetSave}
+          superRecipesList={canvasItems}
+        />
+      )}
     </DndContext>
   );
 }

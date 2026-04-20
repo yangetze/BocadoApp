@@ -50,3 +50,6 @@
 ## 2026-04-20 - Unknown Prisma Argument Fix
  **Learning:** When attempting to update a Prisma model and encountering "Unknown argument", the database fields need to be properly defined in `schema.prisma`. In this case, `defaultCurrency`, `companyLogo`, `policies`, and `paymentMethods` were missing on the `User` model despite being processed in the controller.
  **Action:** Define the missing fields in `schema.prisma`, generate the client using `npx prisma@X.X.X generate`, and create a migration using `npx prisma@X.X.X migrate dev` (or manually creating a SQL migration and pushing to origin for schema parity in edge cases where direct DB connections aren't feasible during automated runs).
+## 2026-04-20 - Fix missing modal block for budget saving
+ **Learning:** In complex React state machines (like `Builder.jsx`), a disconnected end-step component (like a modal that finalizes a network request) can silently break the entire flow. Even if the logic is prepared in a hook, the UI component must be physically rendered in the component tree to be reachable by the user.
+ **Action:** Always trace the full logic path from user click to network request. If a state transition relies on a component being mounted (like `isOpen` for a modal), ensure that component is imported and rendered.
