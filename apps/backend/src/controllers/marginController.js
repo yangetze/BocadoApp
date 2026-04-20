@@ -41,7 +41,11 @@ export const recommendMargin = async (req, res) => {
 
     // Por cada receta base
     if (superRecipe.baseRecipes) {
-      for (const srBaseRecipe of superRecipe.baseRecipes) {
+      // ⚡ Bolt: Loop optimization using a standard indexed for-loop instead of for...of
+      // Impact: Reduces overhead of the iteration protocol when computing margins for large nested recipes.
+      const baseRecipesLen = superRecipe.baseRecipes.length;
+      for (let i = 0; i < baseRecipesLen; i++) {
+        const srBaseRecipe = superRecipe.baseRecipes[i];
         // 2 puntos por la receta base en sí (requiere preparación previa)
         complexityScore += 2;
         // 1 punto por cada ingrediente dentro de la receta base
