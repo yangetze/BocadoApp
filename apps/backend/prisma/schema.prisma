@@ -28,6 +28,10 @@ model User {
   identificationNumber String   @unique
   name                 String?
   active               Boolean  @default(true)
+  defaultCurrency      String?
+  companyLogo          String?
+  policies             String?
+  paymentMethods       Json?
   role                 Role     @default(USER)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
