@@ -1,0 +1,10 @@
+
+> @bocadoapp/frontend@1.0.0 dev
+> vite
+
+
+  VITE v5.4.21  ready in 564 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+6:22:45 PM [vite] hmr update /src/components/Budgets/BudgetList.jsx, /src/index.css
