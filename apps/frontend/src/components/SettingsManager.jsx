@@ -184,7 +184,8 @@ export default function SettingsManager() {
                     <button
                       type="button"
                       onClick={() => handleRemovePaymentMethod(index)}
-                      className="absolute top-4 right-4 text-gray-400 hover:text-red-500">
+                      className="absolute top-4 right-4 text-gray-400 hover:text-red-500"
+                      aria-label="Eliminar método de pago">
                       <Trash2 className="w-4 h-4" />
                     </button>
 
@@ -246,7 +247,7 @@ export default function SettingsManager() {
                             className="flex-1 border border-gray-200 rounded text-xs px-2 py-1"
                             placeholder="Valor"
                           />
-                          <button type="button" onClick={() => handleRemovePaymentDetail(index, key)} className="text-gray-400 hover:text-red-500 px-1">
+                          <button type="button" onClick={() => handleRemovePaymentDetail(index, key)} className="text-gray-400 hover:text-red-500 px-1" aria-label="Eliminar detalle">
                             &times;
                           </button>
                         </div>
