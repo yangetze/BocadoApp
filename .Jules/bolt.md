@@ -53,3 +53,6 @@
 ## 2026-04-20 - Fix missing modal block for budget saving
  **Learning:** In complex React state machines (like `Builder.jsx`), a disconnected end-step component (like a modal that finalizes a network request) can silently break the entire flow. Even if the logic is prepared in a hook, the UI component must be physically rendered in the component tree to be reachable by the user.
  **Action:** Always trace the full logic path from user click to network request. If a state transition relies on a component being mounted (like `isOpen` for a modal), ensure that component is imported and rendered.
+## 2026-04-21 - Fix budget brand selections load
+ **Learning:** React state elements array needs proper dependency management and dependency updates mapped manually if initial array from `editingItem` differs from API payload structure (e.g., brandSelections mapped directly without using the parent id wrapper during load). Fixed the `useEffect` handling these.
+ **Action:** For complex builders setting initial state via `useEffect`, explicitly handle all dependencies and clear all existing states first when the target object resets.
