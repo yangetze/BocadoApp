@@ -187,6 +187,17 @@ export const updateBudget = async (req, res) => {
     const { customerName, profitMargin, superRecipes, brandSelections, customCurrency, customPolicies, customPaymentMethods } = req.body;
     const userId = req.user.id;
 
+    // Verify ownership early to prevent IDOR (information leakage via dependency checks)
+    if (!isTestMode()) {
+      const existingBudget = await prisma.budget.findUnique({
+        where: { id }
+      });
+
+      if (!existingBudget || existingBudget.userId !== userId) {
+        return res.status(404).json({ error: 'Budget not found' });
+      }
+    }
+
     if (!superRecipes || !Array.isArray(superRecipes) || superRecipes.length === 0) {
       return res.status(400).json({ error: 'Missing required fields or invalid superRecipes array' });
     }
@@ -256,15 +267,6 @@ export const updateBudget = async (req, res) => {
       };
       mockData.budgets[budgetIndex] = updatedBudget;
       return res.status(200).json(updatedBudget);
-    }
-
-    // Verify ownership
-    const existingBudget = await prisma.budget.findUnique({
-      where: { id }
-    });
-
-    if (!existingBudget || existingBudget.userId !== userId) {
-      return res.status(404).json({ error: 'Budget not found' });
     }
 
     const budget = await prisma.$transaction(async (tx) => {
