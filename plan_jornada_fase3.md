@@ -23,3 +23,11 @@
   - Buscador global en la vista de registro que permita ingresar la Cédula o el Identificador. Si el sistema encuentra coincidencia, autocompleta el formulario para agilizar el proceso y permite editar (ej: agregar la cédula si faltaba).
 - [ ] **Selector de Servicios:**
   - Lista de botones (Grid responsivo) con los servicios de la jornada activa. Al seleccionar uno y dar "Guardar", se emite la petición al backend para generar la asignación.
+
+## Micro-tareas de Pruebas y Calidad (Testing)
+
+- [ ] **Test Registro Flexible (Happy Path):** Validar la creación de un participante aportando solo el `identificador` (sin cédula).
+- [ ] **Test Registro Autogenerado:** Validar que si no se provee cédula ni identificador, el sistema genera el `identificador` automáticamente.
+- [ ] **Test Actualización (PATCH):** Verificar que un registro existente puede ser actualizado posteriormente para incluir la `cedula`.
+- [ ] **Test Asignación por Tipo:** Validar que asignar un participante a un servicio tipo 'FLUJO' setea su estado en 'ATENDIDO' (o el equivalente definido), mientras que un servicio 'COLA' lo deja en 'ASIGNADO'.
+- [ ] **Verificación de Compilación:** Correr tests unitarios y garantizar un `build` exitoso tanto en frontend como en backend.

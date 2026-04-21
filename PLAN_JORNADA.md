@@ -18,3 +18,5 @@ A continuación se listan los enlaces a los planes detallados por fase (micro-ta
 ## Consideraciones Globales
 - **Flexibilidad de Registro:** Los participantes pueden ser registrados inicialmente solo con un identificador (Ej: número de pulsera) sin requerir obligatoriamente la cédula. Estos datos pueden actualizarse más adelante.
 - **Botones Táctiles:** El estándar para interacciones de acción rápida en móvil será el uso de botones con la clase `min-h-[60px]`.
+- **Calidad y Testing (Obligatorio):** En cada fase se deben implementar tests automatizados. Como mínimo, se debe probar el "Happy Path" (flujo básico exitoso) de cada endpoint y componente crítico, seguido de flujos alternos (Ej: fallos de validación).
+- **Verificación de Compilación:** Antes de dar por finalizada cualquier fase, se debe ejecutar un proceso de validación para asegurar que el proyecto compila íntegramente (`build` del frontend y backend) sin errores de sintaxis, tipos o referencias perdidas.

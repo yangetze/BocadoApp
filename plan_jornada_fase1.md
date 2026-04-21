@@ -29,3 +29,11 @@
 - [ ] **Middlewares de Protección:**
   - [ ] `verifyToken`: Middleware genérico para proteger rutas privadas (verificando el JWT).
   - [ ] `requireAdmin`: Middleware para proteger rutas exclusivas del Administrador (Ej: Crear jornadas).
+
+## Micro-tareas de Pruebas y Calidad (Testing)
+
+- [ ] **Tests de Modelos/Migraciones:** Verificar que las restricciones únicas (Ej: `cedula`) y opcionales (`identificador`) funcionen correctamente en la base de datos (Test de Integración).
+- [ ] **Test de Endpoint de Login (Happy Path):** Validar que enviar credenciales correctas retorna un status 200 y el token JWT.
+- [ ] **Test de Endpoint de Login (Casos de Error):** Validar que enviar credenciales inválidas retorna un status 401.
+- [ ] **Test de Middlewares:** Verificar que el middleware `requireAdmin` bloquee peticiones de usuarios con rol 'SERVIDOR' retornando status 403.
+- [ ] **Verificación de Compilación:** Asegurar que el backend levanta sin errores tras definir los modelos y rutas iniciales.

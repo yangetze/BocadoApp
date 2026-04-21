@@ -25,3 +25,11 @@
     - 🟥 **ROJO (`bg-red-500`):** 'Cancelar/Desasignar' (La persona se retiró o fue asignada por error).
 - [ ] **Feedback Inmediato de UX:**
   - Al presionar un botón de estado, deshabilitarlo de inmediato y mostrar un *spinner* de carga localmente para evitar que el servidor haga múltiples *taps* accidentales si el internet está lento.
+
+## Micro-tareas de Pruebas y Calidad (Testing)
+
+- [ ] **Test Obtener Asignaciones:** Validar que el endpoint retorna correctamente la lista de personas 'EN_ESPERA' o 'ASIGNADO' para un servicio específico.
+- [ ] **Test Cambio de Estado (PATCH):** Validar que la transición de estados (Ej: de 'ASIGNADO' a 'EN_ESPERA', o a 'ATENDIDO') se actualice en la base de datos de manera correcta.
+- [ ] **Test de UI/UX Frontend:** Validar que los botones de acción táctil se deshabiliten tras el clic (previniendo doble envío).
+- [ ] **Test del Buscador Local:** Verificar que el buscador filtre correctamente a los usuarios cargados en memoria por nombre, identificador o cédula.
+- [ ] **Verificación de Compilación Final:** Ejecutar el flujo de compilación para producción en el frontend y validación final del backend para garantizar que toda la aplicación PERN está lista para despliegue.
