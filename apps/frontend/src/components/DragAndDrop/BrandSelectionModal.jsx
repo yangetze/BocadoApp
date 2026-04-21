@@ -6,6 +6,7 @@ export function BrandSelectionModal({
   onClose,
   onConfirm,
   superRecipesList,
+  initialSelections = [],
 }) {
   const [selections, setSelections] = useState({});
 
@@ -41,16 +42,25 @@ export function BrandSelectionModal({
   // Set default selection if an ingredient only has 1 presentation, or null if it has multiple/none
   useEffect(() => {
     if (isOpen && uniqueIngredients.length > 0) {
-      const initialSelections = {};
+      const initialSelectionsMap = {};
       uniqueIngredients.forEach((ing) => {
         if (ing.presentations && ing.presentations.length > 0) {
-          initialSelections[ing.id] = ing.presentations[0].id;
+          initialSelectionsMap[ing.id] = ing.presentations[0].id;
         } else {
-          initialSelections[ing.id] = null;
+          initialSelectionsMap[ing.id] = null;
         }
       });
+      // Apply existing selections if passed, overriding defaults
+      if (initialSelections && initialSelections.length > 0) {
+         initialSelections.forEach(sel => {
+            if (initialSelectionsMap.hasOwnProperty(sel.ingredientId)) {
+               initialSelectionsMap[sel.ingredientId] = sel.brandPresentationId;
+            }
+         });
+      }
+
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelections(initialSelections);
+      setSelections(initialSelectionsMap);
     }
   }, [isOpen, uniqueIngredients]);
 

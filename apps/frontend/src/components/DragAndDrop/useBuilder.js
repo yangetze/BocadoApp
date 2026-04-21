@@ -1,4 +1,5 @@
-import { useState, useCallback, useMemo } from "react";
+setSuperRecipeMetadata({
+            name: editingItem.name || editingItem.customerName || "",import { useState, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 import { budgetApi, superRecipeApi, baseRecipeApi } from "../../api";
 
@@ -26,6 +27,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] =
     useState(false);
   const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
+  const [brandSelections, setBrandSelections] = useState([]);
 
   useEffect(() => {
     if (editingItem && mode === "baseRecipe") {
@@ -45,7 +47,15 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           })),
         );
       }
-    } else if (editingItem && mode === "superRecipe") {
+    } else if (editingItem && mode === "budget" && editingItem.brandSelections) {
+      setBrandSelections(
+        editingItem.brandSelections.map(bs => ({
+          ingredientId: bs.ingredientId,
+          brandPresentationId: bs.brandPresentationId
+        }))
+      );
+    }
+    if (editingItem && mode === "superRecipe") {
         setIsEditing(true);
         setSuperRecipeMetadata({
           name: editingItem.name || "",
@@ -169,31 +179,9 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     return Array.from(totalsMap.values());
   }, [canvasItems, mode]);
 
-  const confirmBudgetSave = async (brandSelections) => {
-    if (!pendingBudgetPayload) return;
-    setIsSaving(true);
-    try {
-      const payload = {
-        ...pendingBudgetPayload,
-        brandSelections,
-      };
-      if (isEditing) {
-         await budgetApi.update(editingItem.id, payload);
-         toast.success("Presupuesto actualizado exitosamente");
-      } else {
-         await budgetApi.create(payload);
-         toast.success("Presupuesto guardado exitosamente");
-      }
-      setIsBrandSelectionModalOpen(false);
-      setPendingBudgetPayload(null);
-      setCanvasItems([]);
-      if (onSuccess) onSuccess();
-    } catch (error) {
-      console.error(error);
-      toast.error(error.message || "Hubo un error al guardar el presupuesto.");
-    } finally {
-      setIsSaving(false);
-    }
+  const handleConfirmBrandSelections = (selections) => {
+    setBrandSelections(selections);
+    setIsBrandSelectionModalOpen(false);
   };
 
   const handleSave = async () => {
@@ -224,8 +212,22 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
             originalItem: item,
           })),
         };
-        setPendingBudgetPayload(payload);
-        setIsBrandSelectionModalOpen(true);
+        try {
+          if (isEditing) {
+             await budgetApi.update(editingItem.id, payload);
+             toast.success("Presupuesto actualizado exitosamente");
+          } else {
+             await budgetApi.create(payload);
+             toast.success("Presupuesto guardado exitosamente");
+          }
+          setCanvasItems([]);
+          if (onSuccess) onSuccess();
+        } catch (error) {
+          console.error(error);
+          toast.error(error.message || "Hubo un error al guardar el presupuesto.");
+        } finally {
+          setIsSaving(false);
+        }
       } else if (mode === "superRecipe") {
         if (!superRecipeMetadata.name) {
           toast.error("Debes colocar el nombre de la súper receta");
@@ -385,7 +387,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     ingredientTotals,
     isBrandSelectionModalOpen,
     setIsBrandSelectionModalOpen,
-    pendingBudgetPayload,
-    confirmBudgetSave,
+    brandSelections,
+    handleConfirmBrandSelections,
   };
 }

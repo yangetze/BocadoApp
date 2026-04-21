@@ -12,14 +12,14 @@ export const getSuperRecipes = async (req, res) => {
             baseRecipe: {
               include: {
                 ingredients: {
-                  include: { ingredient: true }
+                  include: { ingredient: { include: { presentations: true } } }
                 }
               }
             }
           }
         },
         directIngredients: {
-          include: { ingredient: true }
+          include: { ingredient: { include: { presentations: true } } }
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -87,13 +87,13 @@ export const createSuperRecipe = async (req, res) => {
             baseRecipe: {
               include: {
                 ingredients: {
-                  include: { ingredient: true }
+                  include: { ingredient: { include: { presentations: true } } }
                 }
               }
             }
           }
         },
-        directIngredients: { include: { ingredient: true } }
+        directIngredients: { include: { ingredient: { include: { presentations: true } } } }
       }
     });
 
@@ -189,13 +189,13 @@ export const updateSuperRecipe = async (req, res) => {
               baseRecipe: {
                 include: {
                   ingredients: {
-                    include: { ingredient: true }
+                    include: { ingredient: { include: { presentations: true } } }
                   }
                 }
               }
             }
           },
-          directIngredients: { include: { ingredient: true } }
+          directIngredients: { include: { ingredient: { include: { presentations: true } } } }
         }
       });
     });
