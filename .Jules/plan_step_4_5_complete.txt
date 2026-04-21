@@ -1,0 +1,1 @@
+Step 4 and 5 complete. Update `BrandSelectionModal.jsx` behavior and Add "Seleccionar Presentaciones" button in UI are done.

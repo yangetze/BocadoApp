@@ -123,7 +123,7 @@ export const getBudgets = async (req, res) => {
       include: {
         superRecipes: {
           include: {
-            superRecipe: true
+            superRecipe: { include: { baseRecipes: { include: { baseRecipe: { include: { ingredients: { include: { ingredient: { include: { presentations: true } } } } } } } }, directIngredients: { include: { ingredient: { include: { presentations: true } } } } } }
           }
         },
         brandSelections: {
@@ -159,7 +159,7 @@ export const getBudgetById = async (req, res) => {
       include: {
         superRecipes: {
           include: {
-            superRecipe: true
+            superRecipe: { include: { baseRecipes: { include: { baseRecipe: { include: { ingredients: { include: { ingredient: { include: { presentations: true } } } } } } } }, directIngredients: { include: { ingredient: { include: { presentations: true } } } } } }
           }
         },
         brandSelections: {

@@ -1,0 +1,1 @@
+Step 3 complete. Update `useBuilder.js` to manage brand selections state is done.
