@@ -49,3 +49,6 @@
 ## 2024-05-19 - Accessible dynamically generated lists
 **Learning:** Icon-only buttons used for deletion operations within dynamically generated configuration lists (such as payment details or custom forms) are a common pattern that lacks inherent screen-reader support.
 **Action:** Always ensure that inline action buttons containing only icons (like Trash or cross/close icons) receive explicit `aria-label` attributes (e.g. `aria-label="Eliminar detalle"`) to maintain accessibility context for assistive technologies.
+## $(date +%Y-%m-%d) - Dynamic Forms Accessibility
+**Learning:** Forms dynamically generating inputs via `.map` must use index-based `id` attributes and `htmlFor` on labels, or explicit `aria-label` attributes to ensure screen readers correctly associate the label with the input.
+**Action:** Always map unique variables like index to `id` and `htmlFor` when generating elements iteratively inside React components.

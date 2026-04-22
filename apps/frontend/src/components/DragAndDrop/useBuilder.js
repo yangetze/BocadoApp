@@ -1,5 +1,4 @@
-setSuperRecipeMetadata({
-            name: editingItem.name || editingItem.customerName || "",import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 import { budgetApi, superRecipeApi, baseRecipeApi } from "../../api";
 
@@ -26,7 +25,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] =
     useState(false);
-  const [pendingBudgetPayload, setPendingBudgetPayload] = useState(null);
   const [brandSelections, setBrandSelections] = useState([]);
 
   useEffect(() => {
