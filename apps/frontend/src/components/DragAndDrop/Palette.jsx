@@ -15,18 +15,27 @@ export const Palette = React.memo(function Palette({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
+  // ⚡ Bolt: Pre-calculate normalized names when items change, not on every keystroke.
+  // This prevents O(N) regex and string manipulation operations on every render cycle.
+  const normalizedItems = useMemo(() => {
+    if (!items) return [];
+    return items.map((item) => ({
+      ...item,
+      _normalizedName: normalizeString(item.name),
+    }));
+  }, [items]);
+
   // ⚡ Bolt: Memoized the filtered list and moved the search query normalization
   // outside of the filter loop. This replaces an O(n) redundant regex operation
   // with an O(1) operation, and prevents unnecessary re-calculations on re-renders.
   const filteredItems = useMemo(() => {
-    if (!searchQuery) return items;
+    if (!searchQuery) return normalizedItems;
 
     const normalizedSearchQuery = normalizeString(searchQuery);
-    return items.filter((item) => {
-      const normalizedItemName = normalizeString(item.name);
-      return normalizedItemName.includes(normalizedSearchQuery);
-    });
-  }, [items, searchQuery]);
+    return normalizedItems.filter((item) =>
+      item._normalizedName.includes(normalizedSearchQuery)
+    );
+  }, [normalizedItems, searchQuery]);
 
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm h-full lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 flex flex-col border border-gray-100">
