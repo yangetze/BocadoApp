@@ -17,6 +17,11 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: 'Formato de credenciales inválido' });
     }
 
+    // Security: Add max length validation to prevent DoS via expensive bcrypt hashing
+    if (loginId.length > 255 || password.length > 255) {
+      return res.status(400).json({ error: 'Credenciales inválidas' }); // Do not leak specifics about length limits
+    }
+
     const user = await prisma.user.findFirst({
       where: {
         OR: [
