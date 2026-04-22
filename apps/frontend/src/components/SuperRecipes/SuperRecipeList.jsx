@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, ChefHat, ChevronRight, Search, Trash2 } from 'lucide-react';
+import { Plus, ChefHat, ChevronRight, Search, Trash2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { normalizeString } from '../../utils/stringUtils';
 
@@ -98,8 +98,21 @@ export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete
             setSearchTerm(e.target.value);
             setCurrentPage(1); // Reset to first page on new search
           }}
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all"
+          className="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 focus:border-peach-soft focus:ring-2 focus:ring-peach-soft/20 outline-none transition-all"
         />
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm("");
+              setCurrentPage(1);
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Limpiar búsqueda"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       {currentRecipes.length === 0 && searchTerm && (

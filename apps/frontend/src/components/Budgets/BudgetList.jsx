@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Trash2, Edit2 } from 'lucide-react';
+import { Search, Plus, Trash2, Edit2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { normalizeString } from '../../utils/stringUtils';
 
@@ -48,7 +48,7 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
         </button>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-3">
+      <div className="relative bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-3">
         <Search className="w-5 h-5 text-gray-400" />
         <input
           type="text"
@@ -58,8 +58,21 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="flex-1 bg-transparent border-none focus:ring-0 text-slate-gray placeholder-gray-400 outline-none"
+          className="flex-1 bg-transparent border-none focus:ring-0 text-slate-gray placeholder-gray-400 outline-none pr-8"
         />
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={() => {
+              setSearchTerm("");
+              setCurrentPage(1);
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Limpiar búsqueda"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
