@@ -1,5 +1,5 @@
 import { DraggableItem } from "./DraggableItem";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 import PropTypes from "prop-types";
 import React, { useState, useMemo } from "react";
@@ -48,8 +48,18 @@ export const Palette = React.memo(function Palette({
           aria-label="Buscar elementos"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:border-peach-soft focus:bg-white focus:ring-4 focus:ring-peach-soft/10 outline-none transition-all placeholder:text-gray-400 text-slate-gray"
+          className="w-full pl-10 pr-10 py-3 bg-gray-50 border-transparent rounded-xl focus:border-peach-soft focus:bg-white focus:ring-4 focus:ring-peach-soft/10 outline-none transition-all placeholder:text-gray-400 text-slate-gray"
         />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Limpiar búsqueda"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">

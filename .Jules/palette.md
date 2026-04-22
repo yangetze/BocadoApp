@@ -52,3 +52,6 @@
 ## $(date +%Y-%m-%d) - Dynamic Forms Accessibility
 **Learning:** Forms dynamically generating inputs via `.map` must use index-based `id` attributes and `htmlFor` on labels, or explicit `aria-label` attributes to ensure screen readers correctly associate the label with the input.
 **Action:** Always map unique variables like index to `id` and `htmlFor` when generating elements iteratively inside React components.
+## 2024-04-22 - Search Input Clear Button
+**Learning:** Adding a clear button (an 'X' icon) to search inputs is a common UX pattern that allows users to quickly reset their search query without repeatedly pressing the backspace key, improving the overall user experience and task efficiency.
+**Action:** When implementing or modifying search inputs, always consider adding a conditionally rendered clear button when text is present. Ensure this button includes an appropriate `aria-label` (e.g., `Limpiar búsqueda`) for screen reader accessibility, adhering to the codebase's accessibility standards for icon-only buttons.
