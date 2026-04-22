@@ -53,7 +53,7 @@ export function BrandSelectionModal({
       // Apply existing selections if passed, overriding defaults
       if (initialSelections && initialSelections.length > 0) {
          initialSelections.forEach(sel => {
-            if (initialSelectionsMap.hasOwnProperty(sel.ingredientId)) {
+            if (Object.prototype.hasOwnProperty.call(initialSelectionsMap, sel.ingredientId)) {
                initialSelectionsMap[sel.ingredientId] = sel.brandPresentationId;
             }
          });
@@ -62,7 +62,7 @@ export function BrandSelectionModal({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelections(initialSelectionsMap);
     }
-  }, [isOpen, uniqueIngredients]);
+  }, [isOpen, uniqueIngredients, initialSelections]);
 
   if (!isOpen) return null;
 
