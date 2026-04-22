@@ -62,7 +62,7 @@ export function BrandSelectionModal({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelections(initialSelectionsMap);
     }
-  }, [isOpen, uniqueIngredients]);
+  }, [isOpen, uniqueIngredients, initialSelections]);
 
   if (!isOpen) return null;
 

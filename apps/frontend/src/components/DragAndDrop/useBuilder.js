@@ -1,8 +1,9 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
+
+
 import toast from "react-hot-toast";
 import { budgetApi, superRecipeApi, baseRecipeApi } from "../../api";
 
-import { useEffect } from "react";
 export function useBuilder(mode, editingItem = null, onSuccess = null) {
   const [canvasItems, setCanvasItems] = useState([]);
   const [activeId, setActiveId] = useState(null);
@@ -25,11 +26,22 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
   const [isBrandSelectionModalOpen, setIsBrandSelectionModalOpen] =
     useState(false);
+
   const [brandSelections, setBrandSelections] = useState([]);
 
   useEffect(() => {
-    if (editingItem && mode === "baseRecipe") {
-      setIsEditing(true);
+    if (!editingItem) {
+      setIsEditing(false);
+      setBaseRecipeMetadata({ name: "", baseYield: "", yieldUnit: "gr" });
+      setSuperRecipeMetadata({ name: "", description: "" });
+      setCanvasItems([]);
+      setBrandSelections([]);
+      return;
+    }
+
+    setIsEditing(true);
+
+    if (mode === "baseRecipe") {
       setBaseRecipeMetadata({
         name: editingItem.name || "",
         baseYield: editingItem.baseYield?.toString() || "",
@@ -42,52 +54,48 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
             id: `canvas-${Date.now()}-${ing.ingredientId}`,
             quantity: ing.quantity,
             ingredientId: ing.ingredientId,
-          })),
+          }))
         );
       }
-    } else if (editingItem && mode === "budget" && editingItem.brandSelections) {
-      setBrandSelections(
-        editingItem.brandSelections.map(bs => ({
-          ingredientId: bs.ingredientId,
-          brandPresentationId: bs.brandPresentationId
-        }))
-      );
-    }
-    if (editingItem && mode === "superRecipe") {
-        setIsEditing(true);
-        setSuperRecipeMetadata({
-          name: editingItem.name || "",
-          description: editingItem.description || "",
-        });
-        if (editingItem.baseRecipes) {
-          setCanvasItems(
-            editingItem.baseRecipes.map((br) => ({
-              ...br.baseRecipe,
-              id: `canvas-${Date.now()}-${br.baseRecipeId}`,
-              quantity: br.quantityNeeded,
-            })),
-          );
-        }
-    } else if (editingItem && mode === "budget") {
-        setIsEditing(true);
-        setSuperRecipeMetadata({
-            name: editingItem.customerName || "",
-            description: "",
-        });
-        if (editingItem.superRecipes) {
-            setCanvasItems(
-                editingItem.superRecipes.map((sr) => ({
-                    ...sr.superRecipe,
-                    id: `canvas-${Date.now()}-${sr.superRecipeId}`,
-                    quantity: sr.scaleQuantity,
-                }))
-            );
-        }
-    } else {
-      setIsEditing(false);
-      setBaseRecipeMetadata({ name: "", baseYield: "", yieldUnit: "gr" });
-      setSuperRecipeMetadata({ name: "", description: "" });
-      setCanvasItems([]);
+    } else if (mode === "superRecipe") {
+      setSuperRecipeMetadata({
+        name: editingItem.name || "",
+        description: editingItem.description || "",
+      });
+      if (editingItem.baseRecipes) {
+        setCanvasItems(
+          editingItem.baseRecipes.map((br) => ({
+            ...br.baseRecipe,
+            id: `canvas-${Date.now()}-${br.baseRecipeId}`,
+            quantity: br.quantityNeeded,
+          }))
+        );
+      }
+    } else if (mode === "budget") {
+      setSuperRecipeMetadata({
+        name: editingItem.customerName || "",
+        description: "",
+      });
+
+      if (editingItem.brandSelections) {
+        setBrandSelections(
+          editingItem.brandSelections.map(bs => ({
+            ingredientId: bs.ingredientId,
+            brandPresentationId: bs.brandPresentationId
+          }))
+        );
+      }
+
+      if (editingItem.superRecipes) {
+        setCanvasItems(
+          editingItem.superRecipes.map((sr) => ({
+            ...sr.superRecipe,
+            id: `canvas-${Date.now()}-${sr.superRecipeId}`,
+            quantity: sr.scaleQuantity,
+            originalItem: sr.superRecipe,
+          }))
+        );
+      }
     }
   }, [editingItem, mode]);
 
@@ -204,7 +212,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           customPolicies: superRecipeMetadata.customPolicies || undefined,
           customPaymentMethods: superRecipeMetadata.customPaymentMethods || undefined,
           userId: "user-default-1",
-          superRecipes: canvasItems.map((item) => ({
+          brandSelections: brandSelections, superRecipes: canvasItems.map((item) => ({
             superRecipeId: item.id.replace(/^canvas-\d+-/, "") || item.id,
             scaleQuantity: item.quantity || 1,
             originalItem: item,
