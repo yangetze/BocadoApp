@@ -84,3 +84,7 @@
 **Vulnerability:** The `updateBudget` endpoint performed existence and permission checks on related entities (`superRecipes` and `brandSelections` via `count` queries using `userId`) before confirming if the user actually owned the parent `budget` being updated.
 **Learning:** This ordering allowed an attacker to enumerate or verify the existence of super recipes or ingredients belonging to another user by attempting to update a budget with ID X (which they don't own) and observing whether the endpoint returns a 404 for missing ingredients/recipes versus a 404 for missing budget. Dependency validation leaked information before authorization.
 **Prevention:** Always verify ownership of the primary resource (`budget`) immediately after extracting the ID and user token, before validating the relationships or structure of the incoming nested payload.
+## 2026-04-22 - Missing Input Validation on Login Credentials
+**Vulnerability:** The `login` endpoint in `authController.js` lacked maximum length validation for `loginId` and `password` fields.
+**Learning:** While checking for string types prevents obvious type confusion attacks, missing upper bounds on inputs like passwords can lead to Denial of Service (DoS) vulnerabilities because bcrypt hashing is intentionally slow and computationally expensive. An attacker could send a massive string to exhaust server CPU.
+**Prevention:** Always enforce reasonable maximum length limits (e.g., 255 characters) on login credentials *before* executing database queries or cryptographic operations.
