@@ -88,3 +88,8 @@
 **Vulnerability:** The `login` endpoint in `authController.js` lacked maximum length validation for `loginId` and `password` fields.
 **Learning:** While checking for string types prevents obvious type confusion attacks, missing upper bounds on inputs like passwords can lead to Denial of Service (DoS) vulnerabilities because bcrypt hashing is intentionally slow and computationally expensive. An attacker could send a massive string to exhaust server CPU.
 **Prevention:** Always enforce reasonable maximum length limits (e.g., 255 characters) on login credentials *before* executing database queries or cryptographic operations.
+
+## 2024-04-23 - [Input Length Validation Missing in Controllers]
+**Vulnerability:** Input fields such as `name` and `measurementUnit` in controller functions (e.g., `createIngredient`, `updateIngredient`) lacked maximum length validations.
+**Learning:** This exposes the application to Denial of Service (DoS) attacks or database insertion errors by allowing excessively large payloads.
+**Prevention:** Implement explicit `typeof` and `length` checks (e.g., `name.length > 255`) for all incoming string fields in API controllers before passing them to the database or processing them.
