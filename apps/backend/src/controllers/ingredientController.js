@@ -47,6 +47,14 @@ export const createIngredient = async (req, res) => {
     const { name, globalPrice, globalPriceQuantity = 1, measurementUnit, presentations } = req.body;
     const userId = req.user.id;
 
+    // Security: Validate input length to prevent DoS via excessively large strings
+    if (name && (typeof name !== 'string' || name.length > 255)) {
+      return res.status(400).json({ error: 'El nombre es inválido o muy largo' });
+    }
+    if (measurementUnit && (typeof measurementUnit !== 'string' || measurementUnit.length > 50)) {
+      return res.status(400).json({ error: 'La unidad de medida es inválida o muy larga' });
+    }
+
     if (isTestMode()) {
       const newIngredient = {
         id: `ing-${crypto.randomUUID()}`,
@@ -97,6 +105,14 @@ export const updateIngredient = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, globalPrice, globalPriceQuantity = 1, measurementUnit, presentations } = req.body;
+
+    // Security: Validate input length to prevent DoS via excessively large strings
+    if (name !== undefined && (typeof name !== 'string' || name.length > 255)) {
+      return res.status(400).json({ error: 'El nombre es inválido o muy largo' });
+    }
+    if (measurementUnit !== undefined && (typeof measurementUnit !== 'string' || measurementUnit.length > 50)) {
+      return res.status(400).json({ error: 'La unidad de medida es inválida o muy larga' });
+    }
 
     if (isTestMode()) {
       const ingredientIndex = mockData.ingredients.findIndex(i => i.id === id);
