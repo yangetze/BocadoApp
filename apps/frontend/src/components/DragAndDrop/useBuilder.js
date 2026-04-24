@@ -242,20 +242,18 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           return;
         }
 
-        // Group items by baseRecipeId to prevent unique constraint errors
-        const groupedBaseRecipes = canvasItems.reduce((acc, item) => {
+        // ⚡ Bolt: Group items by baseRecipeId using an O(1) Map lookup
+        // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
+        const baseRecipeMap = new Map();
+        canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
-          const existing = acc.find(x => x.baseRecipeId === id);
-          if (existing) {
-            existing.quantityNeeded += parseFloat(item.quantity || 1);
-          } else {
-            acc.push({
-              baseRecipeId: id,
-              quantityNeeded: parseFloat(item.quantity || 1),
-            });
-          }
-          return acc;
-        }, []);
+          const currentQuantity = baseRecipeMap.get(id)?.quantityNeeded || 0;
+          baseRecipeMap.set(id, {
+            baseRecipeId: id,
+            quantityNeeded: currentQuantity + parseFloat(item.quantity || 1),
+          });
+        });
+        const groupedBaseRecipes = Array.from(baseRecipeMap.values());
 
         const payload = {
           name: superRecipeMetadata.name,
@@ -282,22 +280,20 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
 
 
-        // ⚡ Bolt: Group ingredients by ID before sending to backend.
-        // This converts O(N) duplicate inserts into O(1) grouped updates,
-        // reducing payload size and avoiding unique constraint violations.
-        const groupedIngredients = canvasItems.reduce((acc, item) => {
+        // ⚡ Bolt: Group ingredients by ID before sending to backend using an O(1) Map lookup.
+        // This converts duplicate inserts into grouped updates while replacing
+        // the unoptimized O(N^2) array-find reduction with O(N) mapping,
+        // reducing both CPU overhead and payload size to avoid unique constraint violations.
+        const ingredientMap = new Map();
+        canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
-          const existing = acc.find(x => x.ingredientId === id);
-          if (existing) {
-            existing.quantity += parseFloat(item.quantity || 1);
-          } else {
-            acc.push({
-              ingredientId: id,
-              quantity: parseFloat(item.quantity || 1),
-            });
-          }
-          return acc;
-        }, []);
+          const currentQuantity = ingredientMap.get(id)?.quantity || 0;
+          ingredientMap.set(id, {
+            ingredientId: id,
+            quantity: currentQuantity + parseFloat(item.quantity || 1),
+          });
+        });
+        const groupedIngredients = Array.from(ingredientMap.values());
 
         const payload = {
           name: baseRecipeMetadata.name,

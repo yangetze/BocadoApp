@@ -62,3 +62,6 @@
 ## 2024-04-22 - [Pre-computed normalized strings for filtering]
 **Learning:** Performing expensive string manipulation (like `normalizeString` which involves regex and `.normalize()`) inside a `filter` loop on every keystroke causes O(N) redundant operations, leading to input lag when handling large lists in components like `Palette.jsx`.
 **Action:** Always pre-calculate these normalized strings when the underlying data (`items` array) changes, using a separate `useMemo`. Then, use these pre-computed values during the actual filtering `useMemo` that depends on `searchQuery`, turning the operation into an O(1) property lookup per item.
+## 2024-05-20 - Use O(1) Map instead of O(N^2) reduce for groupings
+**Learning:** Using `reduce` and `find` together to group objects is `O(N^2)` time complexity. While it "prevents redundant inserts" at the database level by shrinking the payload, it is algorithmically unoptimized.
+**Action:** Always prefer using a `Map` when aggregating/grouping arrays in Javascript for $O(N)$ total time complexity.
