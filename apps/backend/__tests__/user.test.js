@@ -85,4 +85,27 @@ describe('User Routes - getAllUsers', () => {
       consoleErrorSpy.mockRestore();
     });
   });
+
+  describe('PUT /api/users/:id', () => {
+    it('should return a 400 status when updating a user conflicts with an existing unique constraint', async () => {
+      prisma.user.findUnique.mockResolvedValue({ id: 'some-id', role: 'USER' });
+      prisma.user.update.mockRejectedValue({ code: 'P2002' });
+
+      // Suppress console.error for the expected error
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      const response = await request(app)
+        .put('/api/users/some-id')
+        .send({
+          username: 'conflict-user',
+          email: 'conflict@example.com',
+          identificationNumber: '123456789'
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: 'El usuario, email o cédula ya existen.' });
+
+      consoleErrorSpy.mockRestore();
+    });
+  });
 });
