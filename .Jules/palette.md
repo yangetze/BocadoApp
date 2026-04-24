@@ -55,3 +55,6 @@
 ## 2024-04-22 - Search Input Clear Button
 **Learning:** Adding a clear button (an 'X' icon) to search inputs is a common UX pattern that allows users to quickly reset their search query without repeatedly pressing the backspace key, improving the overall user experience and task efficiency.
 **Action:** When implementing or modifying search inputs, always consider adding a conditionally rendered clear button when text is present. Ensure this button includes an appropriate `aria-label` (e.g., `Limpiar búsqueda`) for screen reader accessibility, adhering to the codebase's accessibility standards for icon-only buttons.
+## 2024-04-24 - [Replace native window.confirm with Toast Delete Confirmation]
+**Learning:** Native `window.confirm` dialogs break the seamless app experience, are visually jarring, and lack accessibility/customization (e.g. styling, context). They pause the JS thread and disrupt the overall visual language (especially with the heavy use of tailwind classes across the components).
+**Action:** Created and used a generic, reusable custom toast confirmation dialog `confirmDelete` built with `react-hot-toast`. Used it consistently for all delete confirmations (e.g., Budgets, Recipes, Ingredients) to maintain a cohesive user experience and better visual alignment with our design system.

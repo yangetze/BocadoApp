@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Plus, ChefHat, ChevronRight, Search, Trash2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { normalizeString } from '../../utils/stringUtils';
+import { confirmDelete } from '../../utils/toastUtils';
 
 export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete, loading }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -136,9 +137,9 @@ export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete
               </div>
               <button
                 onClick={() => {
-                  if(window.confirm('¿Estás seguro de que deseas eliminar esta súper receta?')) {
+                  confirmDelete('¿Estás seguro de que deseas eliminar esta súper receta?', () => {
                     onDelete(recipe.id);
-                  }
+                  });
                 }}
                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                 aria-label="Eliminar súper receta"

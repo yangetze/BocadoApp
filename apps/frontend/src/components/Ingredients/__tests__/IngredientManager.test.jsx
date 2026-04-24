@@ -10,6 +10,10 @@ import IngredientManager from '../IngredientManager';
 import { ingredientApi } from '../../../api';
 import toast from 'react-hot-toast';
 
+jest.mock('../../../utils/toastUtils', () => ({
+  confirmDelete: jest.fn((msg, onConfirm) => onConfirm()),
+}));
+
 jest.mock('../../../api', () => ({
   ingredientApi: {
     getAll: jest.fn().mockResolvedValue([]),
@@ -54,9 +58,6 @@ describe('IngredientManager', () => {
     ingredientApi.getAll.mockResolvedValue([mockIngredient]);
     const mockErrorMessage = 'No se puede eliminar el ingrediente porque está en uso en una o más recetas.';
     ingredientApi.delete.mockRejectedValueOnce({ message: mockErrorMessage });
-
-    // Mock confirm
-    window.confirm = jest.fn().mockReturnValue(true);
 
     render(<IngredientManager />);
 
