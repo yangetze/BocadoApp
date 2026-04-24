@@ -3,6 +3,7 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 
 import toast from "react-hot-toast";
 import { budgetApi, superRecipeApi, baseRecipeApi } from "../../api";
+import { confirmDelete } from "../../utils/toastUtils";
 
 export function useBuilder(mode, editingItem = null, onSuccess = null) {
   const [canvasItems, setCanvasItems] = useState([]);
@@ -328,9 +329,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
   const handleDelete = async () => {
     if (!editingItem) return;
-    if (
-      window.confirm("¿Estás seguro de que deseas eliminar esta receta base?")
-    ) {
+    confirmDelete("¿Estás seguro de que deseas eliminar esta receta base?", async () => {
       setIsSaving(true);
       try {
         await baseRecipeApi.delete(editingItem.id);
@@ -342,7 +341,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
       } finally {
         setIsSaving(false);
       }
-    }
+    });
   };
 
   const removeItem = useCallback(

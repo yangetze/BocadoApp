@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Plus, Trash2, Edit2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { normalizeString } from '../../utils/stringUtils';
+import { confirmDelete } from '../../utils/toastUtils';
 
 export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDelete }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -125,9 +126,9 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
                         </button>
                         <button
                           onClick={() => {
-                            if (window.confirm('¿Estás seguro de que deseas eliminar este presupuesto?')) {
+                            confirmDelete('¿Estás seguro de que deseas eliminar este presupuesto?', () => {
                               onDelete(budget.id);
-                            }
+                            });
                           }}
                           className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                           title="Eliminar Presupuesto"

@@ -4,6 +4,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import BudgetList from '../BudgetList';
 import '@testing-library/jest-dom';
 
+jest.mock('../../../utils/toastUtils', () => ({
+  confirmDelete: jest.fn((msg, onConfirm) => onConfirm()),
+}));
+
 describe('BudgetList', () => {
   const mockBudgets = [
     { id: '1', customerName: 'Alpha Client', createdAt: new Date('2023-01-01').toISOString() },
@@ -39,8 +43,6 @@ describe('BudgetList', () => {
     const mockDelete = jest.fn();
     const mockCreate = jest.fn();
 
-    window.confirm = jest.fn(() => true); // mock confirm dialog
-
     render(<BudgetList loading={false} budgets={mockBudgets} onCreateNew={mockCreate} onEdit={mockEdit} onDelete={mockDelete} />);
 
     const editButtons = screen.getAllByTitle('Editar Presupuesto');
@@ -50,7 +52,6 @@ describe('BudgetList', () => {
     const deleteButtons = screen.getAllByTitle('Eliminar Presupuesto');
     fireEvent.click(deleteButtons[0]);
     expect(mockDelete).toHaveBeenCalledWith('1');
-    expect(window.confirm).toHaveBeenCalled();
 
     const createButton = screen.getByText('Crear Presupuesto');
     fireEvent.click(createButton);
