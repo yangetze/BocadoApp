@@ -49,7 +49,7 @@
 ## 2024-05-19 - Accessible dynamically generated lists
 **Learning:** Icon-only buttons used for deletion operations within dynamically generated configuration lists (such as payment details or custom forms) are a common pattern that lacks inherent screen-reader support.
 **Action:** Always ensure that inline action buttons containing only icons (like Trash or cross/close icons) receive explicit `aria-label` attributes (e.g. `aria-label="Eliminar detalle"`) to maintain accessibility context for assistive technologies.
-## $(date +%Y-%m-%d) - Dynamic Forms Accessibility
+## 2024-04-26 - Dynamic Forms Accessibility
 **Learning:** Forms dynamically generating inputs via `.map` must use index-based `id` attributes and `htmlFor` on labels, or explicit `aria-label` attributes to ensure screen readers correctly associate the label with the input.
 **Action:** Always map unique variables like index to `id` and `htmlFor` when generating elements iteratively inside React components.
 ## 2024-04-22 - Search Input Clear Button
@@ -58,3 +58,6 @@
 ## 2024-04-24 - [Replace native window.confirm with Toast Delete Confirmation]
 **Learning:** Native `window.confirm` dialogs break the seamless app experience, are visually jarring, and lack accessibility/customization (e.g. styling, context). They pause the JS thread and disrupt the overall visual language (especially with the heavy use of tailwind classes across the components).
 **Action:** Created and used a generic, reusable custom toast confirmation dialog `confirmDelete` built with `react-hot-toast`. Used it consistently for all delete confirmations (e.g., Budgets, Recipes, Ingredients) to maintain a cohesive user experience and better visual alignment with our design system.
+## 2024-04-26 - Add Clear Button to Search Inputs
+**Learning:** We need standard rules across the frontend search inputs to make it easy to clear the content without repeatedly pressing the backspace key, ensuring efficiency and good accessibility.
+**Action:** Added a clear button (using `<X />` from `lucide-react`) to the search input in `AdminDashboard.jsx`, ensuring it only conditionally renders when the `searchTerm` exists and has an explicit `aria-label="Limpiar búsqueda"` to maintain accessibility context for assistive technologies. Also adjusted the `pr` padding to make sure the clear button does not overlap with the input text.

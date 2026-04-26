@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft } from 'lucide-react';
+import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
@@ -98,8 +98,18 @@ export default function AdminDashboard() {
               placeholder="Buscar por usuario, email o cédula..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-gray-200 bg-white focus:ring-2 focus:ring-peach-soft/50 focus:border-peach-soft transition-all outline-none shadow-sm"
+              className="w-full pl-11 pr-10 py-3 rounded-2xl border border-gray-200 bg-white focus:ring-2 focus:ring-peach-soft/50 focus:border-peach-soft transition-all outline-none shadow-sm"
             />
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Limpiar búsqueda"
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
         </div>
 
