@@ -43,6 +43,10 @@ export const createBaseRecipe = async (req, res) => {
     const payloadItems = items || ingredients || [];
     const userId = req.user.id;
 
+    if (parseFloat(baseYield) <= 0) {
+      return res.status(400).json({ error: 'El rendimiento base debe ser mayor a 0' });
+    }
+
     // Security: Verify ownership of ingredients before linking
     if (payloadItems && payloadItems.length > 0) {
       const ingredientIds = [...new Set(payloadItems.map(i => i.ingredientId))];
@@ -108,6 +112,10 @@ export const updateBaseRecipe = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, baseYield, yieldUnit, items } = req.body;
+
+    if (baseYield !== undefined && parseFloat(baseYield) <= 0) {
+      return res.status(400).json({ error: 'El rendimiento base debe ser mayor a 0' });
+    }
 
     if (isTestMode()) {
       const recipeIndex = mockData.baseRecipes.findIndex(br => br.id === id);

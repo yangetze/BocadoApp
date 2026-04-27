@@ -13,7 +13,11 @@ const signMock = jest.fn();
 const verifyMock = jest.fn();
 
 jest.unstable_mockModule('bcryptjs', () => ({
-  default: { compare: compareMock, hash: hashMock }
+  default: {
+    compare: compareMock,
+    hash: hashMock,
+    hashSync: jest.fn().mockReturnValue('dummy_hashed_password')
+  }
 }));
 
 jest.unstable_mockModule('jsonwebtoken', () => ({

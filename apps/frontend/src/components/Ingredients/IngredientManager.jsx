@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import { ingredientApi } from '../../api';
+import { confirmDelete } from '../../utils/toastUtils';
 import IngredientFormModal from './IngredientFormModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, X } from 'lucide-react';
@@ -73,15 +74,16 @@ export default function IngredientManager() {
     }
   };
 
-  const handleDelete = useCallback(async (id) => {
-    if (!window.confirm('¿Seguro que deseas eliminar este ingrediente?')) return;
-    try {
-      await ingredientApi.delete(id);
-      setIngredients(prev => prev.filter(ing => ing.id !== id));
-      toast.success('Ingrediente eliminado');
-    } catch (error) {
-      toast.error(error.message || 'Error al eliminar el ingrediente');
-    }
+  const handleDelete = useCallback((id) => {
+    confirmDelete('¿Seguro que deseas eliminar este ingrediente?', async () => {
+      try {
+        await ingredientApi.delete(id);
+        setIngredients(prev => prev.filter(ing => ing.id !== id));
+        toast.success('Ingrediente eliminado');
+      } catch (error) {
+        toast.error(error.message || 'Error al eliminar el ingrediente');
+      }
+    });
   }, []);
 
   const toggleExpand = useCallback((id) => {

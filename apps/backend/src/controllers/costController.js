@@ -107,7 +107,9 @@ export const calculateSuperRecipeCost = async (req, res) => {
       const { baseRecipeCostPerUnit, baseRecipeIngredientsBreakdown } = cachedData;
 
       // Pro-rate the cost based on how much of this base recipe is needed for the super recipe
-      const costForSuperRecipe = (quantityNeeded / baseRecipe.baseYield) * baseRecipeCostPerUnit;
+      // Security: Prevent division by zero if baseYield is 0 or negative
+      const safeYield = baseRecipe.baseYield > 0 ? baseRecipe.baseYield : 1;
+      const costForSuperRecipe = (quantityNeeded / safeYield) * baseRecipeCostPerUnit;
 
       // Apply the scale multiplier
       const finalCost = costForSuperRecipe * scaleMultiplier;

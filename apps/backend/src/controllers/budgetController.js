@@ -53,6 +53,7 @@ export const createBudget = async (req, res) => {
 
     if (isTestMode()) {
       const budgetId = `bud-${crypto.randomUUID()}`;
+      const superRecipeMap = new Map(mockData.superRecipes.map(s => [s.id, s]));
       const newBudget = {
         id: budgetId,
         customerName: customerName || null,
@@ -65,7 +66,7 @@ export const createBudget = async (req, res) => {
           budgetId,
           superRecipeId: sr.superRecipeId,
           scaleQuantity: sr.scaleQuantity || 1,
-          superRecipe: mockData.superRecipes.find(s => s.id === sr.superRecipeId)
+          superRecipe: superRecipeMap.get(sr.superRecipeId)
         })),
         brandSelections: brandSelections?.map(bs => ({
            id: `bbs-${crypto.randomUUID()}`,
@@ -245,6 +246,7 @@ export const updateBudget = async (req, res) => {
       const budgetIndex = mockData.budgets.findIndex((b) => b.id === id && b.userId === userId);
       if (budgetIndex === -1) return res.status(404).json({ error: 'Budget not found' });
 
+      const superRecipeMap = new Map(mockData.superRecipes.map(s => [s.id, s]));
       const updatedBudget = {
         ...mockData.budgets[budgetIndex],
         customerName: customerName || null,
@@ -255,7 +257,7 @@ export const updateBudget = async (req, res) => {
           budgetId: id,
           superRecipeId: sr.superRecipeId,
           scaleQuantity: sr.scaleQuantity || 1,
-          superRecipe: mockData.superRecipes.find((s) => s.id === sr.superRecipeId),
+          superRecipe: superRecipeMap.get(sr.superRecipeId),
         })),
         brandSelections:
           brandSelections?.map((bs) => ({
