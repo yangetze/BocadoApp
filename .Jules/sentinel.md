@@ -88,6 +88,10 @@
 **Vulnerability:** The `login` endpoint in `authController.js` lacked maximum length validation for `loginId` and `password` fields.
 **Learning:** While checking for string types prevents obvious type confusion attacks, missing upper bounds on inputs like passwords can lead to Denial of Service (DoS) vulnerabilities because bcrypt hashing is intentionally slow and computationally expensive. An attacker could send a massive string to exhaust server CPU.
 **Prevention:** Always enforce reasonable maximum length limits (e.g., 255 characters) on login credentials *before* executing database queries or cryptographic operations.
+## 2026-04-24 - Prisma P2002 Information Leakage / 500 Error on Profile Updates
+**Vulnerability:** The `updateUser` controller failed to explicitly catch Prisma `P2002` (Unique constraint failed) errors. When a user attempted to change their email or username to one already in use, the server threw an unhandled exception, resulting in a `500 Internal Server Error`.
+**Learning:** Returning a 500 status for validation or uniqueness errors represents bad practice and can leak underlying infrastructure details (e.g., that a database constraint triggered an exception instead of application logic).
+**Prevention:** Consistently catch expected Prisma error codes (like `P2002` for unique constraints and `P2025` for not found errors) across *all* controllers (creation, modification) and translate them into standard HTTP client errors (`400 Bad Request` or `404 Not Found`).
 
 ## 2024-04-23 - [Input Length Validation Missing in Controllers]
 **Vulnerability:** Input fields such as `name` and `measurementUnit` in controller functions (e.g., `createIngredient`, `updateIngredient`) lacked maximum length validations.
