@@ -5,8 +5,8 @@ import prisma from '../prisma.js';
 import { JWT_SECRET } from '../config/auth.js';
 import logger from '../utils/logger.js';
 
-// Dummy hash for timing attack mitigation ('dummy' hashed with bcrypt factor 10)
-const DUMMY_HASH = '$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa';
+// Security: Dummy hash used to mitigate timing attacks (user enumeration) on the login endpoint
+const DUMMY_HASH = bcrypt.hashSync('dummy_password_for_timing_attack_mitigation', 10);
 
 export const login = async (req, res) => {
   try {
@@ -35,7 +35,7 @@ export const login = async (req, res) => {
     });
 
     if (!user) {
-      // Security: Mitigation for timing attacks. Ensure response time is consistent
+      // Security: Execute dummy password comparison to prevent timing attacks (user enumeration)
       await bcrypt.compare(password, DUMMY_HASH);
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }

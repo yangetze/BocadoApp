@@ -88,8 +88,16 @@
 **Vulnerability:** The `login` endpoint in `authController.js` lacked maximum length validation for `loginId` and `password` fields.
 **Learning:** While checking for string types prevents obvious type confusion attacks, missing upper bounds on inputs like passwords can lead to Denial of Service (DoS) vulnerabilities because bcrypt hashing is intentionally slow and computationally expensive. An attacker could send a massive string to exhaust server CPU.
 **Prevention:** Always enforce reasonable maximum length limits (e.g., 255 characters) on login credentials *before* executing database queries or cryptographic operations.
+## 2026-04-24 - Prisma P2002 Information Leakage / 500 Error on Profile Updates
+**Vulnerability:** The `updateUser` controller failed to explicitly catch Prisma `P2002` (Unique constraint failed) errors. When a user attempted to change their email or username to one already in use, the server threw an unhandled exception, resulting in a `500 Internal Server Error`.
+**Learning:** Returning a 500 status for validation or uniqueness errors represents bad practice and can leak underlying infrastructure details (e.g., that a database constraint triggered an exception instead of application logic).
+**Prevention:** Consistently catch expected Prisma error codes (like `P2002` for unique constraints and `P2025` for not found errors) across *all* controllers (creation, modification) and translate them into standard HTTP client errors (`400 Bad Request` or `404 Not Found`).
 
 ## 2024-04-23 - [Input Length Validation Missing in Controllers]
 **Vulnerability:** Input fields such as `name` and `measurementUnit` in controller functions (e.g., `createIngredient`, `updateIngredient`) lacked maximum length validations.
 **Learning:** This exposes the application to Denial of Service (DoS) attacks or database insertion errors by allowing excessively large payloads.
 **Prevention:** Implement explicit `typeof` and `length` checks (e.g., `name.length > 255`) for all incoming string fields in API controllers before passing them to the database or processing them.
+## 2024-04-26 - Mitigate User Enumeration Timing Attack on Login
+**Vulnerability:** A timing attack (user enumeration) vulnerability existed on the login endpoint (`apps/backend/src/controllers/authController.js`). When a user was not found, the function returned early with a 401 response without executing the expensive `bcrypt.compare` operation. This allows an attacker to measure the response time and determine whether a given username or email exists in the database.
+**Learning:** The previous implementation failed to maintain consistent response times across all authentication paths. This is a common gap where early returns for non-existent users leak information. It's crucial to always equalize processing time when comparing hashes or secrets.
+**Prevention:** Pre-compute a DUMMY_HASH at module initialization. If a user is not found, execute a dummy password comparison (`await bcrypt.compare(password, DUMMY_HASH)`) before returning the 401 response. Ensure that test files properly mock `bcrypt.hashSync` if it's introduced at the top level of the module to prevent test execution failures.

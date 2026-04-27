@@ -151,6 +151,9 @@ export const updateUser = async (req, res) => {
     res.json(updatedUser);
   } catch (error) {
     logger.error('Error updating user:', error);
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
+    }
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
