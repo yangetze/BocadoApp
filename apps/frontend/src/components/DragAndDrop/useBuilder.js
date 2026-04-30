@@ -213,12 +213,22 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           customPolicies: superRecipeMetadata.customPolicies || undefined,
           customPaymentMethods: superRecipeMetadata.customPaymentMethods || undefined,
           userId: "user-default-1",
-          brandSelections: brandSelections, superRecipes: canvasItems.map((item) => ({
-            superRecipeId: item.id.replace(/^canvas-\d+-/, "") || item.id,
-            scaleQuantity: item.quantity || 1,
-            originalItem: item,
-          })),
+          brandSelections: brandSelections,
         };
+
+        // ⚡ Bolt: Group items by superRecipeId using an O(1) Map lookup
+        // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
+        const superRecipeMap = new Map();
+        canvasItems.forEach((item) => {
+          const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
+          const currentQuantity = superRecipeMap.get(id)?.scaleQuantity || 0;
+          superRecipeMap.set(id, {
+            superRecipeId: id,
+            scaleQuantity: currentQuantity + parseFloat(item.quantity || 1),
+            originalItem: item,
+          });
+        });
+        payload.superRecipes = Array.from(superRecipeMap.values());
         try {
           if (isEditing) {
              await budgetApi.update(editingItem.id, payload);
