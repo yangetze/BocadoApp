@@ -33,54 +33,7 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
     }
   };
 
-
-  const budgetRows = useMemo(() => {
-    return paginatedBudgets.map((budget) => (
-      <motion.tr
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        key={budget.id}
-        className="border-b border-gray-50 hover:bg-peach-soft/10 transition-colors group"
-      >
-        <td className="py-4 px-6">
-          <div className="font-bold text-slate-gray">{budget.customerName || 'Sin Nombre'}</div>
-        </td>
-        <td className="py-4 px-6 text-gray-500">
-          {new Date(budget.createdAt).toLocaleDateString('es-ES')}
-        </td>
-        <td className="py-4 px-6 text-right">
-          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={() => {
-                const { _normalizedName, ...originalBudget } = budget;
-                onEdit(originalBudget);
-              }}
-              className="p-2 text-slate-gray hover:bg-gray-100 rounded-lg transition-colors"
-              title="Editar Presupuesto"
-              aria-label={`Editar presupuesto de ${budget.customerName || 'Sin Nombre'}`}
-            >
-              <Edit2 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => {
-                confirmDelete('¿Estás seguro de que deseas eliminar este presupuesto?', () => {
-                  onDelete(budget.id);
-                });
-              }}
-              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-              title="Eliminar Presupuesto"
-              aria-label={`Eliminar presupuesto de ${budget.customerName || 'Sin Nombre'}`}
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        </td>
-      </motion.tr>
-    ));
-  }, [paginatedBudgets, onEdit, onDelete, confirmDelete]);
-
   return (
-
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -145,7 +98,48 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
                 </tr>
               </thead>
               <tbody>
-                {budgetRows}
+                {paginatedBudgets.map((budget) => (
+                  <motion.tr
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    key={budget.id}
+                    className="border-b border-gray-50 hover:bg-peach-soft/10 transition-colors group"
+                  >
+                    <td className="py-4 px-6">
+                      <div className="font-bold text-slate-gray">{budget.customerName || 'Sin Nombre'}</div>
+                    </td>
+                    <td className="py-4 px-6 text-gray-500">
+                      {new Date(budget.createdAt).toLocaleDateString('es-ES')}
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => {
+                            const { _normalizedName, ...originalBudget } = budget;
+                            onEdit(originalBudget);
+                          }}
+                          className="p-2 text-slate-gray hover:bg-gray-100 rounded-lg transition-colors"
+                          title="Editar Presupuesto"
+                          aria-label={`Editar presupuesto de ${budget.customerName || 'Sin Nombre'}`}
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            confirmDelete('¿Estás seguro de que deseas eliminar este presupuesto?', () => {
+                              onDelete(budget.id);
+                            });
+                          }}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Eliminar Presupuesto"
+                          aria-label={`Eliminar presupuesto de ${budget.customerName || 'Sin Nombre'}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -1,4 +1,4 @@
-/* global describe, it, expect, jest, beforeEach, afterEach, global */
+/* global describe, it, expect, jest, beforeEach, afterEach */
 import { api } from '../api';
 
 describe('api.js - fetchWithAuth', () => {
@@ -51,8 +51,7 @@ describe('api.js - fetchWithAuth', () => {
 
     try {
       await api.get('/protected');
-    } catch (error) { // eslint-disable-line no-unused-vars
-
+    } catch (e) {
       // Expected to throw
     }
 

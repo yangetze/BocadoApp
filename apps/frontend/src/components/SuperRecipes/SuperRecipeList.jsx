@@ -32,75 +32,7 @@ export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete
     return filteredRecipes.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredRecipes, currentPage]);
 
-
-  const recipeCards = useMemo(() => {
-    return currentRecipes.map((recipe, index) => (
-      <motion.div
-        key={recipe.id}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.05 }}
-        className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col h-full"
-      >
-        <div className="flex justify-between items-start mb-4">
-          <div className="p-3 bg-peach-soft/10 rounded-xl text-peach-soft">
-            <ChefHat className="w-6 h-6" />
-          </div>
-          <button
-            onClick={() => {
-              confirmDelete('¿Estás seguro de que deseas eliminar esta súper receta?', () => {
-                onDelete(recipe.id);
-              });
-            }}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-            aria-label="Eliminar súper receta"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-
-        <h3 className="text-xl font-bold text-slate-gray mb-2 group-hover:text-peach-soft transition-colors line-clamp-1">
-          {recipe.name}
-        </h3>
-
-        {recipe.description && (
-          <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow">
-            {recipe.description}
-          </p>
-        )}
-
-        <div className="mb-4 space-y-2 mt-auto">
-          {(recipe.baseRecipes?.length > 0) && (
-             <div className="text-xs">
-                <span className="font-semibold text-slate-gray">Recetas Base: </span>
-                <span className="text-gray-500">{recipe.baseRecipes.length}</span>
-             </div>
-          )}
-           {(recipe.directIngredients?.length > 0) && (
-             <div className="text-xs">
-                <span className="font-semibold text-slate-gray">Ingredientes Extra: </span>
-                <span className="text-gray-500">{recipe.directIngredients.length}</span>
-             </div>
-          )}
-        </div>
-
-        <div className="pt-4 border-t border-gray-50 mt-auto flex justify-between items-center">
-          <span className="text-xs text-gray-400">
-            {new Date(recipe.createdAt).toLocaleDateString()}
-          </span>
-          <button
-            onClick={() => onEdit(recipe)}
-            className="text-peach-soft hover:bg-peach-soft/10 p-2 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
-          >
-            Editar <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </motion.div>
-    ));
-  }, [currentRecipes, onDelete, onEdit, confirmDelete]);
-
   if (loading) {
-
     return (
       <div className="flex flex-col items-center justify-center p-12 text-slate-gray/50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-peach-soft mb-4"></div>
@@ -191,7 +123,69 @@ export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recipeCards}
+        {currentRecipes.map((recipe, index) => (
+          <motion.div
+            key={recipe.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col h-full"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-peach-soft/10 rounded-xl text-peach-soft">
+                <ChefHat className="w-6 h-6" />
+              </div>
+              <button
+                onClick={() => {
+                  confirmDelete('¿Estás seguro de que deseas eliminar esta súper receta?', () => {
+                    onDelete(recipe.id);
+                  });
+                }}
+                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                aria-label="Eliminar súper receta"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            <h3 className="text-xl font-bold text-slate-gray mb-2 group-hover:text-peach-soft transition-colors line-clamp-1">
+              {recipe.name}
+            </h3>
+
+            {recipe.description && (
+              <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow">
+                {recipe.description}
+              </p>
+            )}
+
+            <div className="mb-4 space-y-2 mt-auto">
+              {(recipe.baseRecipes?.length > 0) && (
+                 <div className="text-xs">
+                    <span className="font-semibold text-slate-gray">Recetas Base: </span>
+                    <span className="text-gray-500">{recipe.baseRecipes.length}</span>
+                 </div>
+              )}
+               {(recipe.directIngredients?.length > 0) && (
+                 <div className="text-xs">
+                    <span className="font-semibold text-slate-gray">Ingredientes Extra: </span>
+                    <span className="text-gray-500">{recipe.directIngredients.length}</span>
+                 </div>
+              )}
+            </div>
+
+            <div className="pt-4 border-t border-gray-50 mt-auto flex justify-between items-center">
+              <span className="text-xs text-gray-400">
+                {new Date(recipe.createdAt).toLocaleDateString()}
+              </span>
+              <button
+                onClick={() => onEdit(recipe)}
+                className="text-peach-soft hover:bg-peach-soft/10 p-2 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
+              >
+                Editar <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
       {totalPages > 1 && (
