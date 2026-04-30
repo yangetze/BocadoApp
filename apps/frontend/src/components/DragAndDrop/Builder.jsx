@@ -11,14 +11,11 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import PropTypes from "prop-types";
 
-import { Palette } from "./Palette";
 import { Canvas } from "./Canvas";
 import { ItemSearchSelect } from "./ItemSearchSelect";
-import { DraggableItem } from "./DraggableItem";
 import { SortableItem } from "./SortableItem";
 
-import { useCallback, useState } from "react";
-import { MobilePaletteModal } from "./MobilePaletteModal";
+import { useCallback } from "react";
 import { Plus } from "lucide-react";
 
 import { toast } from "react-hot-toast";
@@ -30,8 +27,6 @@ import { BrandSelectionModal } from "./BrandSelectionModal";
 import { IngredientsSummary } from "./IngredientsSummary";
 
 export default function Builder({ mode = "superRecipe", availableItems = [], editingItem, onSuccess, initialData }) {
-  const [isPaletteModalOpen, setIsPaletteModalOpen] = useState(false);
-
   const {
     isEditing,
     handleDelete,
@@ -129,7 +124,6 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
         });
       }
     }
-    // 2. Reordering inside the canvas
     else if (!isSourcePalette && over.id !== "canvas") {
       const oldIndex = canvasItems.findIndex((i) => i.id === active.id);
       const newIndex = canvasItems.findIndex((i) => i.id === over.id);
@@ -161,8 +155,6 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
 
   const handleAddItem = useCallback(
     (item) => {
-      setIsPaletteModalOpen(false);
-
       setCanvasItems((items) => {
         const exists = items.some((canvasItem) => {
           const baseId = canvasItem.id.replace(/^canvas-\d+-/, "");
@@ -188,38 +180,14 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
     [setCanvasItems, mode, fetchMarginRecommendation],
   );
 
-  const paletteTitle =
-    mode === "superRecipe"
-      ? "Recetas Base"
-      : mode === "baseRecipe"
-        ? "Ingredientes"
-        : "Súper Recetas";
-  const paletteDescription =
-    mode === "superRecipe"
-      ? "Arrastra para armar tu Súper Receta"
-      : mode === "baseRecipe"
-        ? "Arrastra ingredientes a la receta"
-        : "Arrastra para armar tu Presupuesto";
-
-  return (
+    return (
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="grid grid-cols-1 gap-8">
-        {/* Left Column: Palette */}
-        <div className="hidden lg:block lg:col-span-1">
-          <Palette
-            items={availableItems}
-            title={paletteTitle}
-            description={paletteDescription}
-            onAdd={handleAddItem}
-          />
-        </div>
-
-        {/* Right Column: Canvas & Controls */}
+      <div>
         <div className="flex flex-col gap-6 w-full">
           <div className="bg-white rounded-3xl p-4 lg:p-8 shadow-sm border border-gray-100 lg:min-h-[calc(100vh-8rem)] flex flex-col">
             <BuilderHeader
@@ -306,7 +274,7 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
             {/* Desktop Autocomplete Search */}
             <ItemSearchSelect items={availableItems} onAdd={handleAddItem} placeholder={mode === "baseRecipe" ? "Buscar ingrediente para agregar..." : mode === "superRecipe" ? "Buscar receta base para agregar..." : "Buscar súper receta para agregar..."} />
 
-            {/* The Canvas Area */}
+            {}
             <div className="flex-1 flex flex-col">
               <Canvas
                 items={canvasItems}
@@ -315,15 +283,6 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
                 onUpdateQuantity={updateItemQuantity}
               />
 
-              {/* Mobile Add Item Button */}
-              <button
-                type="button"
-                onClick={() => setIsPaletteModalOpen(true)}
-                className="w-full mt-4 lg:hidden flex items-center justify-center gap-2 py-3 px-4 border-2 border-dashed border-peach-soft text-peach-soft rounded-xl hover:bg-peach-soft/5 transition-colors font-medium"
-              >
-                <Plus size={20} />
-                Agregar elemento
-              </button>
 
               {mode === "budget" && (
                 <button
@@ -344,26 +303,10 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
         </div>
       </div>
 
-      <MobilePaletteModal
-        isOpen={isPaletteModalOpen}
-        onClose={() => setIsPaletteModalOpen(false)}
-      >
-        <div className="h-full">
-          <Palette
-            items={availableItems}
-            title={paletteTitle}
-            description={paletteDescription}
-            onAdd={handleAddItem}
-          />
-        </div>
-      </MobilePaletteModal>
-
       {/* Drag Overlay for smooth animations while dragging */}
       <DragOverlay dropAnimation={dropAnimationConfig}>
         {activeId ? (
-          activeItem?.source === "palette" ? (
-            <DraggableItem id={activeId} item={activeItem} isOverlay />
-          ) : (
+
             <SortableItem
               id={activeId}
               item={activeItem}
@@ -371,8 +314,7 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
               onRemove={() => {}}
               onUpdateQuantity={() => {}}
             />
-          )
-        ) : null}
+          ) : null}
       </DragOverlay>
       {mode === "budget" && (
         <BrandSelectionModal

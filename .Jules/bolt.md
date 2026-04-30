@@ -176,3 +176,8 @@
 - Replaced the split-column (1/4 - 3/4) Drag and Drop `Palette` desktop layout with a single-column layout using `grid-cols-1` for the `Builder.jsx`.
 - Replaced the legacy visual-drag approach for ingredients and recipes on large screens with an Autocomplete/Search Select Dropdown (`ItemSearchSelect`). This pattern is much more modern and prevents component crowding and text truncations as previously experienced by the user.
 - Left the `<MobilePaletteModal />` behavior identical, as Mobile users still utilize the full-screen modal pattern effectively.
+
+### Frontend Builder Desktop Layout Upgrade (Update)
+- Completely removed the `Palette.jsx` and `MobilePaletteModal.jsx` drag-and-drop source components and their related dependencies across all modes in the `Builder.jsx` component.
+- The `ItemSearchSelect` component is now the exclusive and unified mechanism to add elements on both desktop and mobile layouts.
+- Removed unused local states (`isPaletteModalOpen`) and cleaned up responsive rendering conditions to match the single-column search-driven architecture.

@@ -49,7 +49,7 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
   };
 
   return (
-    <div className="relative w-full mb-6 z-20 hidden lg:block" ref={wrapperRef}>
+    <div className="relative w-full mb-6 z-20" ref={wrapperRef}>
       <div className="relative group">
         <Search
           className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-peach-soft transition-colors"
