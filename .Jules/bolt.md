@@ -171,3 +171,8 @@
 ## 2026-04-30 - Prevent Redundant Array Mapping in useBuilder
 **Learning:** During drag-and-drop operations, particularly when submitting a `budget`, iterating over `canvasItems` to map them directly into a payload array can lead to DB constraint errors (`P2002`) and redundant nested loop operations (especially if we try grouping with `.find()` inside a `.reduce()`).
 **Action:** When saving lists of duplicate items that share the same ID in the frontend (such as `superRecipes` inside a `budget`), aggregate them first using an $O(1)$ `Map`. This collapses identical items into a single payload entry with a grouped quantity, preventing unique constraint violations and reducing redundant insert queries on the backend.
+
+### Frontend Builder Desktop Layout Upgrade
+- Replaced the split-column (1/4 - 3/4) Drag and Drop `Palette` desktop layout with a single-column layout using `grid-cols-1` for the `Builder.jsx`.
+- Replaced the legacy visual-drag approach for ingredients and recipes on large screens with an Autocomplete/Search Select Dropdown (`ItemSearchSelect`). This pattern is much more modern and prevents component crowding and text truncations as previously experienced by the user.
+- Left the `<MobilePaletteModal />` behavior identical, as Mobile users still utilize the full-screen modal pattern effectively.
