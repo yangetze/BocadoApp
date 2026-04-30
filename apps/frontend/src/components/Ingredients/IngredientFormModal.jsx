@@ -214,7 +214,7 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 sm:flex gap-4 w-full sm:w-auto">
+                <div className="grid grid-cols-2 sm:flex gap-4 w-full sm:w-auto sm:items-end">
                   <div className="col-span-1 sm:w-24">
                     <label className="block text-sm font-medium text-slate-gray mb-1" htmlFor="globalPriceQuantity">Por cada *</label>
                   <input
