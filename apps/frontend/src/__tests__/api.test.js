@@ -1,4 +1,4 @@
-/* global describe, it, expect, jest, beforeEach, afterEach */
+/* global describe, it, expect, jest, beforeEach, afterEach, global */
 import { api } from '../api';
 
 describe('api.js - fetchWithAuth', () => {
@@ -51,7 +51,7 @@ describe('api.js - fetchWithAuth', () => {
 
     try {
       await api.get('/protected');
-    } catch (e) {
+    } catch {
       // Expected to throw
     }
 
