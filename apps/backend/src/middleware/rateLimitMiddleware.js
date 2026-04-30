@@ -11,6 +11,15 @@ export const authLimiter = rateLimit({
   skip: () => isTestEnvironment
 });
 
+export const apiSyncLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // Limit each IP to 5 requests per window for API sync
+  message: { error: 'Límite de sincronización alcanzado. Inténtalo de nuevo en una hora.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => isTestEnvironment
+});
+
 export const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // Limit each IP to 1000 requests per window
