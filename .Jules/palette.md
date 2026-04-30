@@ -61,3 +61,6 @@
 ## 2024-04-26 - Add Clear Button to Search Inputs
 **Learning:** We need standard rules across the frontend search inputs to make it easy to clear the content without repeatedly pressing the backspace key, ensuring efficiency and good accessibility.
 **Action:** Added a clear button (using `<X />` from `lucide-react`) to the search input in `AdminDashboard.jsx`, ensuring it only conditionally renders when the `searchTerm` exists and has an explicit `aria-label="Limpiar búsqueda"` to maintain accessibility context for assistive technologies. Also adjusted the `pr` padding to make sure the clear button does not overlap with the input text.
+## 2024-05-19 - Accessibility for Icon-only Buttons
+**Learning:** In the `BaseRecipeManager`, `SuperRecipeManager`, and `BudgetManager`, the "Volver a la lista" back buttons combine an icon `<ArrowLeft>` and text, but screen readers might not interpret the destination clearly from just "Volver a la lista". Adding a descriptive `aria-label` like "Volver a la lista de recetas base" improves context without changing the visual design.
+**Action:** Always verify if navigation buttons, especially those using generic text like "Back" or "Close" combined with icons, have sufficient context for screen readers. Apply specific `aria-label` attributes to clarify their exact destination or action.
