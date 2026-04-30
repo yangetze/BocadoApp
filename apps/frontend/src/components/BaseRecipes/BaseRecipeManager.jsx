@@ -33,7 +33,7 @@ export default function BaseRecipeManager() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [view, searchQuery]);
+  }, [view, fetchBaseRecipes]);
 
   const handleCreateNew = useCallback(() => {
     setEditingRecipe(null);
