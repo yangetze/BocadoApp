@@ -33,8 +33,7 @@ export default function BaseRecipeManager() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [view, searchQuery]);
+  }, [view, searchQuery, fetchBaseRecipes]);
 
   const handleCreateNew = useCallback(() => {
     setEditingRecipe(null);

@@ -65,3 +65,6 @@
 ## 2024-05-20 - Use O(1) Map instead of O(N^2) reduce for groupings
 **Learning:** Using `reduce` and `find` together to group objects is `O(N^2)` time complexity. While it "prevents redundant inserts" at the database level by shrinking the payload, it is algorithmically unoptimized.
 **Action:** Always prefer using a `Map` when aggregating/grouping arrays in Javascript for $O(N)$ total time complexity.
+## 2026-04-30 - Prevent Redundant Array Mapping in useBuilder
+**Learning:** During drag-and-drop operations, particularly when submitting a `budget`, iterating over `canvasItems` to map them directly into a payload array can lead to DB constraint errors (`P2002`) and redundant nested loop operations (especially if we try grouping with `.find()` inside a `.reduce()`).
+**Action:** When saving lists of duplicate items that share the same ID in the frontend (such as `superRecipes` inside a `budget`), aggregate them first using an $O(1)$ `Map`. This collapses identical items into a single payload entry with a grouped quantity, preventing unique constraint violations and reducing redundant insert queries on the backend.
