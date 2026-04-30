@@ -33,21 +33,28 @@ export default function BaseRecipeManager() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, searchQuery]);
 
   const handleCreateNew = useCallback(() => {
     setEditingRecipe(null);
     setView("builder");
+
+
   }, []);
 
   const handleEdit = useCallback((recipe) => {
     setEditingRecipe(recipe);
     setView("builder");
+
+
   }, []);
 
   const handleBackToList = useCallback(() => {
     setView("list");
     setEditingRecipe(null);
+
+
   }, []);
 
   if (view === "builder") {
@@ -56,6 +63,7 @@ export default function BaseRecipeManager() {
         <button
           onClick={handleBackToList}
           className="flex items-center gap-2 text-slate-gray hover:text-peach-soft transition-colors font-medium mb-4"
+          aria-label="Volver a la lista de recetas base"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver a la lista
