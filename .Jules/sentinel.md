@@ -1,0 +1,4 @@
+## 2026-05-01 - [Authorization Bypass Fix in Auth Middleware]
+**Vulnerability:** The `verifyToken` middleware (`apps/backend/src/middleware/authMiddleware.js`) was relying exclusively on the JWT payload to determine user activity status (`decoded.active`). If an administrator deactivated or deleted a user *after* a token was issued, the user could still authenticate and access protected API routes for up to 24 hours until the token expired.
+**Learning:** Checking authorization claims directly from a long-lived JWT payload without validating against the database creates a race condition where revoked permissions are ignored.
+**Prevention:** Always perform a database lookup for critical authorization states (like account existence and active status) during JWT verification on sensitive applications, or implement a robust token revocation mechanism (like a Redis blacklist or shortened token lifespans).

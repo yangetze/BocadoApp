@@ -6,7 +6,17 @@ jest.unstable_mockModule('jsonwebtoken', () => ({
   }
 }));
 
+jest.unstable_mockModule('../src/prisma.js', () => ({
+  default: {
+    user: {
+      findUnique: jest.fn()
+    }
+  }
+}));
+
 const { default: jwt } = await import('jsonwebtoken');
+const prismaClient = await import('../src/prisma.js');
+const prisma = prismaClient.default;
 const { verifyToken, authenticateToken, requireAdmin, isAdmin } = await import('../src/middleware/authMiddleware.js');
 
 // Constants for expected error messages
@@ -43,82 +53,117 @@ describe('Auth Middleware', () => {
 
   describe('verifyToken', () => {
     describe('Happy Paths', () => {
-      it('should call next() and set req.user when valid token is provided (lowercase header)', () => {
+      it('should call next() and set req.user when valid token is provided (lowercase header)', async () => {
         const decodedUser = { id: 'user1', username: 'testuser', role: 'USER' };
+        const dbUser = { ...decodedUser, active: true };
         mockReq.headers['authorization'] = 'Bearer validtoken';
         jwt.verify.mockReturnValue(decodedUser);
+        prisma.user.findUnique.mockResolvedValue(dbUser);
 
-        verifyToken(mockReq, mockRes, mockNext);
+        await verifyToken(mockReq, mockRes, mockNext);
 
         expect(jwt.verify).toHaveBeenCalledWith('validtoken', expect.any(String));
-        expect(mockReq.user).toEqual(decodedUser);
+        expect(prisma.user.findUnique).toHaveBeenCalledWith({
+          where: { id: decodedUser.id },
+          select: { id: true, username: true, role: true, active: true }
+        });
+        expect(mockReq.user).toEqual(dbUser);
         expect(mockNext).toHaveBeenCalledTimes(1);
         expect(mockRes.status).not.toHaveBeenCalled();
       });
 
-      it('should call next() and set req.user when valid token is provided (Capitalized header)', () => {
+      it('should call next() and set req.user when valid token is provided (Capitalized header)', async () => {
         const decodedUser = { id: 'user1', username: 'testuser', role: 'USER' };
+        const dbUser = { ...decodedUser, active: true };
         mockReq.headers['Authorization'] = 'Bearer validtoken';
         jwt.verify.mockReturnValue(decodedUser);
+        prisma.user.findUnique.mockResolvedValue(dbUser);
 
-        verifyToken(mockReq, mockRes, mockNext);
+        await verifyToken(mockReq, mockRes, mockNext);
 
         expect(jwt.verify).toHaveBeenCalledWith('validtoken', expect.any(String));
-        expect(mockReq.user).toEqual(decodedUser);
+        expect(mockReq.user).toEqual(dbUser);
         expect(mockNext).toHaveBeenCalledTimes(1);
         expect(mockRes.status).not.toHaveBeenCalled();
       });
     });
 
     describe('Error Conditions & Edge Cases', () => {
-      it('should return 401 when no token is provided', () => {
-        verifyToken(mockReq, mockRes, mockNext);
+      it('should return 401 when no token is provided', async () => {
+        await verifyToken(mockReq, mockRes, mockNext);
 
         expect(mockRes.status).toHaveBeenCalledWith(401);
         expect(mockRes.json).toHaveBeenCalledWith({ error: ERRORS.NO_TOKEN });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
-      it('should return 401 when header is present but malformed (missing Bearer)', () => {
+      it('should return 401 when header is present but malformed (missing Bearer)', async () => {
         mockReq.headers['authorization'] = 'validtoken';
 
-        verifyToken(mockReq, mockRes, mockNext);
+        await verifyToken(mockReq, mockRes, mockNext);
 
         expect(mockRes.status).toHaveBeenCalledWith(401);
         expect(mockRes.json).toHaveBeenCalledWith({ error: ERRORS.NO_TOKEN });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
-      it('should return 403 when user is inactive', () => {
+      it('should return 403 when user is inactive in token payload', async () => {
         const decodedUser = { id: 'user1', active: false };
         mockReq.headers['authorization'] = 'Bearer validtoken';
         jwt.verify.mockReturnValue(decodedUser);
 
-        verifyToken(mockReq, mockRes, mockNext);
+        await verifyToken(mockReq, mockRes, mockNext);
 
         expect(mockRes.status).toHaveBeenCalledWith(403);
         expect(mockRes.json).toHaveBeenCalledWith({ error: ERRORS.INACTIVE_USER });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
-      it('should return 401 when token has expired', () => {
+      it('should return 401 when user is not found in database', async () => {
+        const decodedUser = { id: 'user1' };
+        mockReq.headers['authorization'] = 'Bearer validtoken';
+        jwt.verify.mockReturnValue(decodedUser);
+        prisma.user.findUnique.mockResolvedValue(null);
+
+        await verifyToken(mockReq, mockRes, mockNext);
+
+        expect(mockRes.status).toHaveBeenCalledWith(401);
+        expect(mockRes.json).toHaveBeenCalledWith({ error: 'Acceso denegado: Usuario no encontrado' });
+        expect(mockNext).not.toHaveBeenCalled();
+      });
+
+      it('should return 403 when user is found but inactive in database', async () => {
+        const decodedUser = { id: 'user1' };
+        const dbUser = { id: 'user1', active: false };
+        mockReq.headers['authorization'] = 'Bearer validtoken';
+        jwt.verify.mockReturnValue(decodedUser);
+        prisma.user.findUnique.mockResolvedValue(dbUser);
+
+        await verifyToken(mockReq, mockRes, mockNext);
+
+        expect(mockRes.status).toHaveBeenCalledWith(403);
+        expect(mockRes.json).toHaveBeenCalledWith({ error: ERRORS.INACTIVE_USER });
+        expect(mockNext).not.toHaveBeenCalled();
+      });
+
+      it('should return 401 when token has expired', async () => {
         mockReq.headers['authorization'] = 'Bearer expiredtoken';
         const error = new Error('jwt expired');
         error.name = 'TokenExpiredError';
         jwt.verify.mockImplementation(() => { throw error; });
 
-        verifyToken(mockReq, mockRes, mockNext);
+        await verifyToken(mockReq, mockRes, mockNext);
 
         expect(mockRes.status).toHaveBeenCalledWith(401);
         expect(mockRes.json).toHaveBeenCalledWith({ error: ERRORS.TOKEN_EXPIRED });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
-      it('should return 403 when token is invalid or malformed', () => {
+      it('should return 403 when token is invalid or malformed', async () => {
         mockReq.headers['authorization'] = 'Bearer invalidtoken';
         jwt.verify.mockImplementation(() => { throw new Error('invalid token'); });
 
-        verifyToken(mockReq, mockRes, mockNext);
+        await verifyToken(mockReq, mockRes, mockNext);
 
         expect(mockRes.status).toHaveBeenCalledWith(403);
         expect(mockRes.json).toHaveBeenCalledWith({ error: ERRORS.INVALID_TOKEN });
