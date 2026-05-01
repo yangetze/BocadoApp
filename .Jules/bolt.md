@@ -181,3 +181,6 @@
 - Completely removed the `Palette.jsx` and `MobilePaletteModal.jsx` drag-and-drop source components and their related dependencies across all modes in the `Builder.jsx` component.
 - The `ItemSearchSelect` component is now the exclusive and unified mechanism to add elements on both desktop and mobile layouts.
 - Removed unused local states (`isPaletteModalOpen`) and cleaned up responsive rendering conditions to match the single-column search-driven architecture.
+## 2024-05-19 - O(K) Search Filtering Optimization
+**Learning:** When performing string matching and limiting results on a large dataset (e.g., getting the top 50 search results), chaining `.filter(condition).slice(0, 50)` creates an unnecessary O(N) bottleneck because `.filter()` processes the entire array even if the first 50 items match.
+**Action:** Replace full array iterations with early-return `for` loops that `break` once the desired number of matches is collected. This bounds the search complexity to O(K) (where K is the number of elements checked to find the limit), significantly improving responsiveness on large datasets.
