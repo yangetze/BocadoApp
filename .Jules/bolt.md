@@ -181,3 +181,6 @@
 - Completely removed the `Palette.jsx` and `MobilePaletteModal.jsx` drag-and-drop source components and their related dependencies across all modes in the `Builder.jsx` component.
 - The `ItemSearchSelect` component is now the exclusive and unified mechanism to add elements on both desktop and mobile layouts.
 - Removed unused local states (`isPaletteModalOpen`) and cleaned up responsive rendering conditions to match the single-column search-driven architecture.
+## 2023-11-09 - [ItemSearchSelect filteredItems slice]
+**Learning:** Using `.filter(...).slice(0, 50)` creates an O(N) traversal on every search query change.
+**Action:** Replaced `.filter(...).slice(...)` with a standard `for` loop that uses an early `break` when 50 items are reached. This significantly reduces computation time from O(N) to O(K) where K is the target max items (50) and improves performance on large arrays during debounced search processing.
