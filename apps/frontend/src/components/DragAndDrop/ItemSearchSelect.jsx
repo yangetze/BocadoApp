@@ -37,9 +37,20 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
     if (!searchQuery) return normalizedItems.slice(0, 50); // Show max 50 items initially
 
     const normalizedSearchQuery = normalizeString(searchQuery);
-    return normalizedItems.filter((item) =>
-      item._normalizedName.includes(normalizedSearchQuery)
-    ).slice(0, 50);
+    // ⚡ Bolt: Use a for loop with early break instead of .filter().slice()
+    // This reduces search complexity from O(N) to O(K) where K is max items (50)
+    const result = [];
+    const len = normalizedItems.length;
+    for (let i = 0; i < len; i++) {
+      const item = normalizedItems[i];
+      if (item._normalizedName.includes(normalizedSearchQuery)) {
+        result.push(item);
+        if (result.length >= 50) {
+          break;
+        }
+      }
+    }
+    return result;
   }, [normalizedItems, searchQuery]);
 
   const handleSelect = (item) => {
