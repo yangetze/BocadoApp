@@ -37,9 +37,19 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
     if (!searchQuery) return normalizedItems.slice(0, 50); // Show max 50 items initially
 
     const normalizedSearchQuery = normalizeString(searchQuery);
-    return normalizedItems.filter((item) =>
-      item._normalizedName.includes(normalizedSearchQuery)
-    ).slice(0, 50);
+    const results = [];
+    const len = normalizedItems.length;
+
+    // ⚡ Bolt: Replaced O(N) .filter().slice() with an early-exit loop for O(K) complexity
+    for (let i = 0; i < len; i++) {
+      const item = normalizedItems[i];
+      if (item._normalizedName.includes(normalizedSearchQuery)) {
+        results.push(item);
+        if (results.length === 50) break;
+      }
+    }
+
+    return results;
   }, [normalizedItems, searchQuery]);
 
   const handleSelect = (item) => {
