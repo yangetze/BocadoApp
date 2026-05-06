@@ -2,12 +2,13 @@ import jwt from 'jsonwebtoken';
 
 import { JWT_SECRET } from '../config/auth.js';
 import logger from '../utils/logger.js';
+import prisma from '../prisma.js';
 
 /**
  * Middleware para verificar si el usuario tiene un JWT válido.
  * Extrae el usuario y lo inyecta en la petición para uso posterior.
  */
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Formato: Bearer <TOKEN>
@@ -18,9 +19,17 @@ export const verifyToken = (req, res, next) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     
-    // En Supabase el ID puede estar en decoded.sub o decoded.id.
-    // Verificamos si el usuario está activo (si esa info viene en el token o se valida luego)
-    if (decoded.active === false) {
+    // Security: Validate against database to ensure user still exists and is active
+    // relying only on token contents leaves the app vulnerable to deactivated users with valid tokens
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id }
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Usuario no encontrado' });
+    }
+
+    if (!user.active) {
       return res.status(403).json({ error: 'Usuario inactivo.' });
     }
 
