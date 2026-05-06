@@ -67,3 +67,6 @@
 ## 2024-05-19 - Accessibility for Icon-only Buttons
 **Learning:** In the `BaseRecipeManager`, `SuperRecipeManager`, and `BudgetManager`, the "Volver a la lista" back buttons combine an icon `<ArrowLeft>` and text, but screen readers might not interpret the destination clearly from just "Volver a la lista". Adding a descriptive `aria-label` like "Volver a la lista de recetas base" improves context without changing the visual design.
 **Action:** Always verify if navigation buttons, especially those using generic text like "Back" or "Close" combined with icons, have sufficient context for screen readers. Apply specific `aria-label` attributes to clarify their exact destination or action.
+## 2026-05-06 - Dynamic Form Accessibility
+**Learning:** When working with dynamically generated forms (e.g., lists of inputs mapped over an array), standard `id` and `htmlFor` pairs fail accessibility checks if they aren't uniquely keyed. Screen readers will only associate the label with the *first* input that matches the ID.
+**Action:** Always append the array index (or a unique UUID) to dynamically generated `id` and `htmlFor` attributes (e.g., `id={`methodType-${index}`}`) to ensure 1:1 mapping between labels and inputs for screen reader users.
