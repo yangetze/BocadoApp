@@ -70,3 +70,6 @@
 ## 2026-05-06 - Dynamic Form Accessibility
 **Learning:** When working with dynamically generated forms (e.g., lists of inputs mapped over an array), standard `id` and `htmlFor` pairs fail accessibility checks if they aren't uniquely keyed. Screen readers will only associate the label with the *first* input that matches the ID.
 **Action:** Always append the array index (or a unique UUID) to dynamically generated `id` and `htmlFor` attributes (e.g., `id={`methodType-${index}`}`) to ensure 1:1 mapping between labels and inputs for screen reader users.
+## 2024-05-20 - Action Button Loading and Blocking State in Modals
+**Learning:** Form modals that submit asynchronously without providing visual feedback (such as the `IngredientFormModal` missing an `isSaving` state) leave users guessing whether their click registered, leading to potential duplicate submissions or frustrated repeated clicking.
+**Action:** When implementing or updating form modals, always ensure there is an internal state (like `isSaving`) to disable action buttons during submission and to provide visual feedback (e.g., displaying "Guardando..." with a spinner instead of "Guardar").
