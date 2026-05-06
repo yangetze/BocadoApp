@@ -67,6 +67,9 @@
 ## 2024-05-19 - Accessibility for Icon-only Buttons
 **Learning:** In the `BaseRecipeManager`, `SuperRecipeManager`, and `BudgetManager`, the "Volver a la lista" back buttons combine an icon `<ArrowLeft>` and text, but screen readers might not interpret the destination clearly from just "Volver a la lista". Adding a descriptive `aria-label` like "Volver a la lista de recetas base" improves context without changing the visual design.
 **Action:** Always verify if navigation buttons, especially those using generic text like "Back" or "Close" combined with icons, have sufficient context for screen readers. Apply specific `aria-label` attributes to clarify their exact destination or action.
+## 2024-05-20 - Empty State Design Patterns
+**Learning:** We noticed that some empty states (e.g. `SettingsManager` payment methods, `ExchangeRateManager` rates, `BrandSelectionModal` ingredients) were missing a consistent visual icon or illustration, which makes them look unpolished compared to other empty states in the application. Good empty states should provide a visual cue alongside the text.
+**Action:** When implementing empty states for lists or data sets, always include a relevant `lucide-react` icon (e.g. `CreditCard`, `History`, `BoxSelect`) styled inside a circular background container above the primary empty state text, maintaining visual consistency across the application.
 ## 2026-05-06 - Dynamic Form Accessibility
 **Learning:** When working with dynamically generated forms (e.g., lists of inputs mapped over an array), standard `id` and `htmlFor` pairs fail accessibility checks if they aren't uniquely keyed. Screen readers will only associate the label with the *first* input that matches the ID.
 **Action:** Always append the array index (or a unique UUID) to dynamically generated `id` and `htmlFor` attributes (e.g., `id={`methodType-${index}`}`) to ensure 1:1 mapping between labels and inputs for screen reader users.

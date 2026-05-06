@@ -96,12 +96,18 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden max-h-[400px] flex flex-col z-50">
           <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
             {filteredItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
-                <p className="text-sm">
+              <div className="text-center py-10 px-4 text-gray-500 flex flex-col items-center justify-center">
+                <Search className="w-10 h-10 text-gray-300 mb-3" />
+                <p className="text-sm font-medium">
                   {searchQuery
                     ? "No se encontraron resultados."
                     : "No hay elementos disponibles."}
                 </p>
+                {searchQuery && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Prueba buscando con diferentes términos.
+                  </p>
+                )}
               </div>
             ) : (
               filteredItems.map((item) => (

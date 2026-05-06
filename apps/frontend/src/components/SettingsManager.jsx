@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api';
 import ExchangeRateManager from './ExchangeRateManager';
-import { Save, Plus, Trash2 } from 'lucide-react';
+import { Save, Plus, Trash2, CreditCard } from 'lucide-react';
 
 export default function SettingsManager() {
   const { user, login } = useAuth(); // Login can be used to update context
@@ -199,7 +199,13 @@ export default function SettingsManager() {
               </div>
 
               {paymentMethods.length === 0 ? (
-                <p className="text-center text-gray-500 py-4 text-sm">No has configurado métodos de pago.</p>
+                <div className="text-center text-gray-500 py-8 bg-white rounded-xl border border-dashed border-gray-200 flex flex-col items-center">
+                  <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                    <CreditCard className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-gray">No has configurado métodos de pago.</p>
+                  <p className="text-xs text-gray-400 mt-1">Agrega opciones para facilitar el cobro a tus clientes.</p>
+                </div>
               ) : (
                 <div className="space-y-4">
                   {paymentMethods.map((method, index) => (
