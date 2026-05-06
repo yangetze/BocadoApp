@@ -184,3 +184,7 @@
 ## 2024-05-04 - Search Filtering Loop Optimization
 **Learning:** Using `.filter().slice()` for frontend search filtering is inefficient for large datasets because `.filter()` processes the entire array `O(N)` even if the user only needs the first few results (e.g., 50).
 **Action:** Replace `.filter().slice()` patterns in frontend components (like `ItemSearchSelect`) with a standard `for` loop and an early `break` when the maximum number of desired results is reached, reducing the time complexity from `O(N)` to `O(K)`.
+
+## 2024-05-24 - Frontend Array Iteration Early Short-Circuiting
+**Learning:** In React hooks (like `useMemo`), wrapping the entire logic in array iteration functions like `.reduce()` or `.forEach()` while placing mode-specific condition checks (e.g., `if (mode !== 'baseRecipe')`) *inside* the callback forces the application to evaluate an $O(N)$ operation even when the calculated value is irrelevant.
+**Action:** When a calculation is specific to a particular UI mode or state, place an early return (`if (mode !== 'target_mode') return default_value;`) *before* entering the iteration block. This short-circuits the calculation, turning an $O(N)$ traversal into an $O(1)$ operation, significantly reducing CPU overhead per render cycle for unrelated UI states.

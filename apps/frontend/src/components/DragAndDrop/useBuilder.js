@@ -118,16 +118,20 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
   // on every render of the Builder, especially during 60fps Drag & Drop interactions.
   // Impact: Reduces CPU overhead per render cycle for baseRecipe canvases by preventing redundant iteration.
   const totalBaseRecipeCost = useMemo(() => {
-    return canvasItems.reduce((acc, item) => {
-      if (mode === "baseRecipe" && item.globalPrice !== undefined) {
-        return (
-          acc +
-          (item.quantity !== undefined ? item.quantity : 1) *
-            (item.globalPrice / (item.globalPriceQuantity || 1))
-        );
+    // ⚡ Bolt: Early exit for non-baseRecipe modes converts O(N) traversal to O(1)
+    if (mode !== "baseRecipe") return 0;
+
+    // ⚡ Bolt: Replaced .reduce() with a standard for-loop to minimize iteration protocol overhead
+    let total = 0;
+    const len = canvasItems.length;
+    for (let i = 0; i < len; i++) {
+      const item = canvasItems[i];
+      if (item.globalPrice !== undefined) {
+        const qty = item.quantity !== undefined ? item.quantity : 1;
+        total += qty * (item.globalPrice / (item.globalPriceQuantity || 1));
       }
-      return acc;
-    }, 0);
+    }
+    return total;
   }, [canvasItems, mode]);
 
   const ingredientTotals = useMemo(() => {
