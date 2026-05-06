@@ -131,8 +131,9 @@ export default function SettingsManager() {
               <h3 className="text-lg font-semibold text-slate-gray mb-4">Preferencias Globales</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-gray mb-1">Moneda Principal por Defecto</label>
+                  <label htmlFor="defaultCurrency" className="block text-sm font-medium text-slate-gray mb-1">Moneda Principal por Defecto</label>
                   <select
+                    id="defaultCurrency"
                     value={formData.defaultCurrency}
                     onChange={e => setFormData({...formData, defaultCurrency: e.target.value})}
                     className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-peach-soft"
@@ -219,8 +220,9 @@ export default function SettingsManager() {
 
                       <div className="grid grid-cols-2 gap-4 mb-4 pr-8">
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">Tipo de Pago</label>
+                          <label htmlFor={`methodType-${index}`} className="block text-xs text-gray-500 mb-1">Tipo de Pago</label>
                           <input
+                            id={`methodType-${index}`}
                             type="text"
                             value={method.type}
                             onChange={(e) => handlePaymentMethodChange(index, 'type', e.target.value)}
@@ -229,8 +231,9 @@ export default function SettingsManager() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">Moneda</label>
+                          <label htmlFor={`methodCurrency-${index}`} className="block text-xs text-gray-500 mb-1">Moneda</label>
                           <select
+                            id={`methodCurrency-${index}`}
                             value={method.currency}
                             onChange={(e) => handlePaymentMethodChange(index, 'currency', e.target.value)}
                             className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white"
@@ -267,6 +270,7 @@ export default function SettingsManager() {
                               }}
                               className="w-1/3 border border-gray-200 rounded text-xs px-2 py-1"
                               placeholder="Clave"
+                              aria-label="Clave"
                             />
                             <input
                               type="text"
@@ -274,6 +278,7 @@ export default function SettingsManager() {
                               onChange={(e) => handlePaymentDetailChange(index, key, e.target.value)}
                               className="flex-1 border border-gray-200 rounded text-xs px-2 py-1"
                               placeholder="Valor"
+                              aria-label="Valor"
                             />
                             <button type="button" onClick={() => handleRemovePaymentDetail(index, key)} className="text-gray-400 hover:text-red-500 px-1" aria-label="Eliminar detalle">
                               &times;
