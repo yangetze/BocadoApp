@@ -114,7 +114,17 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
                 <div
                   key={`search-${item.id}`}
                   onClick={() => handleSelect(item)}
-                  className="p-3 bg-white border border-transparent rounded-xl hover:bg-peach-soft/5 hover:border-peach-soft/20 cursor-pointer flex items-center justify-between gap-3 transition-colors group"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelect(item);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Agregar ${item.name}`}
+                  title={`Agregar ${item.name}`}
+                  className="p-3 bg-white border border-transparent rounded-xl hover:bg-peach-soft/5 hover:border-peach-soft/20 focus:bg-peach-soft/5 focus:border-peach-soft/20 focus:outline-none focus:ring-2 focus:ring-peach-soft/50 cursor-pointer flex items-center justify-between gap-3 transition-colors group"
                 >
                   <div className="flex items-center gap-3 overflow-hidden flex-1">
                     <div className="w-10 h-10 rounded-lg bg-peach-soft/10 text-peach-soft flex items-center justify-center font-bold text-lg flex-shrink-0 group-hover:bg-peach-soft group-hover:text-white transition-colors">

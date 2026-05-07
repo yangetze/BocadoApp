@@ -76,3 +76,6 @@
 ## 2024-05-20 - Action Button Loading and Blocking State in Modals
 **Learning:** Form modals that submit asynchronously without providing visual feedback (such as the `IngredientFormModal` missing an `isSaving` state) leave users guessing whether their click registered, leading to potential duplicate submissions or frustrated repeated clicking.
 **Action:** When implementing or updating form modals, always ensure there is an internal state (like `isSaving`) to disable action buttons during submission and to provide visual feedback (e.g., displaying "Guardando..." with a spinner instead of "Guardar").
+## 2024-05-07 - Make Autocomplete Results Keyboard Accessible
+**Learning:** Dropdown results built with generic `div` tags and `onClick` handlers become completely invisible to keyboard and screen reader users. Simply rendering them doesn't allow users to select an item.
+**Action:** Always add `role="button"`, `tabIndex={0}`, keyboard event handlers (`onKeyDown` for Enter/Space), and clear focus states (`focus:outline-none focus:ring-2`) to interactive generic elements to ensure inclusive UX.
