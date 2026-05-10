@@ -138,12 +138,14 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     if (mode === "budget") return [];
 
     const totalsMap = new Map();
+    const len = canvasItems.length;
 
-    canvasItems.forEach((item) => {
-      const quantity = item.quantity !== undefined ? item.quantity : 1;
-
-      if (mode === "baseRecipe") {
-        // En modo baseRecipe, canvasItems son ingredientes
+    // ⚡ Bolt: Hoisted the 'mode' condition outside the loop to prevent O(N) evaluation
+    // and replaced .forEach() with a standard indexed loop to minimize iteration protocol overhead.
+    if (mode === "baseRecipe") {
+      for (let i = 0; i < len; i++) {
+        const item = canvasItems[i];
+        const quantity = item.quantity !== undefined ? item.quantity : 1;
         const ingredientId = item.ingredientId || item.id;
         const currentAmount = totalsMap.get(ingredientId)?.totalQuantity || 0;
 
@@ -153,19 +155,24 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           measurementUnit:
             item.measurementUnit || item.ingredient?.measurementUnit || "gr",
         });
-      } else if (mode === "superRecipe") {
-        // En modo superRecipe, canvasItems son recetas base (o podrían ser ingredientes directos)
-        // Por ahora, asumimos que son recetas base como está en el sistema actual
+      }
+    } else if (mode === "superRecipe") {
+      for (let i = 0; i < len; i++) {
+        const item = canvasItems[i];
+        const quantity = item.quantity !== undefined ? item.quantity : 1;
+
         if (
           item.ingredients &&
           Array.isArray(item.ingredients) &&
           item.baseYield
         ) {
           const factor = quantity / item.baseYield;
+          const ingLen = item.ingredients.length;
 
-          item.ingredients.forEach((brIng) => {
+          for (let j = 0; j < ingLen; j++) {
+            const brIng = item.ingredients[j];
             const ingredientId = brIng.ingredientId || brIng.ingredient?.id;
-            if (!ingredientId) return;
+            if (!ingredientId) continue;
 
             const ingQuantityInBaseRecipe = brIng.quantity || 0;
             const computedQuantity = ingQuantityInBaseRecipe * factor;
@@ -178,14 +185,14 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
               totalQuantity: currentAmount + computedQuantity,
               measurementUnit: brIng.ingredient?.measurementUnit || "gr",
             });
-          });
+          }
         } else if (item.ingredients) {
             // Manejar ingredientes si vienen sin baseYield pero con un arreglo de ingredients
             // Esto sucede si el editingItem viene de la BD pero no se populó baseYield (lo cual sí debe estar, pero por si acaso)
             // O podemos ver que canvasItems[].ingredients no está llegando correctamente poblado
         }
       }
-    });
+    }
 
     return Array.from(totalsMap.values());
   }, [canvasItems, mode]);

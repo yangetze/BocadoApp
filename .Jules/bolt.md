@@ -188,3 +188,7 @@
 ## 2024-05-24 - Frontend Array Iteration Early Short-Circuiting
 **Learning:** In React hooks (like `useMemo`), wrapping the entire logic in array iteration functions like `.reduce()` or `.forEach()` while placing mode-specific condition checks (e.g., `if (mode !== 'baseRecipe')`) *inside* the callback forces the application to evaluate an $O(N)$ operation even when the calculated value is irrelevant.
 **Action:** When a calculation is specific to a particular UI mode or state, place an early return (`if (mode !== 'target_mode') return default_value;`) *before* entering the iteration block. This short-circuits the calculation, turning an $O(N)$ traversal into an $O(1)$ operation, significantly reducing CPU overhead per render cycle for unrelated UI states.
+
+## 2024-06-15 - React Hook useMemo Iteration Pattern Optimization
+**Learning:** In hot-path React hooks (like calculating running totals during Drag & Drop interactions in `useBuilder`), placing context checks (`mode === 'baseRecipe'`) inside iteration functions like `.forEach()` forces evaluation of these checks for every item. Also, `.forEach()` has a higher protocol overhead compared to a standard `for` loop.
+**Action:** When calculating derived state across arrays in React hooks, hoist conditionals based on single scalar values (like `mode`) *outside* the loop block, and use standard indexed `for` loops instead of array iteration protocols. This converts the operation from evaluating an `if` N times with higher overhead to evaluating it once and looping N times rapidly.
