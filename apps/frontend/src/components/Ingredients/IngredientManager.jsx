@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { toast } from "react-hot-toast";
-import { ingredientApi } from "../../api";
-import { confirmDelete } from "../../utils/toastUtils";
-import IngredientFormModal from "./IngredientFormModal";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Search, X, Carrot } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { toast } from 'react-hot-toast';
+import { ingredientApi } from '../../api';
+import { confirmDelete } from '../../utils/toastUtils';
+import IngredientFormModal from './IngredientFormModal';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Search, X, Carrot } from 'lucide-react';
 
 const UNITS = ["gr", "kg", "ml", "l", "u"];
 
