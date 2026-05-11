@@ -82,3 +82,6 @@
 ## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
 **Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
 **Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.
+## 2025-05-11 - Enforce Icon Component Standards
+**Learning:** Found an inline, hardcoded raw SVG used for the "Seleccionar Presentaciones" action button in `Builder.jsx`. While functional, this breaks visual consistency across the app, which uses the `lucide-react` library for all other icons. Mixing generic SVGs with library components leads to disjointed UI styling and harder-to-maintain code.
+**Action:** Always replace standalone inline SVGs with their conceptual equivalents from the `lucide-react` library (e.g., using `<Package />` or `<BoxSelect />`) to ensure standardized stroke widths, sizes, and colors across the application's UX.
