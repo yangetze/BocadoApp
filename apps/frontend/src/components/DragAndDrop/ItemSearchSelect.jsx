@@ -40,7 +40,6 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
     const results = [];
     const len = normalizedItems.length;
 
-    // ⚡ Bolt: Replaced O(N) .filter().slice() with an early-exit loop for O(K) complexity
     for (let i = 0; i < len; i++) {
       const item = normalizedItems[i];
       if (item._normalizedName.includes(normalizedSearchQuery)) {

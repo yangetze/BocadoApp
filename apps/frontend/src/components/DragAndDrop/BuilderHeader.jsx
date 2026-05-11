@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Eraser, Save, Trash2 } from "lucide-react";
 
-// ⚡ Bolt: Wrapped BuilderHeader in React.memo to prevent unnecessary re-renders when parent state
 // (like dragging items in the canvas) updates. Since handlers are memoized via useCallback in the parent,
 // this ensures the header only re-renders when its specific props change.
 export const BuilderHeader = React.memo(function BuilderHeader({
