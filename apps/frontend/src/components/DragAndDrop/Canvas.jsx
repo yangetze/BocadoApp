@@ -8,7 +8,6 @@ import { SortableItem } from "./SortableItem";
 import PropTypes from "prop-types";
 import React from "react";
 
-// ⚡ Bolt: Wrapped Canvas in React.memo to prevent unnecessary re-renders of the drop area
 // when parent state updates that don't affect the Canvas properties.
 export const Canvas = React.memo(function Canvas({
   items,
