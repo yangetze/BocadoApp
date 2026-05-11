@@ -4,6 +4,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableItem } from "./SortableItem";
+import { BoxSelect } from "lucide-react";
 
 import PropTypes from "prop-types";
 import React from "react";
@@ -27,26 +28,14 @@ export const Canvas = React.memo(function Canvas({
     >
       {items.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-            <svg
-              className="w-8 h-8 text-gray-300"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
+          <div className="w-20 h-20 bg-peach-soft/20 rounded-full flex items-center justify-center mb-6">
+            <BoxSelect className="w-10 h-10 text-peach-soft" />
           </div>
           <p className="text-lg font-medium text-slate-gray">
             El lienzo está vacío
           </p>
-          <p className="text-sm text-center">
-            Arrastra elementos desde la paleta aquí o usa el botón +
+          <p className="text-sm text-center text-gray-400 mt-2">
+            Busca y selecciona elementos desde la barra superior para agregarlos al lienzo
           </p>
         </div>
       ) : (
