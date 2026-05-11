@@ -4,7 +4,7 @@ import { ingredientApi } from '../../api';
 import { confirmDelete } from '../../utils/toastUtils';
 import IngredientFormModal from './IngredientFormModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, X } from 'lucide-react';
+import { Plus, Search, X, BoxSelect } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
@@ -103,7 +103,7 @@ export default function IngredientManager() {
         <tr>
           <td colSpan="6" className="py-12 text-center">
             <div className="flex flex-col items-center justify-center opacity-60">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-2xl">🥚</div>
+              <div className="w-16 h-16 bg-peach-soft/10 rounded-full flex items-center justify-center mb-4 text-peach-soft"><BoxSelect size={32} /></div>
               <p className="text-slate-gray font-medium">Aún no tienes ingredientes</p>
             </div>
           </td>
@@ -139,7 +139,7 @@ export default function IngredientManager() {
       return (
         <div className="py-12 text-center">
           <div className="flex flex-col items-center justify-center opacity-60">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-2xl">🥚</div>
+            <div className="w-16 h-16 bg-peach-soft/10 rounded-full flex items-center justify-center mb-4 text-peach-soft"><BoxSelect size={32} /></div>
             <p className="text-slate-gray font-medium">Aún no tienes ingredientes</p>
           </div>
         </div>
