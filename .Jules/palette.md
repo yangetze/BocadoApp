@@ -87,3 +87,6 @@
 ## 2024-05-08 - Standardizing Empty States
 **Learning:** Native emojis (like "🥚") were being used for empty states in some components, which leads to inconsistent visuals across different operating systems and breaks the unified design language of the application.
 **Action:** Always use standardized icons from the `lucide-react` library (e.g., `Carrot`, `Package`, `BoxSelect`) styled inside a circular background container above the primary text for empty states to maintain visual consistency.
+## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
+**Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
+**Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.

@@ -36,7 +36,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // ⚡ Bolt: Pre-calculate normalized fields when users change, not on every keystroke
   const normalizedUsers = useMemo(() => {
     if (!users) return [];
     return users.map(u => ({
