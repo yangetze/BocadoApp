@@ -120,9 +120,25 @@ export const fetchAndStoreApiRate = async (req, res) => {
         apiUrl = 'https://ve.dolarapi.com/v1/dolares';
     }
 
-    const response = await fetch(apiUrl);
+    // Security: Add timeout mechanism using AbortController to prevent denial of service (DoS)
+    // resulting from long-hanging external API requests.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+    let response;
+    try {
+      response = await fetch(apiUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Timeout connecting to DolarAPI');
+      }
+      throw new Error('Failed to connect to DolarAPI');
+    }
+
     if (!response.ok) {
-       throw new Error(`Failed to fetch from DolarAPI: ${response.statusText}`);
+       throw new Error('Failed to fetch from DolarAPI: Invalid status code');
     }
     const data = await response.json();
 
