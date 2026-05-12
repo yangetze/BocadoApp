@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft, X } from 'lucide-react';
+import { normalizeString } from '../utils/stringUtils';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
@@ -46,8 +47,8 @@ export default function AdminDashboard() {
     if (!users) return [];
     return users.map(u => ({
       ...u,
-      _normalizedUsername: u.username.toLowerCase(),
-      _normalizedEmail: u.email.toLowerCase()
+      _normalizedUsername: normalizeString(u.username),
+      _normalizedEmail: normalizeString(u.email)
     }));
   }, [users]);
 
