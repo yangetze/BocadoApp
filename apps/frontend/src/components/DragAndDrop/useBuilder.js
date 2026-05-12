@@ -114,8 +114,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     else setSuggestedMargin(30);
   }, []);
 
-  // on every render of the Builder, especially during 60fps Drag & Drop interactions.
-  // Impact: Reduces CPU overhead per render cycle for baseRecipe canvases by preventing redundant iteration.
   const totalBaseRecipeCost = useMemo(() => {
     if (mode !== "baseRecipe") return 0;
 
@@ -137,8 +135,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     const totalsMap = new Map();
     const len = canvasItems.length;
 
-    // ⚡ Bolt: Hoisted the 'mode' condition outside the loop to prevent O(N) evaluation
-    // and replaced .forEach() with a standard indexed loop to minimize iteration protocol overhead.
     if (mode === "baseRecipe") {
       for (let i = 0; i < len; i++) {
         const item = canvasItems[i];
@@ -184,9 +180,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
             });
           }
         } else if (item.ingredients) {
-            // Manejar ingredientes si vienen sin baseYield pero con un arreglo de ingredients
-            // Esto sucede si el editingItem viene de la BD pero no se populó baseYield (lo cual sí debe estar, pero por si acaso)
-            // O podemos ver que canvasItems[].ingredients no está llegando correctamente poblado
         }
       }
     }
@@ -216,7 +209,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
         }
         const payload = {
           customerName: superRecipeMetadata.name,
-          profitMargin: 0.35, // This should ideally be editable later
+          profitMargin: 0.35,
           customCurrency: superRecipeMetadata.customCurrency || undefined,
           customPolicies: superRecipeMetadata.customPolicies || undefined,
           customPaymentMethods: superRecipeMetadata.customPaymentMethods || undefined,
@@ -224,7 +217,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           brandSelections: brandSelections,
         };
 
-        // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
         const superRecipeMap = new Map();
         canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
@@ -259,7 +251,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           return;
         }
 
-        // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
         const baseRecipeMap = new Map();
         canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
@@ -296,9 +287,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
 
 
-        // This converts duplicate inserts into grouped updates while replacing
-        // the unoptimized O(N^2) array-find reduction with O(N) mapping,
-        // reducing both CPU overhead and payload size to avoid unique constraint violations.
         const ingredientMap = new Map();
         canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
