@@ -33,7 +33,14 @@ export const verifyToken = async (req, res, next) => {
       return res.status(403).json({ error: 'Usuario inactivo.' });
     }
 
-    req.user = decoded; // Inyecta los datos del usuario (id, username, role)
+    // Security: Inject the fresh user data from the database to ensure role changes
+    // (e.g., demotion from ADMIN to USER) are effective immediately and prevent privilege escalation.
+    req.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      active: user.active
+    };
     next();
   } catch (error) {
     logger.error('Auth Middleware Error:', error.message);

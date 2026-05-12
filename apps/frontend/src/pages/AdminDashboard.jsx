@@ -11,6 +11,12 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const fetchUsers = async () => {
     try {
@@ -37,7 +43,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // ⚡ Bolt: Pre-calculate normalized fields when users change, not on every keystroke
   const normalizedUsers = useMemo(() => {
     if (!users) return [];
     return users.map(u => ({
@@ -48,14 +53,14 @@ export default function AdminDashboard() {
   }, [users]);
 
   const filteredUsers = useMemo(() => {
-    if (!searchTerm) return normalizedUsers;
-    const normalizedSearchTerm = normalizeString(searchTerm);
+    if (!debouncedSearch) return normalizedUsers;
+    const lowercasedSearchTerm = debouncedSearch.toLowerCase();
     return normalizedUsers.filter(u =>
-      u._normalizedUsername.includes(normalizedSearchTerm) ||
-      u._normalizedEmail.includes(normalizedSearchTerm) ||
-      u.identificationNumber.includes(searchTerm)
+      u._normalizedUsername.includes(lowercasedSearchTerm) ||
+      u._normalizedEmail.includes(lowercasedSearchTerm) ||
+      u.identificationNumber.includes(debouncedSearch)
     );
-  }, [normalizedUsers, searchTerm]);
+  }, [normalizedUsers, debouncedSearch]);
 
   return (
     <div className="min-h-screen bg-gray-50/50">

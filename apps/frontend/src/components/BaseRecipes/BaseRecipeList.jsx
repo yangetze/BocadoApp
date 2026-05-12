@@ -10,7 +10,6 @@ export default function BaseRecipeList({
   searchQuery,
   setSearchQuery
 }) {
-  // ⚡ Bolt: Memoize the recipe cards to prevent O(N) DOM re-renders on every keystroke in the debounced search
   const recipeCards = useMemo(() => {
     if (!recipes || recipes.length === 0) return null;
     return recipes.map((recipe, index) => (
