@@ -1,4 +1,4 @@
-/* global describe, it, expect, jest */
+/* global describe, it, expect, jest, require */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BudgetList from '../BudgetList';
@@ -31,11 +31,18 @@ describe('BudgetList', () => {
     expect(screen.getByText('Alpha Client')).toBeInTheDocument();
     expect(screen.getByText('Beta Client')).toBeInTheDocument();
 
+    jest.useFakeTimers();
     const searchInput = screen.getByPlaceholderText('Buscar presupuesto por nombre de cliente...');
-    fireEvent.change(searchInput, { target: { value: 'Alpha' } });
+
+    const { act } = require('@testing-library/react');
+    act(() => {
+      fireEvent.change(searchInput, { target: { value: 'Alpha' } });
+      jest.advanceTimersByTime(300);
+    });
 
     expect(screen.getByText('Alpha Client')).toBeInTheDocument();
     expect(screen.queryByText('Beta Client')).not.toBeInTheDocument();
+    jest.useRealTimers();
   });
 
   it('calls handlers when buttons are clicked', () => {

@@ -38,13 +38,12 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
 
     const normalizedSearchQuery = normalizeString(searchQuery);
     const results = [];
-    const len = normalizedItems.length;
 
-    // ⚡ Bolt: Replaced O(N) .filter().slice() with an early-exit loop for O(K) complexity
-    for (let i = 0; i < len; i++) {
-      const item = normalizedItems[i];
-      if (item._normalizedName.includes(normalizedSearchQuery)) {
-        results.push(item);
+    // ⚡ Bolt: Use a for loop with early break instead of .filter().slice()
+    // This reduces O(N) traversal to O(K) where K is the number of items needed
+    for (let i = 0; i < normalizedItems.length; i++) {
+      if (normalizedItems[i]._normalizedName.includes(normalizedSearchQuery)) {
+        results.push(normalizedItems[i]);
         if (results.length === 50) break;
       }
     }
@@ -114,7 +113,17 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
                 <div
                   key={`search-${item.id}`}
                   onClick={() => handleSelect(item)}
-                  className="p-3 bg-white border border-transparent rounded-xl hover:bg-peach-soft/5 hover:border-peach-soft/20 cursor-pointer flex items-center justify-between gap-3 transition-colors group"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelect(item);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Agregar ${item.name}`}
+                  title={`Agregar ${item.name}`}
+                  className="p-3 bg-white border border-transparent rounded-xl hover:bg-peach-soft/5 hover:border-peach-soft/20 focus:bg-peach-soft/5 focus:border-peach-soft/20 focus:outline-none focus:ring-2 focus:ring-peach-soft/50 cursor-pointer flex items-center justify-between gap-3 transition-colors group"
                 >
                   <div className="flex items-center gap-3 overflow-hidden flex-1">
                     <div className="w-10 h-10 rounded-lg bg-peach-soft/10 text-peach-soft flex items-center justify-center font-bold text-lg flex-shrink-0 group-hover:bg-peach-soft group-hover:text-white transition-colors">

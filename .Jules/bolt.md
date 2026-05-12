@@ -181,6 +181,10 @@
 - Completely removed the `Palette.jsx` and `MobilePaletteModal.jsx` drag-and-drop source components and their related dependencies across all modes in the `Builder.jsx` component.
 - The `ItemSearchSelect` component is now the exclusive and unified mechanism to add elements on both desktop and mobile layouts.
 - Removed unused local states (`isPaletteModalOpen`) and cleaned up responsive rendering conditions to match the single-column search-driven architecture.
+
+## 2024-05-03 - Array Iteration Performance in Frontend
+**Learning:** In React components dealing with search inputs across large datasets (like `ItemSearchSelect`), standardizing array filtering methods is critical. Using `.filter(...).slice(0, 50)` creates an unnecessary bottleneck by traversing the entire N-sized array to find matches, even when only the first 50 matches are needed.
+**Action:** Replace `.filter().slice()` pipelines with standard indexed `for` loops containing an early `break` when the maximum display count is reached. This transforms an unskippable O(N) iteration into an O(K) best-case, avoiding deep rendering and iteration lags during rapid user keystrokes.
 ## 2024-05-04 - Search Filtering Loop Optimization
 **Learning:** Using `.filter().slice()` for frontend search filtering is inefficient for large datasets because `.filter()` processes the entire array `O(N)` even if the user only needs the first few results (e.g., 50).
 **Action:** Replace `.filter().slice()` patterns in frontend components (like `ItemSearchSelect`) with a standard `for` loop and an early `break` when the maximum number of desired results is reached, reducing the time complexity from `O(N)` to `O(K)`.
@@ -188,3 +192,19 @@
 ## 2024-05-24 - Frontend Array Iteration Early Short-Circuiting
 **Learning:** In React hooks (like `useMemo`), wrapping the entire logic in array iteration functions like `.reduce()` or `.forEach()` while placing mode-specific condition checks (e.g., `if (mode !== 'baseRecipe')`) *inside* the callback forces the application to evaluate an $O(N)$ operation even when the calculated value is irrelevant.
 **Action:** When a calculation is specific to a particular UI mode or state, place an early return (`if (mode !== 'target_mode') return default_value;`) *before* entering the iteration block. This short-circuits the calculation, turning an $O(N)$ traversal into an $O(1)$ operation, significantly reducing CPU overhead per render cycle for unrelated UI states.
+
+## 2024-06-15 - React Hook useMemo Iteration Pattern Optimization
+**Learning:** In hot-path React hooks (like calculating running totals during Drag & Drop interactions in `useBuilder`), placing context checks (`mode === 'baseRecipe'`) inside iteration functions like `.forEach()` forces evaluation of these checks for every item. Also, `.forEach()` has a higher protocol overhead compared to a standard `for` loop.
+**Action:** When calculating derived state across arrays in React hooks, hoist conditionals based on single scalar values (like `mode`) *outside* the loop block, and use standard indexed `for` loops instead of array iteration protocols. This converts the operation from evaluating an `if` N times with higher overhead to evaluating it once and looping N times rapidly.
+## 2024-05-24 - [Optimized AdminDashboard Search Filtering]
+**Learning:** The `AdminDashboard` component used `.toLowerCase()` for normalizing strings inside the `useMemo` hooks for searching users. While it's better than inside the `filter` loop, replacing it with the `normalizeString` utility (which also removes accents using `.normalize("NFD")`) improves search robustness for the end user and maintains performance because the calculation occurs once per data update.
+**Action:** Always prefer `normalizeString` over simple `.toLowerCase()` for search inputs where accent-insensitive matching provides a better user experience without a performance penalty when placed appropriately outside iteration boundaries.
+## 2026-05-10 - Missing Debouncing on Local Search State Causes UI Lag
+**Learning:** In lists with frontend filtering (e.g., `SuperRecipeList`, `BudgetList`), updating the search state and executing `.filter()` and string match operations synchronously on every keystroke forces React to perform $O(N)$ calculations and block the main thread, resulting in extreme lag when the array size is large.
+**Action:** Implement a debounced search term using `useEffect` with `setTimeout` (or `useDeferredValue` in React 18+). The input's `onChange` should update the immediate text state synchronously, but the array filtering and `useMemo` hooks should only depend on the debounced value. This ensures 60fps typing responsiveness while deferring the heavy array processing.
+## 2024-06-15 - React Hook useMemo Iteration Pattern Optimization
+**Learning:** In hot-path React hooks (like calculating running totals during Drag & Drop interactions in `useBuilder`), placing context checks (`mode === 'baseRecipe'`) inside iteration functions like `.forEach()` forces evaluation of these checks for every item. Also, `.forEach()` has a higher protocol overhead compared to a standard `for` loop.
+**Action:** When calculating derived state across arrays in React hooks, hoist conditionals based on single scalar values (like `mode`) *outside* the loop block, and use standard indexed `for` loops instead of array iteration protocols. This converts the operation from evaluating an `if` N times with higher overhead to evaluating it once and looping N times rapidly.
+## 2026-05-12 - Database Validation Batching
+**Learning:** Sequential `.count()` validations for related database entities (like checking ingredients and brand presentations sequentially) create an unnecessary I/O waterfall in backend controllers. Additionally, using multiple `.map()` passes to extract these IDs introduces avoidable O(N) array iteration overhead.
+**Action:** Always replace multiple `.map()` operations with a single consolidated `for` loop, and wrap independent database validations in `Promise.all` to execute them concurrently, minimizing both CPU time and total database latency.
