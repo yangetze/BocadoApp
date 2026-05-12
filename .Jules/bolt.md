@@ -181,6 +181,10 @@
 - Completely removed the `Palette.jsx` and `MobilePaletteModal.jsx` drag-and-drop source components and their related dependencies across all modes in the `Builder.jsx` component.
 - The `ItemSearchSelect` component is now the exclusive and unified mechanism to add elements on both desktop and mobile layouts.
 - Removed unused local states (`isPaletteModalOpen`) and cleaned up responsive rendering conditions to match the single-column search-driven architecture.
+
+## 2024-05-03 - Array Iteration Performance in Frontend
+**Learning:** In React components dealing with search inputs across large datasets (like `ItemSearchSelect`), standardizing array filtering methods is critical. Using `.filter(...).slice(0, 50)` creates an unnecessary bottleneck by traversing the entire N-sized array to find matches, even when only the first 50 matches are needed.
+**Action:** Replace `.filter().slice()` pipelines with standard indexed `for` loops containing an early `break` when the maximum display count is reached. This transforms an unskippable O(N) iteration into an O(K) best-case, avoiding deep rendering and iteration lags during rapid user keystrokes.
 ## 2024-05-04 - Search Filtering Loop Optimization
 **Learning:** Using `.filter().slice()` for frontend search filtering is inefficient for large datasets because `.filter()` processes the entire array `O(N)` even if the user only needs the first few results (e.g., 50).
 **Action:** Replace `.filter().slice()` patterns in frontend components (like `ItemSearchSelect`) with a standard `for` loop and an early `break` when the maximum number of desired results is reached, reducing the time complexity from `O(N)` to `O(K)`.
