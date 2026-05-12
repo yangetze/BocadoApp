@@ -79,6 +79,9 @@
 ## 2024-05-07 - Make Autocomplete Results Keyboard Accessible
 **Learning:** Dropdown results built with generic `div` tags and `onClick` handlers become completely invisible to keyboard and screen reader users. Simply rendering them doesn't allow users to select an item.
 **Action:** Always add `role="button"`, `tabIndex={0}`, keyboard event handlers (`onKeyDown` for Enter/Space), and clear focus states (`focus:outline-none focus:ring-2`) to interactive generic elements to ensure inclusive UX.
+## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
+**Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
+**Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.
 
 ## 2024-05-08 - Keyboard accessibility for interactive generic elements
 **Learning:** Using generic HTML elements like `div` or `span` for interactive components (such as expandable rows or dropdown items) without proper ARIA attributes and keyboard event handlers creates a significant barrier for users navigating via keyboard and screen readers. In `IngredientManager.jsx`, the expandable rows could not be triggered using the keyboard because they were built as standard `div`s with an `onClick` handler.
