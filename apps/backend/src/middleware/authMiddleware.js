@@ -19,10 +19,17 @@ export const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     
-    // Validate that the user exists and is still active in the database
-    // This prevents disabled or deleted users from using unexpired tokens
+    // Security: Validate against database to ensure user still exists and is active
+    // relying only on token contents leaves the app vulnerable to deactivated users with valid tokens
+    // En Supabase el ID puede estar en decoded.sub o decoded.id.
+    const userId = decoded.id || decoded.sub;
+
+    if (!userId) {
+       return res.status(401).json({ error: 'Token no válido o malformado: no se encontró ID' });
+    }
+
     const dbUser = await prisma.user.findUnique({
-      where: { id: decoded.id },
+      where: { id: userId },
       select: {
         id: true,
         username: true,
@@ -32,13 +39,15 @@ export const verifyToken = async (req, res, next) => {
     });
 
     if (!dbUser) {
-      return res.status(401).json({ error: 'Usuario no encontrado o sesión inválida' });
+      return res.status(401).json({ error: 'Usuario no encontrado' });
     }
 
     if (!dbUser.active) {
       return res.status(403).json({ error: 'Usuario inactivo.' });
     }
 
+    // Security: Inject the fresh user data from the database to ensure role changes
+    // (e.g., demotion from ADMIN to USER) are effective immediately and prevent privilege escalation.
     req.user = dbUser; // Inyecta los datos del usuario frescos (id, username, role)
     next();
   } catch (error) {

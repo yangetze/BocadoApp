@@ -67,3 +67,18 @@
 ## 2024-05-19 - Accessibility for Icon-only Buttons
 **Learning:** In the `BaseRecipeManager`, `SuperRecipeManager`, and `BudgetManager`, the "Volver a la lista" back buttons combine an icon `<ArrowLeft>` and text, but screen readers might not interpret the destination clearly from just "Volver a la lista". Adding a descriptive `aria-label` like "Volver a la lista de recetas base" improves context without changing the visual design.
 **Action:** Always verify if navigation buttons, especially those using generic text like "Back" or "Close" combined with icons, have sufficient context for screen readers. Apply specific `aria-label` attributes to clarify their exact destination or action.
+## 2024-05-20 - Empty State Design Patterns
+**Learning:** We noticed that some empty states (e.g. `SettingsManager` payment methods, `ExchangeRateManager` rates, `BrandSelectionModal` ingredients) were missing a consistent visual icon or illustration, which makes them look unpolished compared to other empty states in the application. Good empty states should provide a visual cue alongside the text.
+**Action:** When implementing empty states for lists or data sets, always include a relevant `lucide-react` icon (e.g. `CreditCard`, `History`, `BoxSelect`) styled inside a circular background container above the primary empty state text, maintaining visual consistency across the application.
+## 2026-05-06 - Dynamic Form Accessibility
+**Learning:** When working with dynamically generated forms (e.g., lists of inputs mapped over an array), standard `id` and `htmlFor` pairs fail accessibility checks if they aren't uniquely keyed. Screen readers will only associate the label with the *first* input that matches the ID.
+**Action:** Always append the array index (or a unique UUID) to dynamically generated `id` and `htmlFor` attributes (e.g., `id={`methodType-${index}`}`) to ensure 1:1 mapping between labels and inputs for screen reader users.
+## 2024-05-20 - Action Button Loading and Blocking State in Modals
+**Learning:** Form modals that submit asynchronously without providing visual feedback (such as the `IngredientFormModal` missing an `isSaving` state) leave users guessing whether their click registered, leading to potential duplicate submissions or frustrated repeated clicking.
+**Action:** When implementing or updating form modals, always ensure there is an internal state (like `isSaving`) to disable action buttons during submission and to provide visual feedback (e.g., displaying "Guardando..." with a spinner instead of "Guardar").
+## 2024-05-07 - Make Autocomplete Results Keyboard Accessible
+**Learning:** Dropdown results built with generic `div` tags and `onClick` handlers become completely invisible to keyboard and screen reader users. Simply rendering them doesn't allow users to select an item.
+**Action:** Always add `role="button"`, `tabIndex={0}`, keyboard event handlers (`onKeyDown` for Enter/Space), and clear focus states (`focus:outline-none focus:ring-2`) to interactive generic elements to ensure inclusive UX.
+## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
+**Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
+**Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.

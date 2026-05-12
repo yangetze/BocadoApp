@@ -25,7 +25,7 @@ const ERRORS = {
   TOKEN_EXPIRED: 'Tu sesión ha expirado, por favor inicia sesión de nuevo',
   INVALID_TOKEN: 'Token no válido o malformado',
   NOT_ADMIN: 'No tienes los permisos suficientes (ADMIN) para realizar esta acción',
-  USER_NOT_FOUND: 'Usuario no encontrado o sesión inválida'
+  USER_NOT_FOUND: 'Usuario no encontrado'
 };
 
 describe('Auth Middleware', () => {
@@ -81,6 +81,18 @@ describe('Auth Middleware', () => {
         expect(mockReq.user).toEqual({ ...decodedUser, active: true });
         expect(mockNext).toHaveBeenCalledTimes(1);
         expect(mockRes.status).not.toHaveBeenCalled();
+      });
+
+      it('should correctly update role if it has changed in the database', async () => {
+        const decodedUser = { id: 'user1', username: 'testuser', role: 'USER' };
+        const dbUser = { id: 'user1', username: 'testuser', role: 'ADMIN', active: true };
+        mockReq.headers['authorization'] = 'Bearer validtoken';
+        jwt.verify.mockReturnValue(decodedUser);
+        prisma.user.findUnique.mockResolvedValue(dbUser);
+
+        await verifyToken(mockReq, mockRes, mockNext);
+
+        expect(mockReq.user.role).toBe('ADMIN');
       });
     });
 
