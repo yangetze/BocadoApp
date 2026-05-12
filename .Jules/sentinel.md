@@ -1,4 +1,4 @@
-## 2024-05-02 - Token Validation Missing DB Check
-**Vulnerability:** JWT authentication only validated the token signature without verifying against the database (`verifyToken` in `authMiddleware.js`), allowing deleted or deactivated users to exploit unexpired tokens to maintain sessions.
-**Learning:** Security context for `apps/backend/src/middleware/authMiddleware.js`: verifying a JWT signature is not enough for session control. Deactivated users must be immediately prevented from authenticating regardless of token expiration.
-**Prevention:** Ensure auth middleware always queries the database (e.g., `prisma.user.findUnique`) to verify user existence and `active` status before granting access.
+## 2024-05-12 - Shared Authentication Rate Limiter
+**Vulnerability:** A single global rate limiter (`authLimiter`) was applied to both the `/login` and `/register` endpoints. This allowed an attacker to exhaust the login rate limit by spamming the registration endpoint, potentially locking legitimate users out of the system (a localized Denial of Service). Furthermore, it prevented setting stricter limits on registrations compared to logins.
+**Learning:** Security context for `apps/backend/src/middleware/rateLimitMiddleware.js`: Rate limiting must be endpoint-specific. Authentication operations (login vs. register) have different threat models and require different tolerances (e.g., registrations are typically less frequent than logins).
+**Prevention:** Implement dedicated rate limiters for distinct actions. Use `loginLimiter` and `registerLimiter` with appropriately tuned thresholds (e.g., 10 per 15m for login, 5 per hour for registration).
