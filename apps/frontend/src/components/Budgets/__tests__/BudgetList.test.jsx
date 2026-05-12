@@ -1,5 +1,4 @@
-/* global require */
-/* global describe, it, expect, jest */
+/* global describe, it, expect, jest, require */
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BudgetList from '../BudgetList';

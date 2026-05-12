@@ -5,7 +5,6 @@ import prisma from '../prisma.js';
 import { JWT_SECRET } from '../config/auth.js';
 import logger from '../utils/logger.js';
 
-// Security: Dummy hash used to mitigate timing attacks (user enumeration) on the login endpoint
 const DUMMY_HASH = bcrypt.hashSync('dummy_password_for_timing_attack_mitigation', 10);
 
 export const login = async (req, res) => {
@@ -20,8 +19,7 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: 'Formato de credenciales inválido' });
     }
 
-    // Security: Add max length validation to prevent DoS via expensive bcrypt hashing
-    if (loginId.length > 255 || password.length > 255) {
+        if (loginId.length > 255 || password.length > 255) {
       return res.status(400).json({ error: 'Credenciales inválidas' }); // Do not leak specifics about length limits
     }
 
@@ -35,8 +33,7 @@ export const login = async (req, res) => {
     });
 
     if (!user) {
-      // Security: Execute dummy password comparison to prevent timing attacks (user enumeration)
-      await bcrypt.compare(password, DUMMY_HASH);
+            await bcrypt.compare(password, DUMMY_HASH);
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
 
@@ -186,8 +183,7 @@ export const changePassword = async (req, res) => {
     });
 
     if (!user) {
-      // Security: Execute dummy password comparison to prevent timing attacks
-      await bcrypt.compare(currentPassword, DUMMY_HASH);
+            await bcrypt.compare(currentPassword, DUMMY_HASH);
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
