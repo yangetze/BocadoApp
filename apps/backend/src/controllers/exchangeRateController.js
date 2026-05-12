@@ -90,7 +90,7 @@ export const createOrUpdateManualRate = async (req, res) => {
 
     return res.status(200).json(exchangeRate);
   } catch (error) {
-    logger.error('Error in createOrUpdateManualRate:', error);
+    logger.error('Error in createOrUpdateManualRate:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -203,7 +203,7 @@ export const fetchAndStoreApiRate = async (req, res) => {
     }
 
   } catch (error) {
-    logger.error('Error in fetchAndStoreApiRate:', error);
+    logger.error('Error in fetchAndStoreApiRate:', error.message);
     if (res) {
         return res.status(500).json({ error: 'Internal server error' });
     } else {
@@ -301,7 +301,7 @@ export const getExchangeRates = async (req, res) => {
         totalPages
     });
   } catch (error) {
-    logger.error('Error in getExchangeRates:', error);
+    logger.error('Error in getExchangeRates:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -317,7 +317,7 @@ export const getCurrencies = async (req, res) => {
         const currencies = await prisma.currency.findMany();
         return res.status(200).json(currencies);
     } catch (error) {
-        logger.error('Error in getCurrencies:', error);
+        logger.error('Error in getCurrencies:', error.message);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }

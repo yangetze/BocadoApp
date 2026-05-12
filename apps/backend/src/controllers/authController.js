@@ -70,7 +70,7 @@ export const login = async (req, res) => {
       }
     });
   } catch (error) {
-    logger.error('❌ ERROR EN LOGIN:', error);
+    logger.error('❌ ERROR EN LOGIN:', error.message);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -131,7 +131,7 @@ export const register = async (req, res) => {
       }
     });
   } catch (error) {
-    logger.error('❌ ERROR EN REGISTRO:', error);
+    logger.error('❌ ERROR EN REGISTRO:', error.message);
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
     }
@@ -160,7 +160,7 @@ export const getMe = async (req, res) => {
       }
     });
   } catch (error) {
-    logger.error('❌ ERROR EN GETME:', error);
+    logger.error('❌ ERROR EN GETME:', error.message);
     res.status(500).json({ error: 'Error al recuperar perfil de usuario' });
   }
 };
