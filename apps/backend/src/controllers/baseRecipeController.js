@@ -32,7 +32,7 @@ export const getBaseRecipes = async (req, res) => {
     });
     res.status(200).json(baseRecipes);
   } catch (error) {
-    logger.error('Error fetching base recipes:', error);
+    logger.error('Error fetching base recipes:', error.message);
     res.status(500).json({ error: 'Error al obtener las recetas base' });
   }
 };
@@ -103,7 +103,7 @@ export const createBaseRecipe = async (req, res) => {
 
     res.status(201).json(newRecipe);
   } catch (error) {
-    logger.error('Error creating base recipe:', error);
+    logger.error('Error creating base recipe:', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -214,7 +214,7 @@ export const updateBaseRecipe = async (req, res) => {
 
     res.status(200).json(updatedBaseRecipe);
   } catch (error) {
-    logger.error('Error updating base recipe:', error);
+    logger.error('Error updating base recipe:', error.message);
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Receta base no encontrada o no tienes permiso para actualizarla' });
     }
@@ -262,7 +262,7 @@ export const deleteBaseRecipe = async (req, res) => {
 
     res.status(200).json({ message: 'Receta base eliminada exitosamente' });
   } catch (error) {
-    logger.error('Error deleting base recipe:', error);
+    logger.error('Error deleting base recipe:', error.message);
     res.status(500).json({ error: 'Error al eliminar la receta base' });
   }
 };

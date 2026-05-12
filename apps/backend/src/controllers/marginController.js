@@ -69,7 +69,7 @@ export const recommendMargin = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Error recommending margin:', error);
+    logger.error('Error recommending margin:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
