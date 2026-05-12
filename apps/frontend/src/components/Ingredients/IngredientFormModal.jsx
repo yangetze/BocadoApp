@@ -6,6 +6,7 @@ const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
 export default function IngredientFormModal({ isOpen, onClose, onSave, initialData }) {
   const isEditing = !!initialData;
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     globalPrice: '',
@@ -148,9 +149,14 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    setIsSaving(true);
+    try {
+      await onSave(formData);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -339,15 +345,21 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors"
+                  disabled={isSaving}
+                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-slate-gray text-white rounded-lg hover:bg-opacity-90 font-medium shadow-sm transition-colors"
+                  disabled={isSaving}
+                  className="px-5 py-2.5 bg-slate-gray text-white rounded-lg hover:bg-opacity-90 font-medium shadow-sm transition-colors disabled:opacity-50 flex items-center justify-center min-w-[100px]"
                 >
-                  Guardar
+                  {isSaving ? (
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  ) : (
+                    "Guardar"
+                  )}
                 </button>
               </div>
             </form>
