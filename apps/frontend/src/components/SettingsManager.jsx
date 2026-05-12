@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api';
 import ExchangeRateManager from './ExchangeRateManager';
-import { Save, Plus, Trash2 } from 'lucide-react';
+import { Save, Plus, Trash2, CreditCard } from 'lucide-react';
 
 export default function SettingsManager() {
   const { user, login } = useAuth(); // Login can be used to update context
@@ -131,8 +131,9 @@ export default function SettingsManager() {
               <h3 className="text-lg font-semibold text-slate-gray mb-4">Preferencias Globales</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-gray mb-1">Moneda Principal por Defecto</label>
+                  <label htmlFor="defaultCurrency" className="block text-sm font-medium text-slate-gray mb-1">Moneda Principal por Defecto</label>
                   <select
+                    id="defaultCurrency"
                     value={formData.defaultCurrency}
                     onChange={e => setFormData({...formData, defaultCurrency: e.target.value})}
                     className="w-full border border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-peach-soft"
@@ -198,7 +199,13 @@ export default function SettingsManager() {
               </div>
 
               {paymentMethods.length === 0 ? (
-                <p className="text-center text-gray-500 py-4 text-sm">No has configurado métodos de pago.</p>
+                <div className="text-center text-gray-500 py-8 bg-white rounded-xl border border-dashed border-gray-200 flex flex-col items-center">
+                  <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                    <CreditCard className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-gray">No has configurado métodos de pago.</p>
+                  <p className="text-xs text-gray-400 mt-1">Agrega opciones para facilitar el cobro a tus clientes.</p>
+                </div>
               ) : (
                 <div className="space-y-4">
                   {paymentMethods.map((method, index) => (
@@ -213,8 +220,9 @@ export default function SettingsManager() {
 
                       <div className="grid grid-cols-2 gap-4 mb-4 pr-8">
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">Tipo de Pago</label>
+                          <label htmlFor={`methodType-${index}`} className="block text-xs text-gray-500 mb-1">Tipo de Pago</label>
                           <input
+                            id={`methodType-${index}`}
                             type="text"
                             value={method.type}
                             onChange={(e) => handlePaymentMethodChange(index, 'type', e.target.value)}
@@ -223,8 +231,9 @@ export default function SettingsManager() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">Moneda</label>
+                          <label htmlFor={`methodCurrency-${index}`} className="block text-xs text-gray-500 mb-1">Moneda</label>
                           <select
+                            id={`methodCurrency-${index}`}
                             value={method.currency}
                             onChange={(e) => handlePaymentMethodChange(index, 'currency', e.target.value)}
                             className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white"
@@ -261,6 +270,7 @@ export default function SettingsManager() {
                               }}
                               className="w-1/3 border border-gray-200 rounded text-xs px-2 py-1"
                               placeholder="Clave"
+                              aria-label="Clave"
                             />
                             <input
                               type="text"
@@ -268,6 +278,7 @@ export default function SettingsManager() {
                               onChange={(e) => handlePaymentDetailChange(index, key, e.target.value)}
                               className="flex-1 border border-gray-200 rounded text-xs px-2 py-1"
                               placeholder="Valor"
+                              aria-label="Valor"
                             />
                             <button type="button" onClick={() => handleRemovePaymentDetail(index, key)} className="text-gray-400 hover:text-red-500 px-1" aria-label="Eliminar detalle">
                               &times;

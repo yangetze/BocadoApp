@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, ChefHat, ChevronRight, Search, Trash2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { normalizeString } from '../../utils/stringUtils';
@@ -6,10 +6,15 @@ import { confirmDelete } from '../../utils/toastUtils';
 
 export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete, loading }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // ⚡ Bolt: Pre-calculate normalized names when recipes change, not on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   const normalizedRecipes = useMemo(() => {
     if (!recipes) return [];
     return recipes.map(recipe => ({
@@ -19,10 +24,10 @@ export default function SuperRecipeList({ recipes, onCreateNew, onEdit, onDelete
   }, [recipes]);
 
   const filteredRecipes = useMemo(() => {
-    if (!searchTerm) return normalizedRecipes;
-    const normalizedSearch = normalizeString(searchTerm);
+    if (!debouncedSearch) return normalizedRecipes;
+    const normalizedSearch = normalizeString(debouncedSearch);
     return normalizedRecipes.filter(recipe => recipe._normalizedName.includes(normalizedSearch));
-  }, [normalizedRecipes, searchTerm]);
+  }, [normalizedRecipes, debouncedSearch]);
 
   const totalPages = Math.ceil((filteredRecipes?.length || 0) / itemsPerPage);
 
