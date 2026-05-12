@@ -167,3 +167,46 @@ export const getMe = async (req, res) => {
     res.status(500).json({ error: 'Error al recuperar perfil de usuario' });
   }
 };
+
+
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Debes proporcionar la contraseña actual y la nueva' });
+    }
+
+    if (typeof newPassword !== 'string' || newPassword.length < 6 || newPassword.length > 255) {
+      return res.status(400).json({ error: 'La nueva contraseña debe tener entre 6 y 255 caracteres' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id }
+    });
+
+    if (!user) {
+      // Security: Execute dummy password comparison to prevent timing attacks
+      await bcrypt.compare(currentPassword, DUMMY_HASH);
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'La contraseña actual es incorrecta' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { password: hashedPassword }
+    });
+
+    res.json({ message: 'Contraseña actualizada exitosamente' });
+  } catch (error) {
+    logger.error('❌ ERROR EN CAMBIO DE CONTRASEÑA:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
