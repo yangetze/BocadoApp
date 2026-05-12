@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Plus, Trash2, Edit2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { normalizeString } from '../../utils/stringUtils';
@@ -6,10 +6,15 @@ import { confirmDelete } from '../../utils/toastUtils';
 
 export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDelete }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // ⚡ Bolt: Pre-calculate normalized customer names when budgets change, not on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   const normalizedBudgets = useMemo(() => {
     if (!budgets) return [];
     return budgets.map(budget => ({
@@ -19,10 +24,10 @@ export default function BudgetList({ budgets, loading, onCreateNew, onEdit, onDe
   }, [budgets]);
 
   const filteredBudgets = useMemo(() => {
-    if (!searchTerm) return normalizedBudgets;
-    const term = normalizeString(searchTerm);
+    if (!debouncedSearch) return normalizedBudgets;
+    const term = normalizeString(debouncedSearch);
     return normalizedBudgets.filter(budget => budget._normalizedName.includes(term));
-  }, [normalizedBudgets, searchTerm]);
+  }, [normalizedBudgets, debouncedSearch]);
 
   const totalPages = Math.ceil(filteredBudgets.length / itemsPerPage) || 1;
   const paginatedBudgets = filteredBudgets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);

@@ -114,7 +114,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     else setSuggestedMargin(30);
   }, []);
 
-  // ⚡ Bolt: Wrapped totalBaseRecipeCost calculation in useMemo to prevent an O(N) calculation
   // on every render of the Builder, especially during 60fps Drag & Drop interactions.
   // Impact: Reduces CPU overhead per render cycle for baseRecipe canvases by preventing redundant iteration.
   const totalBaseRecipeCost = useMemo(() => {
@@ -227,7 +226,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           brandSelections: brandSelections,
         };
 
-        // ⚡ Bolt: Group items by superRecipeId using an O(1) Map lookup
         // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
         const superRecipeMap = new Map();
         canvasItems.forEach((item) => {
@@ -263,7 +261,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           return;
         }
 
-        // ⚡ Bolt: Group items by baseRecipeId using an O(1) Map lookup
         // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
         const baseRecipeMap = new Map();
         canvasItems.forEach((item) => {
@@ -301,7 +298,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
 
 
-        // ⚡ Bolt: Group ingredients by ID before sending to backend using an O(1) Map lookup.
         // This converts duplicate inserts into grouped updates while replacing
         // the unoptimized O(N^2) array-find reduction with O(N) mapping,
         // reducing both CPU overhead and payload size to avoid unique constraint violations.

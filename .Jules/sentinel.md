@@ -1,3 +1,7 @@
+## 2026-05-05 - Prevent Authentication Bypass for Deactivated Users
+**Vulnerability:** The `verifyToken` middleware only checked the JWT signature and claims (like `decoded.active`). If a user was deleted or deactivated after the token was issued, the token remained valid until expiration, allowing continued unauthorized access.
+**Learning:** Validating a JWT's signature is insufficient for session management when user state can change. You must additionally query the database to ensure the user still exists and is active.
+**Prevention:** In the `verifyToken` middleware, after successfully verifying the token, always query the database (e.g., `prisma.user.findUnique`) to check if the user exists and their `active` status is true, preventing deactivated users from exploiting unexpired tokens.
 ## 2024-05-02 - Token Validation Missing DB Check
 **Vulnerability:** JWT authentication only validated the token signature without verifying against the database (`verifyToken` in `authMiddleware.js`), allowing deleted or deactivated users to exploit unexpired tokens to maintain sessions.
 **Learning:** Security context for `apps/backend/src/middleware/authMiddleware.js`: verifying a JWT signature is not enough for session control. Deactivated users must be immediately prevented from authenticating regardless of token expiration.
@@ -12,3 +16,7 @@
 **Vulnerability:** The `verifyToken` middleware successfully validated a JWT's signature and expiration, but did not query the database to verify if the user still existed or remained active.
 **Learning:** This architectural flaw allowed deactivated or deleted users to continue accessing protected resources until their unexpired tokens naturally timed out, creating a significant authorization bypass window.
 **Prevention:** In stateless JWT authentication schemes, verifying the token's cryptographic integrity must always be coupled with a database lookup (e.g., `prisma.user.findUnique`) in the core middleware to enforce real-time session invalidation (account deletion or deactivation).
+## 2024-05-12 - Missing Password Rotation Capability
+**Vulnerability:** The application creates default passwords using `identificationNumber` (which may be public or easily guessable), but provides no endpoint for users to change their passwords.
+**Learning:** Hardcoding or relying on weak default passwords during registration becomes a critical vulnerability if users are permanently locked into using them.
+**Prevention:** Always ensure a robust password management lifecycle is implemented, including endpoints for changing and resetting passwords, especially when default credentials are predetermined or weak.

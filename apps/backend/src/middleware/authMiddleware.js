@@ -3,6 +3,7 @@ import prisma from '../prisma.js';
 
 import { JWT_SECRET } from '../config/auth.js';
 import logger from '../utils/logger.js';
+import prisma from '../prisma.js';
 
 export const verifyToken = async (req, res, next) => {
   try {
