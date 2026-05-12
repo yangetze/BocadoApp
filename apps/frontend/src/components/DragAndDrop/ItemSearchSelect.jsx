@@ -38,13 +38,12 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
 
     const normalizedSearchQuery = normalizeString(searchQuery);
     const results = [];
-    const len = normalizedItems.length;
 
-    // ⚡ Bolt: Replaced O(N) .filter().slice() with an early-exit loop for O(K) complexity
-    for (let i = 0; i < len; i++) {
-      const item = normalizedItems[i];
-      if (item._normalizedName.includes(normalizedSearchQuery)) {
-        results.push(item);
+    // ⚡ Bolt: Use a for loop with early break instead of .filter().slice()
+    // This reduces O(N) traversal to O(K) where K is the number of items needed
+    for (let i = 0; i < normalizedItems.length; i++) {
+      if (normalizedItems[i]._normalizedName.includes(normalizedSearchQuery)) {
+        results.push(normalizedItems[i]);
         if (results.length === 50) break;
       }
     }
