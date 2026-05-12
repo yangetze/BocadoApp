@@ -32,7 +32,7 @@ export const verifyToken = async (req, res, next) => {
     });
 
     if (!dbUser) {
-      return res.status(401).json({ error: 'Usuario no encontrado' });
+      return res.status(401).json({ error: 'Usuario no encontrado o sesión inválida' });
     }
 
     if (!dbUser.active) {

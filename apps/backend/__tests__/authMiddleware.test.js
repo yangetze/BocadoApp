@@ -18,14 +18,13 @@ const { default: jwt } = await import('jsonwebtoken');
 const { default: prisma } = await import('../src/prisma.js');
 const { verifyToken, authenticateToken, requireAdmin, isAdmin } = await import('../src/middleware/authMiddleware.js');
 
-// Constants for expected error messages
 const ERRORS = {
   NO_TOKEN: 'Acceso denegado: No se proporcionó un token de autenticación',
   INACTIVE_USER: 'Usuario inactivo.',
   TOKEN_EXPIRED: 'Tu sesión ha expirado, por favor inicia sesión de nuevo',
   INVALID_TOKEN: 'Token no válido o malformado',
   NOT_ADMIN: 'No tienes los permisos suficientes (ADMIN) para realizar esta acción',
-  USER_NOT_FOUND: 'Usuario no encontrado'
+  USER_NOT_FOUND: 'Usuario no encontrado o sesión inválida'
 };
 
 describe('Auth Middleware', () => {
