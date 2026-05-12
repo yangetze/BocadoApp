@@ -67,3 +67,7 @@
 ## 2024-05-19 - Accessibility for Icon-only Buttons
 **Learning:** In the `BaseRecipeManager`, `SuperRecipeManager`, and `BudgetManager`, the "Volver a la lista" back buttons combine an icon `<ArrowLeft>` and text, but screen readers might not interpret the destination clearly from just "Volver a la lista". Adding a descriptive `aria-label` like "Volver a la lista de recetas base" improves context without changing the visual design.
 **Action:** Always verify if navigation buttons, especially those using generic text like "Back" or "Close" combined with icons, have sufficient context for screen readers. Apply specific `aria-label` attributes to clarify their exact destination or action.
+
+## 2024-05-15 - Async Form Feedback
+**Learning:** Some modals and forms (like `IngredientFormModal` and `BrandSelectionModal`) lacked visual feedback and disabled states during asynchronous API calls, allowing duplicate submissions and confusing the user.
+**Action:** Always verify that submit buttons in asynchronous forms are connected to an `isSaving` or `loading` state, updating their text/icon to show progress and setting `disabled={isSaving}` on form controls.

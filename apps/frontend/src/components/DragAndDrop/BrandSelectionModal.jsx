@@ -7,6 +7,7 @@ export function BrandSelectionModal({
   onConfirm,
   superRecipesList,
   initialSelections = [],
+  isSaving = false,
 }) {
   const [selections, setSelections] = useState({});
 
@@ -214,15 +215,20 @@ export function BrandSelectionModal({
           <div className="p-5 border-t border-gray-100 bg-white z-10 flex justify-end gap-3">
             <button
               onClick={onClose}
-              className="px-6 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+              disabled={isSaving}
+              className="px-6 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               onClick={handleConfirm}
-              className="px-6 py-2.5 rounded-xl text-sm font-medium bg-slate-gray text-white hover:bg-opacity-90 shadow-sm transition-all"
+              disabled={isSaving}
+              className="px-6 py-2.5 rounded-xl text-sm font-medium bg-slate-gray text-white hover:bg-opacity-90 shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              Guardar
+              {isSaving ? (
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              ) : null}
+              {isSaving ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
         </motion.div>

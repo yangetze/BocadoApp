@@ -16,6 +16,7 @@ export default function IngredientManager() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [isSavingModal, setIsSavingModal] = useState(false);
 
   // Mobile expanded item state
   const [expandedId, setExpandedId] = useState(null);
@@ -56,6 +57,7 @@ export default function IngredientManager() {
       return;
     }
 
+    setIsSavingModal(true);
     try {
       if (editingItem) {
         // Edit mode
@@ -71,6 +73,8 @@ export default function IngredientManager() {
       setIsModalOpen(false);
     } catch (error) {
       toast.error(error.message || (editingItem ? 'Error al actualizar el ingrediente' : 'Error al agregar el ingrediente'));
+    } finally {
+      setIsSavingModal(false);
     }
   };
 
@@ -287,6 +291,7 @@ export default function IngredientManager() {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveModal}
         initialData={editingItem}
+        isSaving={isSavingModal}
       />
     </div>
   );

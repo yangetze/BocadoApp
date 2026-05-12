@@ -4,7 +4,7 @@ import { Trash2, Plus, Heart, X } from 'lucide-react';
 
 const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
-export default function IngredientFormModal({ isOpen, onClose, onSave, initialData }) {
+export default function IngredientFormModal({ isOpen, onClose, onSave, initialData, isSaving = false }) {
   const isEditing = !!initialData;
   const [formData, setFormData] = useState({
     name: '',
@@ -339,15 +339,20 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors"
+                  disabled={isSaving}
+                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-slate-gray text-white rounded-lg hover:bg-opacity-90 font-medium shadow-sm transition-colors"
+                  disabled={isSaving}
+                  className="px-5 py-2.5 bg-slate-gray text-white rounded-lg hover:bg-opacity-90 font-medium shadow-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  Guardar
+                  {isSaving ? (
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  ) : null}
+                  {isSaving ? 'Guardando...' : 'Guardar'}
                 </button>
               </div>
             </form>

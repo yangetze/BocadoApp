@@ -12,6 +12,7 @@ describe('IngredientFormModal', () => {
         isOpen={true}
         onClose={() => {}}
         onSave={handleSave}
+        isSaving={false}
       />
     );
 
@@ -75,6 +76,7 @@ describe('IngredientFormModal', () => {
         isOpen={true}
         onClose={() => {}}
         onSave={handleSave}
+        isSaving={false}
       />
     );
 
