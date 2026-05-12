@@ -53,31 +53,43 @@ describe('Auth Middleware', () => {
   describe('verifyToken', () => {
     describe('Happy Paths', () => {
       it('should call next() and set req.user when valid token is provided (lowercase header)', async () => {
-        const decodedUser = { id: 'user1', username: 'testuser', role: 'USER' };
+        const decodedUser = { id: 'user1', username: 'old_username', role: 'USER' };
+        const dbUser = { id: 'user1', username: 'testuser', role: 'ADMIN', active: true };
         mockReq.headers['authorization'] = 'Bearer validtoken';
         jwt.verify.mockReturnValue(decodedUser);
-        prisma.user.findUnique.mockResolvedValue({ id: 'user1', username: 'testuser', role: 'USER', active: true });
+        prisma.user.findUnique.mockResolvedValue(dbUser);
 
         await verifyToken(mockReq, mockRes, mockNext);
 
         expect(jwt.verify).toHaveBeenCalledWith('validtoken', expect.any(String));
         expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 'user1' } });
-        expect(mockReq.user).toEqual({ id: 'user1', username: 'testuser', role: 'USER', active: true });
+        expect(mockReq.user).toEqual({
+          id: dbUser.id,
+          username: dbUser.username,
+          role: dbUser.role,
+          active: dbUser.active
+        });
         expect(mockNext).toHaveBeenCalledTimes(1);
         expect(mockRes.status).not.toHaveBeenCalled();
       });
 
       it('should call next() and set req.user when valid token is provided (Capitalized header)', async () => {
-        const decodedUser = { id: 'user1', username: 'testuser', role: 'USER' };
+        const decodedUser = { id: 'user1', username: 'old_username', role: 'USER' };
+        const dbUser = { id: 'user1', username: 'testuser', role: 'ADMIN', active: true };
         mockReq.headers['Authorization'] = 'Bearer validtoken';
         jwt.verify.mockReturnValue(decodedUser);
-        prisma.user.findUnique.mockResolvedValue({ id: 'user1', username: 'testuser', role: 'USER', active: true });
+        prisma.user.findUnique.mockResolvedValue(dbUser);
 
         await verifyToken(mockReq, mockRes, mockNext);
 
         expect(jwt.verify).toHaveBeenCalledWith('validtoken', expect.any(String));
         expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 'user1' } });
-        expect(mockReq.user).toEqual({ id: 'user1', username: 'testuser', role: 'USER', active: true });
+        expect(mockReq.user).toEqual({
+          id: dbUser.id,
+          username: dbUser.username,
+          role: dbUser.role,
+          active: dbUser.active
+        });
         expect(mockNext).toHaveBeenCalledTimes(1);
         expect(mockRes.status).not.toHaveBeenCalled();
       });
@@ -102,6 +114,19 @@ describe('Auth Middleware', () => {
         expect(mockNext).not.toHaveBeenCalled();
       });
 
+      it('should return 401 when user is not found in database', async () => {
+        const decodedUser = { id: 'user1' };
+        mockReq.headers['authorization'] = 'Bearer validtoken';
+        jwt.verify.mockReturnValue(decodedUser);
+        prisma.user.findUnique.mockResolvedValue(null);
+
+        await verifyToken(mockReq, mockRes, mockNext);
+
+        expect(mockRes.status).toHaveBeenCalledWith(401);
+        expect(mockRes.json).toHaveBeenCalledWith({ error: 'Usuario no encontrado' });
+        expect(mockNext).not.toHaveBeenCalled();
+      });
+
       it('should return 403 when user is inactive in database', async () => {
         const decodedUser = { id: 'user1' };
         mockReq.headers['authorization'] = 'Bearer validtoken';
@@ -112,19 +137,6 @@ describe('Auth Middleware', () => {
 
         expect(mockRes.status).toHaveBeenCalledWith(403);
         expect(mockRes.json).toHaveBeenCalledWith({ error: ERRORS.INACTIVE_USER });
-        expect(mockNext).not.toHaveBeenCalled();
-      });
-
-      it('should return 401 when user is not found in database', async () => {
-        const decodedUser = { id: 'user1' };
-        mockReq.headers['authorization'] = 'Bearer validtoken';
-        jwt.verify.mockReturnValue(decodedUser);
-        prisma.user.findUnique.mockResolvedValue(null);
-
-        await verifyToken(mockReq, mockRes, mockNext);
-
-        expect(mockRes.status).toHaveBeenCalledWith(401);
-        expect(mockRes.json).toHaveBeenCalledWith({ error: 'El usuario ya no existe' });
         expect(mockNext).not.toHaveBeenCalled();
       });
 

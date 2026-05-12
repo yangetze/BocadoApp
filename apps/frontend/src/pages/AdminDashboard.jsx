@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft, X } from 'lucide-react';
+import { normalizeString } from '../utils/stringUtils';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
@@ -10,6 +11,12 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const fetchUsers = async () => {
     try {
@@ -36,25 +43,24 @@ export default function AdminDashboard() {
     }
   };
 
-  // ⚡ Bolt: Pre-calculate normalized fields when users change, not on every keystroke
   const normalizedUsers = useMemo(() => {
     if (!users) return [];
     return users.map(u => ({
       ...u,
-      _normalizedUsername: u.username.toLowerCase(),
-      _normalizedEmail: u.email.toLowerCase()
+      _normalizedUsername: normalizeString(u.username),
+      _normalizedEmail: normalizeString(u.email)
     }));
   }, [users]);
 
   const filteredUsers = useMemo(() => {
-    if (!searchTerm) return normalizedUsers;
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    if (!debouncedSearch) return normalizedUsers;
+    const lowercasedSearchTerm = debouncedSearch.toLowerCase();
     return normalizedUsers.filter(u =>
       u._normalizedUsername.includes(lowercasedSearchTerm) ||
       u._normalizedEmail.includes(lowercasedSearchTerm) ||
-      u.identificationNumber.includes(searchTerm)
+      u.identificationNumber.includes(debouncedSearch)
     );
-  }, [normalizedUsers, searchTerm]);
+  }, [normalizedUsers, debouncedSearch]);
 
   return (
     <div className="min-h-screen bg-gray-50/50">

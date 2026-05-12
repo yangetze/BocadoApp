@@ -19,19 +19,28 @@ export const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     
+    // Security: Validate against database to ensure user still exists and is active
+    // relying only on token contents leaves the app vulnerable to deactivated users with valid tokens
     const user = await prisma.user.findUnique({
       where: { id: decoded.id }
     });
 
     if (!user) {
-      return res.status(401).json({ error: 'El usuario ya no existe' });
+      return res.status(401).json({ error: 'Usuario no encontrado' });
     }
 
     if (!user.active) {
       return res.status(403).json({ error: 'Usuario inactivo.' });
     }
 
-    req.user = user; // Inyecta los datos del usuario (id, username, role)
+    // Security: Inject the fresh user data from the database to ensure role changes
+    // (e.g., demotion from ADMIN to USER) are effective immediately and prevent privilege escalation.
+    req.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      active: user.active
+    };
     next();
   } catch (error) {
     logger.error('Auth Middleware Error:', error.message);

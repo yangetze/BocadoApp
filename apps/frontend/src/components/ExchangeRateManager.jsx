@@ -368,7 +368,10 @@ export default function ExchangeRateManager() {
         </div>
 
         {rates.length === 0 ? (
-          <div className="p-12 text-center">
+          <div className="p-12 text-center flex flex-col items-center">
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+              <History className="w-8 h-8 text-gray-300" />
+            </div>
             <p className="text-slate-gray/50 font-medium">No hay tasas registradas todavía.</p>
             <p className="text-sm text-slate-gray/40 mt-1">Sincroniza con la API o agrega una manualmente para empezar.</p>
           </div>
