@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Users, ShieldAlert, CheckCircle2, XCircle, Search, Shield, ArrowLeft, X } from 'lucide-react';
+import { normalizeString } from '../utils/stringUtils';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
@@ -41,17 +42,17 @@ export default function AdminDashboard() {
     if (!users) return [];
     return users.map(u => ({
       ...u,
-      _normalizedUsername: u.username.toLowerCase(),
-      _normalizedEmail: u.email.toLowerCase()
+      _normalizedUsername: normalizeString(u.username),
+      _normalizedEmail: normalizeString(u.email)
     }));
   }, [users]);
 
   const filteredUsers = useMemo(() => {
     if (!searchTerm) return normalizedUsers;
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    const normalizedSearchTerm = normalizeString(searchTerm);
     return normalizedUsers.filter(u =>
-      u._normalizedUsername.includes(lowercasedSearchTerm) ||
-      u._normalizedEmail.includes(lowercasedSearchTerm) ||
+      u._normalizedUsername.includes(normalizedSearchTerm) ||
+      u._normalizedEmail.includes(normalizedSearchTerm) ||
       u.identificationNumber.includes(searchTerm)
     );
   }, [normalizedUsers, searchTerm]);

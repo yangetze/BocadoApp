@@ -188,3 +188,7 @@
 ## 2024-05-24 - Frontend Array Iteration Early Short-Circuiting
 **Learning:** In React hooks (like `useMemo`), wrapping the entire logic in array iteration functions like `.reduce()` or `.forEach()` while placing mode-specific condition checks (e.g., `if (mode !== 'baseRecipe')`) *inside* the callback forces the application to evaluate an $O(N)$ operation even when the calculated value is irrelevant.
 **Action:** When a calculation is specific to a particular UI mode or state, place an early return (`if (mode !== 'target_mode') return default_value;`) *before* entering the iteration block. This short-circuits the calculation, turning an $O(N)$ traversal into an $O(1)$ operation, significantly reducing CPU overhead per render cycle for unrelated UI states.
+
+## 2024-05-24 - [Optimized AdminDashboard Search Filtering]
+**Learning:** The `AdminDashboard` component used `.toLowerCase()` for normalizing strings inside the `useMemo` hooks for searching users. While it's better than inside the `filter` loop, replacing it with the `normalizeString` utility (which also removes accents using `.normalize("NFD")`) improves search robustness for the end user and maintains performance because the calculation occurs once per data update.
+**Action:** Always prefer `normalizeString` over simple `.toLowerCase()` for search inputs where accent-insensitive matching provides a better user experience without a performance penalty when placed appropriately outside iteration boundaries.
