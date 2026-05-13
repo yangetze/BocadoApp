@@ -2,10 +2,19 @@ import rateLimit from 'express-rate-limit';
 
 const isTestEnvironment = process.env.NODE_ENV === 'test';
 
-export const authLimiter = rateLimit({
+export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 10, // Limit each IP to 10 requests per window
-  message: { error: 'Demasiados intentos, por favor inténtalo de nuevo después de 15 minutos' },
+  message: { error: 'Demasiados intentos de inicio de sesión, por favor inténtalo de nuevo después de 15 minutos' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => isTestEnvironment
+});
+
+export const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // Limit each IP to 5 requests per window to prevent spam registrations
+  message: { error: 'Demasiados intentos de registro, por favor inténtalo de nuevo después de una hora' },
   standardHeaders: true,
   legacyHeaders: false,
   skip: () => isTestEnvironment

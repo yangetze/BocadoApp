@@ -65,18 +65,18 @@ describe('Auth Rate Limiter', () => {
     // The 11th request should be rate limited
     const limitedRes = await request(app).post('/api/auth/login').set('X-Forwarded-For', '192.168.0.1').send();
     expect(limitedRes.statusCode).toBe(429);
-    expect(limitedRes.body.error).toBe('Demasiados intentos, por favor inténtalo de nuevo después de 15 minutos');
+    expect(limitedRes.body.error).toBe('Demasiados intentos de inicio de sesión, por favor inténtalo de nuevo después de 15 minutos');
   });
 
-  it('should return 429 after 10 requests to /register', async () => {
-    // Send 10 requests with a different IP
-    for (let i = 0; i < 10; i++) {
+  it('should return 429 after 5 requests to /register', async () => {
+    // Send 5 requests with a different IP
+    for (let i = 0; i < 5; i++) {
       const res = await request(app).post('/api/auth/register').set('X-Forwarded-For', '192.168.0.2').send();
       expect(res.statusCode).not.toBe(429);
     }
 
     const limitedRes = await request(app).post('/api/auth/register').set('X-Forwarded-For', '192.168.0.2').send();
     expect(limitedRes.statusCode).toBe(429);
-    expect(limitedRes.body.error).toBe('Demasiados intentos, por favor inténtalo de nuevo después de 15 minutos');
+    expect(limitedRes.body.error).toBe('Demasiados intentos de registro, por favor inténtalo de nuevo después de una hora');
   });
 });

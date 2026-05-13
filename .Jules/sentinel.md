@@ -1,3 +1,7 @@
+## 2024-05-12 - Shared Authentication Rate Limiter
+**Vulnerability:** A single global rate limiter (`authLimiter`) was applied to both the `/login` and `/register` endpoints. This allowed an attacker to exhaust the login rate limit by spamming the registration endpoint, potentially locking legitimate users out of the system (a localized Denial of Service). Furthermore, it prevented setting stricter limits on registrations compared to logins.
+**Learning:** Security context for `apps/backend/src/middleware/rateLimitMiddleware.js`: Rate limiting must be endpoint-specific. Authentication operations (login vs. register) have different threat models and require different tolerances (e.g., registrations are typically less frequent than logins).
+**Prevention:** Implement dedicated rate limiters for distinct actions. Use `loginLimiter` and `registerLimiter` with appropriately tuned thresholds (e.g., 10 per 15m for login, 5 per hour for registration).
 ## 2026-05-05 - Prevent Authentication Bypass for Deactivated Users
 **Vulnerability:** The `verifyToken` middleware only checked the JWT signature and claims (like `decoded.active`). If a user was deleted or deactivated after the token was issued, the token remained valid until expiration, allowing continued unauthorized access.
 **Learning:** Validating a JWT's signature is insufficient for session management when user state can change. You must additionally query the database to ensure the user still exists and is active.

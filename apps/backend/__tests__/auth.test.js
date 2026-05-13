@@ -36,13 +36,17 @@ jest.unstable_mockModule('jsonwebtoken', () => ({
 
 // 1.5 Mock rate limiter
 jest.unstable_mockModule('../src/middleware/rateLimitMiddleware.js', () => ({
-  authLimiter: (req, res, next) => next()
+  loginLimiter: (req, res, next) => next(),
+  registerLimiter: (req, res, next) => next()
 }));
 
-// 2. Import the routes AFTER the mocks have been set
+// 2. Import the limiter dependencies AFTER the mocks have been set
+const rateLimitMiddleware = await import('../src/middleware/rateLimitMiddleware.js');
+
+// 3. Import the routes AFTER the mocks have been set
 const { default: authRoutes } = await import('../src/routes/authRoutes.js');
 
-// 3. Import prisma (this will be the test mock version since NODE_ENV='test')
+// 4. Import prisma (this will be the test mock version since NODE_ENV='test')
 import prisma from '../src/prisma.js';
 
 const app = express();
