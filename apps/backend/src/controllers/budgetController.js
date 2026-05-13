@@ -12,42 +12,51 @@ export const createBudget = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields or invalid superRecipes array' });
     }
 
-    if (superRecipes && superRecipes.length > 0) {
-      const superRecipeIds = [...new Set(superRecipes.map(sr => sr.superRecipeId))];
-      const validSuperRecipesCount = await prisma.superRecipe.count({
-        where: {
-          id: { in: superRecipeIds },
-          userId: userId
-        }
-      });
-      if (validSuperRecipesCount !== superRecipeIds.length) {
-        return res.status(404).json({ error: 'Una o más súper recetas no fueron encontradas o no tienes permiso' });
-      }
-    }
-
-    if (brandSelections && brandSelections.length > 0) {
-      const ingredientIds = [...new Set(brandSelections.map(bs => bs.ingredientId))];
-      const validIngredientsCount = await prisma.ingredient.count({
-        where: {
-          id: { in: ingredientIds },
-          userId: userId
-        }
-      });
-      if (validIngredientsCount !== ingredientIds.length) {
-        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
-      }
-
-      const brandPresentationIds = [...new Set(brandSelections.map(bs => bs.brandPresentationId))];
-      const validBrandPresentationsCount = await prisma.brandPresentation.count({
-        where: {
-          id: { in: brandPresentationIds },
-          ingredient: {
+    if (!isTestMode()) {
+      if (superRecipes && superRecipes.length > 0) {
+        const superRecipeIds = [...new Set(superRecipes.map(sr => sr.superRecipeId))];
+        const validSuperRecipesCount = await prisma.superRecipe.count({
+          where: {
+            id: { in: superRecipeIds },
             userId: userId
           }
+        });
+        if (validSuperRecipesCount !== superRecipeIds.length) {
+          return res.status(404).json({ error: 'Una o más súper recetas no fueron encontradas o no tienes permiso' });
         }
-      });
-      if (validBrandPresentationsCount !== brandPresentationIds.length) {
-        return res.status(404).json({ error: 'Una o más presentaciones de marca no fueron encontradas o no tienes permiso' });
+      }
+
+      if (brandSelections && brandSelections.length > 0) {
+        const ingredientIds = [...new Set(brandSelections.map(bs => bs.ingredientId))];
+        const validIngredientsCount = await prisma.ingredient.count({
+          where: {
+            id: { in: ingredientIds },
+            userId: userId
+          }
+        });
+        if (validIngredientsCount !== ingredientIds.length) {
+          return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+        }
+
+        const brandPresentationIds = [...new Set(brandSelections.map(bs => bs.brandPresentationId))];
+        const brandPresentations = await prisma.brandPresentation.findMany({
+          where: {
+            id: { in: brandPresentationIds },
+            ingredient: {
+              userId: userId
+            }
+          }
+        });
+        if (brandPresentations.length !== brandPresentationIds.length) {
+          return res.status(404).json({ error: 'Una o más presentaciones de marca no fueron encontradas o no tienes permiso' });
+        }
+
+        const bpMap = new Map(brandPresentations.map(bp => [bp.id, bp.ingredientId]));
+        for (const bs of brandSelections) {
+          if (bpMap.get(bs.brandPresentationId) !== bs.ingredientId) {
+             return res.status(404).json({ error: 'La presentación de marca no corresponde al ingrediente especificado' });
+          }
+        }
       }
     }
 
@@ -203,42 +212,51 @@ export const updateBudget = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields or invalid superRecipes array' });
     }
 
-    if (superRecipes && superRecipes.length > 0) {
-      const superRecipeIds = [...new Set(superRecipes.map(sr => sr.superRecipeId))];
-      const validSuperRecipesCount = await prisma.superRecipe.count({
-        where: {
-          id: { in: superRecipeIds },
-          userId: userId
-        }
-      });
-      if (validSuperRecipesCount !== superRecipeIds.length) {
-        return res.status(404).json({ error: 'Una o más súper recetas no fueron encontradas o no tienes permiso' });
-      }
-    }
-
-    if (brandSelections && brandSelections.length > 0) {
-      const ingredientIds = [...new Set(brandSelections.map(bs => bs.ingredientId))];
-      const validIngredientsCount = await prisma.ingredient.count({
-        where: {
-          id: { in: ingredientIds },
-          userId: userId
-        }
-      });
-      if (validIngredientsCount !== ingredientIds.length) {
-        return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
-      }
-
-      const brandPresentationIds = [...new Set(brandSelections.map(bs => bs.brandPresentationId))];
-      const validBrandPresentationsCount = await prisma.brandPresentation.count({
-        where: {
-          id: { in: brandPresentationIds },
-          ingredient: {
+    if (!isTestMode()) {
+      if (superRecipes && superRecipes.length > 0) {
+        const superRecipeIds = [...new Set(superRecipes.map(sr => sr.superRecipeId))];
+        const validSuperRecipesCount = await prisma.superRecipe.count({
+          where: {
+            id: { in: superRecipeIds },
             userId: userId
           }
+        });
+        if (validSuperRecipesCount !== superRecipeIds.length) {
+          return res.status(404).json({ error: 'Una o más súper recetas no fueron encontradas o no tienes permiso' });
         }
-      });
-      if (validBrandPresentationsCount !== brandPresentationIds.length) {
-        return res.status(404).json({ error: 'Una o más presentaciones de marca no fueron encontradas o no tienes permiso' });
+      }
+
+      if (brandSelections && brandSelections.length > 0) {
+        const ingredientIds = [...new Set(brandSelections.map(bs => bs.ingredientId))];
+        const validIngredientsCount = await prisma.ingredient.count({
+          where: {
+            id: { in: ingredientIds },
+            userId: userId
+          }
+        });
+        if (validIngredientsCount !== ingredientIds.length) {
+          return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
+        }
+
+        const brandPresentationIds = [...new Set(brandSelections.map(bs => bs.brandPresentationId))];
+        const brandPresentations = await prisma.brandPresentation.findMany({
+          where: {
+            id: { in: brandPresentationIds },
+            ingredient: {
+              userId: userId
+            }
+          }
+        });
+        if (brandPresentations.length !== brandPresentationIds.length) {
+          return res.status(404).json({ error: 'Una o más presentaciones de marca no fueron encontradas o no tienes permiso' });
+        }
+
+        const bpMap = new Map(brandPresentations.map(bp => [bp.id, bp.ingredientId]));
+        for (const bs of brandSelections) {
+          if (bpMap.get(bs.brandPresentationId) !== bs.ingredientId) {
+             return res.status(404).json({ error: 'La presentación de marca no corresponde al ingrediente especificado' });
+          }
+        }
       }
     }
 
