@@ -16,7 +16,6 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
   });
 
   const [editingPresentationIndex, setEditingPresentationIndex] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
 
   const [currentPresentation, setCurrentPresentation] = useState({
     presentationName: '',

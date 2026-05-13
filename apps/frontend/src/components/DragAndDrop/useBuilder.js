@@ -182,6 +182,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
             });
           }
         } else if (item.ingredients) {
+          // TODO: handle generic ingredients
         }
       }
     }
