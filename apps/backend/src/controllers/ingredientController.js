@@ -37,7 +37,7 @@ export const getIngredients = async (req, res) => {
     });
     res.status(200).json(ingredients);
   } catch (error) {
-    logger.error('Error fetching ingredients:', error);
+    logger.error('Error fetching ingredients:', error.message);
     res.status(500).json({ error: 'Error al obtener los ingredientes' });
   }
 };
@@ -96,7 +96,7 @@ export const createIngredient = async (req, res) => {
 
     res.status(201).json(newIngredient);
   } catch (error) {
-    logger.error('Error creating ingredient:', error);
+    logger.error('Error creating ingredient:', error.message);
     res.status(500).json({ error: 'Error al crear el ingrediente' });
   }
 };
@@ -172,7 +172,7 @@ export const updateIngredient = async (req, res) => {
 
     res.status(200).json(updatedIngredient);
   } catch (error) {
-    logger.error('Error updating ingredient:', error);
+    logger.error('Error updating ingredient:', error.message);
     res.status(500).json({ error: 'Error al actualizar el ingrediente' });
   }
 };
@@ -217,7 +217,7 @@ export const deleteIngredient = async (req, res) => {
 
     res.status(200).json({ message: 'Ingrediente eliminado exitosamente' });
   } catch (error) {
-    logger.error('Error deleting ingredient:', error);
+    logger.error('Error deleting ingredient:', error.message);
     res.status(500).json({ error: 'Error al eliminar el ingrediente' });
   }
 };

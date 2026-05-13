@@ -79,3 +79,20 @@
 ## 2024-05-07 - Make Autocomplete Results Keyboard Accessible
 **Learning:** Dropdown results built with generic `div` tags and `onClick` handlers become completely invisible to keyboard and screen reader users. Simply rendering them doesn't allow users to select an item.
 **Action:** Always add `role="button"`, `tabIndex={0}`, keyboard event handlers (`onKeyDown` for Enter/Space), and clear focus states (`focus:outline-none focus:ring-2`) to interactive generic elements to ensure inclusive UX.
+## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
+**Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
+**Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.
+
+## 2024-05-08 - Keyboard accessibility for interactive generic elements
+**Learning:** Using generic HTML elements like `div` or `span` for interactive components (such as expandable rows or dropdown items) without proper ARIA attributes and keyboard event handlers creates a significant barrier for users navigating via keyboard and screen readers. In `IngredientManager.jsx`, the expandable rows could not be triggered using the keyboard because they were built as standard `div`s with an `onClick` handler.
+**Action:** When creating custom interactive components from generic elements, always add `role="button"`, `tabIndex={0}`, an `onKeyDown` handler (to capture 'Enter' and 'Space'), and clear focus styles (e.g., `focus:outline-none focus-visible:ring-2`) to ensure full keyboard accessibility.
+
+## 2024-05-08 - Standardizing Empty States
+**Learning:** Native emojis (like "🥚") were being used for empty states in some components, which leads to inconsistent visuals across different operating systems and breaks the unified design language of the application.
+**Action:** Always use standardized icons from the `lucide-react` library (e.g., `Carrot`, `Package`, `BoxSelect`) styled inside a circular background container above the primary text for empty states to maintain visual consistency.
+## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
+**Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
+**Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.
+## 2025-05-11 - Enforce Icon Component Standards
+**Learning:** Found an inline, hardcoded raw SVG used for the "Seleccionar Presentaciones" action button in `Builder.jsx`. While functional, this breaks visual consistency across the app, which uses the `lucide-react` library for all other icons. Mixing generic SVGs with library components leads to disjointed UI styling and harder-to-maintain code.
+**Action:** Always replace standalone inline SVGs with their conceptual equivalents from the `lucide-react` library (e.g., using `<Package />` or `<BoxSelect />`) to ensure standardized stroke widths, sizes, and colors across the application's UX.

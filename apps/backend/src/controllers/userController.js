@@ -18,7 +18,7 @@ export const getAllUsers = async (req, res) => {
     });
     res.json(users);
   } catch (error) {
-    logger.error('Error fetching users:', error);
+    logger.error('Error fetching users:', error.message);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -78,7 +78,7 @@ export const createUser = async (req, res) => {
 
     res.status(201).json(newUser);
   } catch (error) {
-    logger.error('Error creating user:', error);
+    logger.error('Error creating user:', error.message);
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
     }
@@ -150,7 +150,7 @@ export const updateUser = async (req, res) => {
 
     res.json(updatedUser);
   } catch (error) {
-    logger.error('Error updating user:', error);
+    logger.error('Error updating user:', error.message);
     if (error.code === 'P2002') {
       return res.status(400).json({ error: 'El usuario, email o cédula ya existen.' });
     }
@@ -170,7 +170,7 @@ export const deleteUser = async (req, res) => {
     await prisma.user.delete({ where: { id } });
     res.json({ message: 'Usuario eliminado correctamente' });
   } catch (error) {
-    logger.error('Error deleting user:', error);
+    logger.error('Error deleting user:', error.message);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
@@ -213,7 +213,7 @@ export const updateProfile = async (req, res) => {
 
     res.json(updatedUser);
   } catch (error) {
-    logger.error('Error updating user profile:', error);
+    logger.error('Error updating user profile:', error.message);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };

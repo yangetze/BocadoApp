@@ -1,17 +1,14 @@
 import jwt from 'jsonwebtoken';
+import prisma from '../prisma.js';
 
 import { JWT_SECRET } from '../config/auth.js';
 import logger from '../utils/logger.js';
 import prisma from '../prisma.js';
 
-/**
- * Middleware para verificar si el usuario tiene un JWT válido.
- * Extrae el usuario y lo inyecta en la petición para uso posterior.
- */
 export const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Formato: Bearer <TOKEN>
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({ error: 'Acceso denegado: No se proporcionó un token de autenticación' });
@@ -19,21 +16,31 @@ export const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
     
-    // Security: Validate against database to ensure user still exists and is active
-    // relying only on token contents leaves the app vulnerable to deactivated users with valid tokens
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.id }
-    });
+    const userId = decoded.id || decoded.sub;
 
-    if (!user) {
-      return res.status(401).json({ error: 'Usuario no encontrado' });
+    if (!userId) {
+       return res.status(401).json({ error: 'Token no válido o malformado: no se encontró ID' });
     }
 
-    if (!user.active) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        active: true
+      }
+    });
+
+    if (!dbUser) {
+      return res.status(401).json({ error: 'Usuario no encontrado o sesión inválida' });
+    }
+
+    if (!dbUser.active) {
       return res.status(403).json({ error: 'Usuario inactivo.' });
     }
 
-    req.user = decoded; // Inyecta los datos del usuario (id, username, role)
+    req.user = dbUser;
     next();
   } catch (error) {
     logger.error('Auth Middleware Error:', error.message);
@@ -44,12 +51,8 @@ export const verifyToken = async (req, res, next) => {
   }
 };
 
-// Aliases por compatibilidad
 export const authenticateToken = verifyToken;
 
-/**
- * Middleware para restringir acceso solo a Administradores
- */
 export const requireAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'ADMIN') {
     next();
