@@ -6,6 +6,7 @@ const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
 export default function IngredientFormModal({ isOpen, onClose, onSave, initialData }) {
   const isEditing = !!initialData;
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     globalPrice: '',
@@ -346,22 +347,19 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                   type="button"
                   onClick={onClose}
                   disabled={isSaving}
-                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-5 py-2.5 bg-slate-gray text-white rounded-lg hover:bg-opacity-90 font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[110px]"
+                  className="px-5 py-2.5 bg-slate-gray text-white rounded-lg hover:bg-opacity-90 font-medium shadow-sm transition-colors disabled:opacity-50 flex items-center justify-center min-w-[100px]"
                 >
                   {isSaving ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                      Guardando...
-                    </>
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                   ) : (
-                    'Guardar'
+                    "Guardar"
                   )}
                 </button>
               </div>
