@@ -26,7 +26,7 @@ export const getSuperRecipes = async (req, res) => {
     });
     res.status(200).json(superRecipes);
   } catch (error) {
-    logger.error('Error fetching super recipes:', error);
+    logger.error('Error fetching super recipes:', error.message);
     res.status(500).json({ error: 'Error al obtener las súper recetas' });
   }
 };
@@ -99,7 +99,7 @@ export const createSuperRecipe = async (req, res) => {
 
     res.status(201).json(newSuperRecipe);
   } catch (error) {
-    logger.error('Error creating super recipe:', error);
+    logger.error('Error creating super recipe:', error.message);
     res.status(500).json({ error: 'Error al crear la súper receta' });
   }
 };
@@ -202,7 +202,7 @@ export const updateSuperRecipe = async (req, res) => {
 
     res.status(200).json(updated);
   } catch (error) {
-    logger.error('Error updating super recipe:', error);
+    logger.error('Error updating super recipe:', error.message);
     res.status(500).json({ error: 'Error al actualizar la súper receta' });
   }
 };
@@ -231,7 +231,7 @@ export const deleteSuperRecipe = async (req, res) => {
     });
     res.status(200).json({ message: 'Súper receta eliminada exitosamente' });
   } catch (error) {
-    logger.error('Error deleting super recipe:', error);
+    logger.error('Error deleting super recipe:', error.message);
     res.status(500).json({ error: 'Error al eliminar la súper receta' });
   }
 };

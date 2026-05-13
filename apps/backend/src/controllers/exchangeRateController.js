@@ -1,5 +1,4 @@
 import crypto from 'node:crypto';
-// Ensure we use the exact exported module which might be mocked in tests
 import prismaClient from '../prisma.js';
 import { isTestMode, mockData } from '../mockData.js';
 import logger from '../utils/logger.js';
@@ -7,7 +6,6 @@ const prisma = prismaClient.default || prismaClient;
 
 let defaultCurrenciesVerified = false;
 
-// Performance optimization: cache default currencies check to prevent redundant DB queries on every request
 const ensureDefaultCurrencies = async () => {
   if (defaultCurrenciesVerified || isTestMode()) return;
 
@@ -28,7 +26,6 @@ const ensureDefaultCurrencies = async () => {
   defaultCurrenciesVerified = true;
 };
 
-// Carga Manual: Recibe targetCurrencyId, rate, y optionally effectiveDate
 export const createOrUpdateManualRate = async (req, res) => {
   try {
     const { targetCurrencyId, rate, effectiveDate, source = 'MANUAL' } = req.body;
@@ -37,12 +34,9 @@ export const createOrUpdateManualRate = async (req, res) => {
       return res.status(400).json({ error: 'targetCurrencyId and rate are required' });
     }
 
-    // Ensure default currencies exist
     await ensureDefaultCurrencies();
 
-    // Default to today (start of day) if no date provided to ensure uniqueness per day
     const dateToUse = effectiveDate ? new Date(effectiveDate) : new Date();
-    // Normalize to start of day in UTC for consistency
     const normalizedDate = new Date(Date.UTC(dateToUse.getUTCFullYear(), dateToUse.getUTCMonth(), dateToUse.getUTCDate()));
 
     if (isTestMode()) {
@@ -74,7 +68,6 @@ export const createOrUpdateManualRate = async (req, res) => {
       return res.status(200).json(newOrUpdatedRate);
     }
 
-    // Use Prisma's upsert to automatically create or update based on the unique constraint
     const exchangeRate = await prisma.exchangeRate.upsert({
       where: {
         effectiveDate_targetCurrencyId_source: {
@@ -97,63 +90,64 @@ export const createOrUpdateManualRate = async (req, res) => {
 
     return res.status(200).json(exchangeRate);
   } catch (error) {
-    logger.error('Error in createOrUpdateManualRate:', error);
+    logger.error('Error in createOrUpdateManualRate:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-// API (CriptoYa): Consulta la API y actualiza la tasa para VES
 export const fetchAndStoreApiRate = async (req, res) => {
   try {
-    // Determine which rate type to fetch (bcv or paralelo), default to bcv
     const type = req?.body?.type || 'bcv';
-    // Determine the enum to use. Default to CRIPTOYA_BCV (USD BCV) as requested.
     const sourceEnum = type === 'paralelo' ? 'CRIPTOYA_PARALELO' : (type === 'euro' ? 'EURO' : 'CRIPTOYA_BCV');
 
-    // 1. Fetch from DolarAPI Venezuela depending on type
     let apiUrl = 'https://ve.dolarapi.com/v1/dolares';
     if (type === 'euro') {
         apiUrl = 'https://ve.dolarapi.com/v1/euros';
     } else if (type === 'usdt') {
-        // Just in case we support it later or they add it, but currently DolarAPI VE mainly has dolares and euros
-        // We will default to dolares if usdt is passed, since often it aligns or we can just fetch dolares
         apiUrl = 'https://ve.dolarapi.com/v1/dolares';
     }
 
-    const response = await fetch(apiUrl);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    let response;
+    try {
+      response = await fetch(apiUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Timeout connecting to DolarAPI');
+      }
+      throw new Error('Failed to connect to DolarAPI');
+    }
+
     if (!response.ok) {
-       throw new Error(`Failed to fetch from DolarAPI: ${response.statusText}`);
+       throw new Error('Failed to fetch from DolarAPI: Invalid status code');
     }
     const data = await response.json();
 
-    // Extract the requested rate. For euro, we just take oficial if that's what's mapped, or whatever is there.
     const sourceName = type === 'paralelo' ? 'paralelo' : 'oficial';
-    const rateData = data.find(item => item.fuente === sourceName) || data[0]; // fallback to first item if not found
+    const rateData = data.find(item => item.fuente === sourceName) || data[0];
 
     if (!rateData || !rateData.promedio) {
         throw new Error(`Rate type '${type}' not found in API response`);
     }
     const rate = rateData.promedio;
 
-    // 2. Find the VES Currency ID
-    // Assuming 'VES' is the code for Bolivar
-    // Ensure default currencies exist (including USD and VES)
     await ensureDefaultCurrencies();
 
-    // 2. Find the VES Currency ID
-    // Assuming 'VES' is the code for Bolivar
     let targetCurrency = await prisma.currency.findUnique({
       where: { code: 'VES' }
     });
 
 
-    // Normalize to today (start of day UTC)
     const today = new Date();
     const normalizedDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
 
     if (isTestMode()) {
       const vesCur = mockData.currencies.find(c => c.code === 'VES');
-      const targetCurId = vesCur ? vesCur.id : 'cur-2'; // Defaulting from mockData
+      const targetCurId = vesCur ? vesCur.id : 'cur-2';
 
       const existingRateIndex = mockData.exchangeRates.findIndex(
         r => r.targetCurrencyId === targetCurId &&
@@ -182,7 +176,6 @@ export const fetchAndStoreApiRate = async (req, res) => {
       return newOrUpdatedRate;
     }
 
-    // 3. Upsert the rate
     const exchangeRate = await prisma.exchangeRate.upsert({
       where: {
         effectiveDate_targetCurrencyId_source: {
@@ -206,12 +199,11 @@ export const fetchAndStoreApiRate = async (req, res) => {
     if (res) {
         return res.status(200).json(exchangeRate);
     } else {
-        // Called by cron job
         return exchangeRate;
     }
 
   } catch (error) {
-    logger.error('Error in fetchAndStoreApiRate:', error);
+    logger.error('Error in fetchAndStoreApiRate:', error.message);
     if (res) {
         return res.status(500).json({ error: 'Internal server error' });
     } else {
@@ -220,7 +212,6 @@ export const fetchAndStoreApiRate = async (req, res) => {
   }
 };
 
-// GET: Devuelve historial de tasas
 export const getExchangeRates = async (req, res) => {
   try {
     const { targetCurrencyId, page = 1, limit = 10, startDate, endDate } = req.query;
@@ -255,7 +246,6 @@ export const getExchangeRates = async (req, res) => {
           result = result.filter(r => new Date(r.effectiveDate) <= end);
       }
 
-      // Sort by effectiveDate desc, then alphabetically by currency code
       result.sort((a, b) => {
           const dateA = new Date(a.effectiveDate).getTime();
           const dateB = new Date(b.effectiveDate).getTime();
@@ -290,8 +280,6 @@ export const getExchangeRates = async (req, res) => {
     const total = await prisma.exchangeRate.count({ where: whereClause });
     const totalPages = Math.ceil(total / limitNum);
 
-    // ⚡ Bolt: Pushed sorting logic down to the database using Prisma's multiple orderBy
-    // capabilities instead of an expensive O(n log n) in-memory sort in Node.js.
     let rates = await prisma.exchangeRate.findMany({
       where: whereClause,
       include: {
@@ -313,7 +301,7 @@ export const getExchangeRates = async (req, res) => {
         totalPages
     });
   } catch (error) {
-    logger.error('Error in getExchangeRates:', error);
+    logger.error('Error in getExchangeRates:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -324,13 +312,12 @@ export const getCurrencies = async (req, res) => {
           return res.status(200).json(mockData.currencies);
         }
 
-        // Automatically ensure default currencies exist when querying them to improve UX
         await ensureDefaultCurrencies();
 
         const currencies = await prisma.currency.findMany();
         return res.status(200).json(currencies);
     } catch (error) {
-        logger.error('Error in getCurrencies:', error);
+        logger.error('Error in getCurrencies:', error.message);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }

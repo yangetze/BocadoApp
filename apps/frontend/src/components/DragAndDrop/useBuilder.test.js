@@ -3,7 +3,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useBuilder } from './useBuilder';
 import { superRecipeApi } from '../../api';
 
-// Mock dependencies
 jest.mock('react-hot-toast', () => ({
   error: jest.fn(),
   success: jest.fn(),
@@ -45,7 +44,7 @@ describe('useBuilder - ingredientTotals', () => {
         {
           id: 'br1',
           name: 'Bizcocho',
-          quantity: 500, // quantityNeeded
+          quantity: 500,
           baseYield: 1000,
           ingredients: [
             { ingredientId: 'ing1', quantity: 200, ingredient: { name: 'Harina', measurementUnit: 'gr' } },
@@ -55,7 +54,7 @@ describe('useBuilder - ingredientTotals', () => {
         {
           id: 'br2',
           name: 'Relleno',
-          quantity: 200, // quantityNeeded
+          quantity: 200,
           baseYield: 200,
           ingredients: [
             { ingredientId: 'ing2', quantity: 50, ingredient: { name: 'Azúcar', measurementUnit: 'gr' } },
@@ -125,14 +124,12 @@ describe('useBuilder - edit baseRecipe', () => {
 
     const { result } = renderHook(() => useBuilder('baseRecipe', initialData));
 
-    // Verify initialization
     expect(result.current.baseRecipeMetadata.name).toBe('Masa Madre Editada');
     expect(result.current.baseRecipeMetadata.baseYield).toBe('1500');
     expect(result.current.canvasItems).toHaveLength(1);
     expect(result.current.canvasItems[0].ingredientId).toBe('ing-1');
     expect(result.current.canvasItems[0].quantity).toBe(500);
 
-    // Trigger save
     await act(async () => {
       await result.current.handleSave();
     });
