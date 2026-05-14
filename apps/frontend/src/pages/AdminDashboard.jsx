@@ -5,6 +5,7 @@ import { normalizeString } from '../utils/stringUtils';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api';
+import { confirmAction } from '../utils/toastUtils';
 
 export default function AdminDashboard() {
   const { user, token } = useAuth();
@@ -180,7 +181,12 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 text-right">
                         {u.role !== 'ADMIN' && (
                           <button
-                            onClick={() => toggleUserStatus(u.id, u.active)}
+                            onClick={() => {
+                              const actionName = u.active ? 'bloquear' : 'reactivar';
+                              confirmAction(`¿Estás seguro de que deseas ${actionName} el acceso a ${u.username}?`, () => {
+                                toggleUserStatus(u.id, u.active);
+                              });
+                            }}
                             className={`p-2 rounded-lg transition-colors ${
                               u.active
                                 ? 'text-red-500 hover:bg-red-50'
