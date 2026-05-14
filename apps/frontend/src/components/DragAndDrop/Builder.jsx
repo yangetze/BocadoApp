@@ -323,6 +323,7 @@ export default function Builder({ mode = "superRecipe", availableItems = [], edi
           onConfirm={handleConfirmBrandSelections}
           initialSelections={brandSelections}
           superRecipesList={canvasItems}
+          isSaving={isSaving}
         />
       )}
     </DndContext>
