@@ -1,7 +1,41 @@
-/* global describe, it, expect, jest, beforeEach, afterEach, global */
-import { api } from '../api';
+jest.mock('../api', () => ({
+  api: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn()
+  }
+}));
+/* global describe, it, expect, jest, beforeEach, afterEach, afterAll, global, __dirname, require */
+
+import fs from 'fs';
+import path from 'path';
+
+// Read the api.js file and replace import.meta.env
+const apiPath = path.resolve(__dirname, '../api.js');
+let apiContent = fs.readFileSync(apiPath, 'utf8');
+apiContent = apiContent.replace('import.meta.env.VITE_API_URL', 'global.VITE_API_URL');
+
+// Write to a temporary file
+const tempApiPath = path.resolve(__dirname, '../api.temp.js');
+fs.writeFileSync(tempApiPath, apiContent);
+
+// Import the modified file
+const { api } = require('../api.temp.js');
+
+
 
 describe('api.js - fetchWithAuth', () => {
+
+  afterAll(() => {
+    // Clean up temporary file
+    try {
+      fs.unlinkSync(tempApiPath);
+    } catch {
+      // ignore error
+    }
+  });
+
   const originalFetch = global.fetch;
   const originalLocation = window.location;
 
