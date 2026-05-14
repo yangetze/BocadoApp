@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { BoxSelect, X } from "lucide-react";
 
 export function BrandSelectionModal({
   isOpen,
@@ -118,27 +119,19 @@ export function BrandSelectionModal({
               aria-label="Cerrar modal"
               className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              <X size={20} />
             </button>
           </div>
 
           {/* Body */}
           <div className="p-6 overflow-y-auto bg-gray-50/50 flex-1 space-y-6">
             {uniqueIngredients.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">
-                No se encontraron ingredientes genéricos en las recetas.
+              <div className="text-center text-gray-500 py-12 flex flex-col items-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <BoxSelect className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="font-medium text-slate-gray">No se encontraron ingredientes genéricos</p>
+                <p className="text-sm mt-1">Añade recetas base con ingredientes para poder seleccionar sus presentaciones.</p>
               </div>
             ) : (
               uniqueIngredients.map((ing) => (

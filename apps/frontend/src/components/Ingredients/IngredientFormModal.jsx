@@ -6,6 +6,7 @@ const UNITS = ['gr', 'kg', 'ml', 'l', 'u'];
 
 export default function IngredientFormModal({ isOpen, onClose, onSave, initialData, isSaving = false }) {
   const isEditing = !!initialData;
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     globalPrice: '',
@@ -148,9 +149,14 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    setIsSaving(true);
+    try {
+      await onSave(formData);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (

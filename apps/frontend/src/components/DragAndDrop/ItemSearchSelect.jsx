@@ -37,9 +37,18 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
     if (!searchQuery) return normalizedItems.slice(0, 50); // Show max 50 items initially
 
     const normalizedSearchQuery = normalizeString(searchQuery);
-    return normalizedItems.filter((item) =>
-      item._normalizedName.includes(normalizedSearchQuery)
-    ).slice(0, 50);
+    const results = [];
+
+    // ⚡ Bolt: Use a for loop with early break instead of .filter().slice()
+    // This reduces O(N) traversal to O(K) where K is the number of items needed
+    for (let i = 0; i < normalizedItems.length; i++) {
+      if (normalizedItems[i]._normalizedName.includes(normalizedSearchQuery)) {
+        results.push(normalizedItems[i]);
+        if (results.length === 50) break;
+      }
+    }
+
+    return results;
   }, [normalizedItems, searchQuery]);
 
   const handleSelect = (item) => {
@@ -86,19 +95,35 @@ export const ItemSearchSelect = React.memo(function ItemSearchSelect({
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden max-h-[400px] flex flex-col z-50">
           <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
             {filteredItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
-                <p className="text-sm">
+              <div className="text-center py-10 px-4 text-gray-500 flex flex-col items-center justify-center">
+                <Search className="w-10 h-10 text-gray-300 mb-3" />
+                <p className="text-sm font-medium">
                   {searchQuery
                     ? "No se encontraron resultados."
                     : "No hay elementos disponibles."}
                 </p>
+                {searchQuery && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Prueba buscando con diferentes términos.
+                  </p>
+                )}
               </div>
             ) : (
               filteredItems.map((item) => (
                 <div
                   key={`search-${item.id}`}
                   onClick={() => handleSelect(item)}
-                  className="p-3 bg-white border border-transparent rounded-xl hover:bg-peach-soft/5 hover:border-peach-soft/20 cursor-pointer flex items-center justify-between gap-3 transition-colors group"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelect(item);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Agregar ${item.name}`}
+                  title={`Agregar ${item.name}`}
+                  className="p-3 bg-white border border-transparent rounded-xl hover:bg-peach-soft/5 hover:border-peach-soft/20 focus:bg-peach-soft/5 focus:border-peach-soft/20 focus:outline-none focus:ring-2 focus:ring-peach-soft/50 cursor-pointer flex items-center justify-between gap-3 transition-colors group"
                 >
                   <div className="flex items-center gap-3 overflow-hidden flex-1">
                     <div className="w-10 h-10 rounded-lg bg-peach-soft/10 text-peach-soft flex items-center justify-center font-bold text-lg flex-shrink-0 group-hover:bg-peach-soft group-hover:text-white transition-colors">

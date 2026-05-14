@@ -1,12 +1,13 @@
 import express from 'express';
-import { login, register, getMe } from '../controllers/authController.js';
+import { login, register, getMe, changePassword } from '../controllers/authController.js';
 import { verifyToken } from '../middleware/authMiddleware.js';
-import { authLimiter } from '../middleware/rateLimitMiddleware.js';
+import { loginLimiter, registerLimiter } from '../middleware/rateLimitMiddleware.js';
 
 const router = express.Router();
 
-router.post('/login', authLimiter, login);
-router.post('/register', authLimiter, register);
+router.post('/login', loginLimiter, login);
+router.post('/register', registerLimiter, register);
 router.get('/me', verifyToken, getMe);
+router.post('/change-password', verifyToken, loginLimiter, changePassword);
 
 export default router;

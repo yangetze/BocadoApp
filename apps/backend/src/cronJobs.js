@@ -9,7 +9,7 @@ export const setupCronJobs = () => {
             // Mock req and res for the controller
             await fetchAndStoreApiRate({ body: { type: 'bcv' } }, null);
         } catch (error) {
-            logger.error('[CRON] Failed to synchronize exchange rate:', error);
+            logger.error('[CRON] Failed to synchronize exchange rate:', error.message);
         }
     }, {
         scheduled: true,

@@ -167,7 +167,7 @@ export const calculateSuperRecipeCost = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Error calculating cost:', error);
+    logger.error('Error calculating cost:', error.message);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

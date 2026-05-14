@@ -114,32 +114,33 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
     else setSuggestedMargin(30);
   }, []);
 
-  // ⚡ Bolt: Wrapped totalBaseRecipeCost calculation in useMemo to prevent an O(N) calculation
-  // on every render of the Builder, especially during 60fps Drag & Drop interactions.
-  // Impact: Reduces CPU overhead per render cycle for baseRecipe canvases by preventing redundant iteration.
   const totalBaseRecipeCost = useMemo(() => {
-    return canvasItems.reduce((acc, item) => {
-      if (mode === "baseRecipe" && item.globalPrice !== undefined) {
-        return (
-          acc +
-          (item.quantity !== undefined ? item.quantity : 1) *
-            (item.globalPrice / (item.globalPriceQuantity || 1))
-        );
+    // ⚡ Bolt: Early exit for non-baseRecipe modes converts O(N) traversal to O(1)
+    if (mode !== "baseRecipe") return 0;
+
+    // ⚡ Bolt: Replaced .reduce() with a standard for-loop to minimize iteration protocol overhead
+    let total = 0;
+    const len = canvasItems.length;
+    for (let i = 0; i < len; i++) {
+      const item = canvasItems[i];
+      if (item.globalPrice !== undefined) {
+        const qty = item.quantity !== undefined ? item.quantity : 1;
+        total += qty * (item.globalPrice / (item.globalPriceQuantity || 1));
       }
-      return acc;
-    }, 0);
+    }
+    return total;
   }, [canvasItems, mode]);
 
   const ingredientTotals = useMemo(() => {
     if (mode === "budget") return [];
 
     const totalsMap = new Map();
+    const len = canvasItems.length;
 
-    canvasItems.forEach((item) => {
-      const quantity = item.quantity !== undefined ? item.quantity : 1;
-
-      if (mode === "baseRecipe") {
-        // En modo baseRecipe, canvasItems son ingredientes
+    if (mode === "baseRecipe") {
+      for (let i = 0; i < len; i++) {
+        const item = canvasItems[i];
+        const quantity = item.quantity !== undefined ? item.quantity : 1;
         const ingredientId = item.ingredientId || item.id;
         const currentAmount = totalsMap.get(ingredientId)?.totalQuantity || 0;
 
@@ -149,19 +150,24 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           measurementUnit:
             item.measurementUnit || item.ingredient?.measurementUnit || "gr",
         });
-      } else if (mode === "superRecipe") {
-        // En modo superRecipe, canvasItems son recetas base (o podrían ser ingredientes directos)
-        // Por ahora, asumimos que son recetas base como está en el sistema actual
+      }
+    } else if (mode === "superRecipe") {
+      for (let i = 0; i < len; i++) {
+        const item = canvasItems[i];
+        const quantity = item.quantity !== undefined ? item.quantity : 1;
+
         if (
           item.ingredients &&
           Array.isArray(item.ingredients) &&
           item.baseYield
         ) {
           const factor = quantity / item.baseYield;
+          const ingLen = item.ingredients.length;
 
-          item.ingredients.forEach((brIng) => {
+          for (let j = 0; j < ingLen; j++) {
+            const brIng = item.ingredients[j];
             const ingredientId = brIng.ingredientId || brIng.ingredient?.id;
-            if (!ingredientId) return;
+            if (!ingredientId) continue;
 
             const ingQuantityInBaseRecipe = brIng.quantity || 0;
             const computedQuantity = ingQuantityInBaseRecipe * factor;
@@ -174,14 +180,12 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
               totalQuantity: currentAmount + computedQuantity,
               measurementUnit: brIng.ingredient?.measurementUnit || "gr",
             });
-          });
+          }
         } else if (item.ingredients) {
-            // Manejar ingredientes si vienen sin baseYield pero con un arreglo de ingredients
-            // Esto sucede si el editingItem viene de la BD pero no se populó baseYield (lo cual sí debe estar, pero por si acaso)
-            // O podemos ver que canvasItems[].ingredients no está llegando correctamente poblado
+          // TODO: handle generic ingredients
         }
       }
-    });
+    }
 
     return Array.from(totalsMap.values());
   }, [canvasItems, mode]);
@@ -208,7 +212,7 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
         }
         const payload = {
           customerName: superRecipeMetadata.name,
-          profitMargin: 0.35, // This should ideally be editable later
+          profitMargin: 0.35,
           customCurrency: superRecipeMetadata.customCurrency || undefined,
           customPolicies: superRecipeMetadata.customPolicies || undefined,
           customPaymentMethods: superRecipeMetadata.customPaymentMethods || undefined,
@@ -216,8 +220,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           brandSelections: brandSelections,
         };
 
-        // ⚡ Bolt: Group items by superRecipeId using an O(1) Map lookup
-        // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
         const superRecipeMap = new Map();
         canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
@@ -252,8 +254,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
           return;
         }
 
-        // ⚡ Bolt: Group items by baseRecipeId using an O(1) Map lookup
-        // to prevent unique constraint errors while avoiding O(N^2) array-find iterations.
         const baseRecipeMap = new Map();
         canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;
@@ -290,10 +290,6 @@ export function useBuilder(mode, editingItem = null, onSuccess = null) {
 
 
 
-        // ⚡ Bolt: Group ingredients by ID before sending to backend using an O(1) Map lookup.
-        // This converts duplicate inserts into grouped updates while replacing
-        // the unoptimized O(N^2) array-find reduction with O(N) mapping,
-        // reducing both CPU overhead and payload size to avoid unique constraint violations.
         const ingredientMap = new Map();
         canvasItems.forEach((item) => {
           const id = item.id.replace(/^canvas-\d+-/, "") || item.id;

@@ -71,3 +71,32 @@
 ## 2024-05-15 - Async Form Feedback
 **Learning:** Some modals and forms (like `IngredientFormModal` and `BrandSelectionModal`) lacked visual feedback and disabled states during asynchronous API calls, allowing duplicate submissions and confusing the user.
 **Action:** Always verify that submit buttons in asynchronous forms are connected to an `isSaving` or `loading` state, updating their text/icon to show progress and setting `disabled={isSaving}` on form controls.
+## 2024-05-20 - Empty State Design Patterns
+**Learning:** We noticed that some empty states (e.g. `SettingsManager` payment methods, `ExchangeRateManager` rates, `BrandSelectionModal` ingredients) were missing a consistent visual icon or illustration, which makes them look unpolished compared to other empty states in the application. Good empty states should provide a visual cue alongside the text.
+**Action:** When implementing empty states for lists or data sets, always include a relevant `lucide-react` icon (e.g. `CreditCard`, `History`, `BoxSelect`) styled inside a circular background container above the primary empty state text, maintaining visual consistency across the application.
+## 2026-05-06 - Dynamic Form Accessibility
+**Learning:** When working with dynamically generated forms (e.g., lists of inputs mapped over an array), standard `id` and `htmlFor` pairs fail accessibility checks if they aren't uniquely keyed. Screen readers will only associate the label with the *first* input that matches the ID.
+**Action:** Always append the array index (or a unique UUID) to dynamically generated `id` and `htmlFor` attributes (e.g., `id={`methodType-${index}`}`) to ensure 1:1 mapping between labels and inputs for screen reader users.
+## 2024-05-20 - Action Button Loading and Blocking State in Modals
+**Learning:** Form modals that submit asynchronously without providing visual feedback (such as the `IngredientFormModal` missing an `isSaving` state) leave users guessing whether their click registered, leading to potential duplicate submissions or frustrated repeated clicking.
+**Action:** When implementing or updating form modals, always ensure there is an internal state (like `isSaving`) to disable action buttons during submission and to provide visual feedback (e.g., displaying "Guardando..." with a spinner instead of "Guardar").
+## 2024-05-07 - Make Autocomplete Results Keyboard Accessible
+**Learning:** Dropdown results built with generic `div` tags and `onClick` handlers become completely invisible to keyboard and screen reader users. Simply rendering them doesn't allow users to select an item.
+**Action:** Always add `role="button"`, `tabIndex={0}`, keyboard event handlers (`onKeyDown` for Enter/Space), and clear focus states (`focus:outline-none focus:ring-2`) to interactive generic elements to ensure inclusive UX.
+## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
+**Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
+**Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.
+
+## 2024-05-08 - Keyboard accessibility for interactive generic elements
+**Learning:** Using generic HTML elements like `div` or `span` for interactive components (such as expandable rows or dropdown items) without proper ARIA attributes and keyboard event handlers creates a significant barrier for users navigating via keyboard and screen readers. In `IngredientManager.jsx`, the expandable rows could not be triggered using the keyboard because they were built as standard `div`s with an `onClick` handler.
+**Action:** When creating custom interactive components from generic elements, always add `role="button"`, `tabIndex={0}`, an `onKeyDown` handler (to capture 'Enter' and 'Space'), and clear focus styles (e.g., `focus:outline-none focus-visible:ring-2`) to ensure full keyboard accessibility.
+
+## 2024-05-08 - Standardizing Empty States
+**Learning:** Native emojis (like "🥚") were being used for empty states in some components, which leads to inconsistent visuals across different operating systems and breaks the unified design language of the application.
+**Action:** Always use standardized icons from the `lucide-react` library (e.g., `Carrot`, `Package`, `BoxSelect`) styled inside a circular background container above the primary text for empty states to maintain visual consistency.
+## 2024-05-10 - Updating Legacy Empty State Copy After Architectural Changes
+**Learning:** When major architectural changes are made (like removing the `Palette` component in favor of the `ItemSearchSelect` component), the instructional copy inside empty states (like the one in `Canvas.jsx` telling users to "Drag items from the palette") often gets overlooked. This leads to confusing user experiences where the UI instructs them to interact with components that no longer exist.
+**Action:** Always actively verify and update instructional copy in empty states when the surrounding features or components are deprecated or structurally changed.
+## 2025-05-11 - Enforce Icon Component Standards
+**Learning:** Found an inline, hardcoded raw SVG used for the "Seleccionar Presentaciones" action button in `Builder.jsx`. While functional, this breaks visual consistency across the app, which uses the `lucide-react` library for all other icons. Mixing generic SVGs with library components leads to disjointed UI styling and harder-to-maintain code.
+**Action:** Always replace standalone inline SVGs with their conceptual equivalents from the `lucide-react` library (e.g., using `<Package />` or `<BoxSelect />`) to ensure standardized stroke widths, sizes, and colors across the application's UX.
