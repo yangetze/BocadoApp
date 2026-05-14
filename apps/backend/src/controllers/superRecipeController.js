@@ -37,28 +37,55 @@ export const createSuperRecipe = async (req, res) => {
     const userId = req.user.id;
 
     // Security: Verify ownership of baseRecipes and directIngredients before linking
-    if (baseRecipes && baseRecipes.length > 0) {
-      const baseRecipeIds = [...new Set(baseRecipes.map(br => br.baseRecipeId))];
-      const validBaseRecipesCount = await prisma.baseRecipe.count({
-        where: {
-          id: { in: baseRecipeIds },
-          userId: userId
-        }
-      });
-      if (validBaseRecipesCount !== baseRecipeIds.length) {
+    // ⚡ Bolt: Consolidated mapping into single loops and batched DB validations with Promise.all to prevent sequential I/O bottlenecks.
+    const baseRecipeIdsSet = new Set();
+    if (baseRecipes) {
+      for (let i = 0; i < baseRecipes.length; i++) {
+        baseRecipeIdsSet.add(baseRecipes[i].baseRecipeId);
+      }
+    }
+    const baseRecipeIds = [...baseRecipeIdsSet];
+
+    const ingredientIdsSet = new Set();
+    if (directIngredients) {
+      for (let i = 0; i < directIngredients.length; i++) {
+        ingredientIdsSet.add(directIngredients[i].ingredientId);
+      }
+    }
+    const ingredientIds = [...ingredientIdsSet];
+
+    const promises = [];
+    let baseRecipeCountIndex = -1;
+    let ingredientCountIndex = -1;
+
+    if (baseRecipeIds.length > 0) {
+      baseRecipeCountIndex = promises.length;
+      promises.push(
+        prisma.baseRecipe.count({
+          where: { id: { in: baseRecipeIds }, userId: userId }
+        })
+      );
+    }
+
+    if (ingredientIds.length > 0) {
+      ingredientCountIndex = promises.length;
+      promises.push(
+        prisma.ingredient.count({
+          where: { id: { in: ingredientIds }, userId: userId }
+        })
+      );
+    }
+
+    const results = await Promise.all(promises);
+
+    if (baseRecipeCountIndex !== -1) {
+      if (results[baseRecipeCountIndex] !== baseRecipeIds.length) {
         return res.status(404).json({ error: 'Una o más recetas base no fueron encontradas o no tienes permiso' });
       }
     }
 
-    if (directIngredients && directIngredients.length > 0) {
-      const ingredientIds = [...new Set(directIngredients.map(di => di.ingredientId))];
-      const validIngredientsCount = await prisma.ingredient.count({
-        where: {
-          id: { in: ingredientIds },
-          userId: userId
-        }
-      });
-      if (validIngredientsCount !== ingredientIds.length) {
+    if (ingredientCountIndex !== -1) {
+      if (results[ingredientCountIndex] !== ingredientIds.length) {
         return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
       }
     }
@@ -120,28 +147,55 @@ export const updateSuperRecipe = async (req, res) => {
     }
 
     // Security: Verify ownership of baseRecipes and directIngredients before linking
-    if (baseRecipes && baseRecipes.length > 0) {
-      const baseRecipeIds = [...new Set(baseRecipes.map(br => br.baseRecipeId))];
-      const validBaseRecipesCount = await prisma.baseRecipe.count({
-        where: {
-          id: { in: baseRecipeIds },
-          userId: req.user.id
-        }
-      });
-      if (validBaseRecipesCount !== baseRecipeIds.length) {
+    // ⚡ Bolt: Consolidated mapping into single loops and batched DB validations with Promise.all to prevent sequential I/O bottlenecks.
+    const baseRecipeIdsSet = new Set();
+    if (baseRecipes) {
+      for (let i = 0; i < baseRecipes.length; i++) {
+        baseRecipeIdsSet.add(baseRecipes[i].baseRecipeId);
+      }
+    }
+    const baseRecipeIds = [...baseRecipeIdsSet];
+
+    const ingredientIdsSet = new Set();
+    if (directIngredients) {
+      for (let i = 0; i < directIngredients.length; i++) {
+        ingredientIdsSet.add(directIngredients[i].ingredientId);
+      }
+    }
+    const ingredientIds = [...ingredientIdsSet];
+
+    const promises = [];
+    let baseRecipeCountIndex = -1;
+    let ingredientCountIndex = -1;
+
+    if (baseRecipeIds.length > 0) {
+      baseRecipeCountIndex = promises.length;
+      promises.push(
+        prisma.baseRecipe.count({
+          where: { id: { in: baseRecipeIds }, userId: req.user.id }
+        })
+      );
+    }
+
+    if (ingredientIds.length > 0) {
+      ingredientCountIndex = promises.length;
+      promises.push(
+        prisma.ingredient.count({
+          where: { id: { in: ingredientIds }, userId: req.user.id }
+        })
+      );
+    }
+
+    const results = await Promise.all(promises);
+
+    if (baseRecipeCountIndex !== -1) {
+      if (results[baseRecipeCountIndex] !== baseRecipeIds.length) {
         return res.status(404).json({ error: 'Una o más recetas base no fueron encontradas o no tienes permiso' });
       }
     }
 
-    if (directIngredients && directIngredients.length > 0) {
-      const ingredientIds = [...new Set(directIngredients.map(di => di.ingredientId))];
-      const validIngredientsCount = await prisma.ingredient.count({
-        where: {
-          id: { in: ingredientIds },
-          userId: req.user.id
-        }
-      });
-      if (validIngredientsCount !== ingredientIds.length) {
+    if (ingredientCountIndex !== -1) {
+      if (results[ingredientCountIndex] !== ingredientIds.length) {
         return res.status(404).json({ error: 'Uno o más ingredientes no fueron encontrados o no tienes permiso' });
       }
     }
