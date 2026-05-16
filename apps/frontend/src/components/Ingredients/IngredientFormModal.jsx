@@ -306,7 +306,20 @@ export default function IngredientFormModal({ isOpen, onClose, onSave, initialDa
                 {formData.presentations.length > 0 && (
                   <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                     {formData.presentations.map((p, idx) => (
-                      <div key={idx} className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors" onClick={() => editPresentation(idx)} title="Haz clic para editar el costo">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between bg-white border border-gray-200 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-peach-soft/50"
+                        onClick={() => editPresentation(idx)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            editPresentation(idx);
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        title="Haz clic para editar el costo"
+                      >
                         <div>
                           <div className="flex items-center gap-2">
                             <button

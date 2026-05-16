@@ -100,3 +100,6 @@
 ## 2025-05-11 - Enforce Icon Component Standards
 **Learning:** Found an inline, hardcoded raw SVG used for the "Seleccionar Presentaciones" action button in `Builder.jsx`. While functional, this breaks visual consistency across the app, which uses the `lucide-react` library for all other icons. Mixing generic SVGs with library components leads to disjointed UI styling and harder-to-maintain code.
 **Action:** Always replace standalone inline SVGs with their conceptual equivalents from the `lucide-react` library (e.g., using `<Package />` or `<BoxSelect />`) to ensure standardized stroke widths, sizes, and colors across the application's UX.
+## 2024-05-16 - Focus Visible Standard
+**Learning:** When adding keyboard accessibility to custom interactive elements (like generic `div`s), utilizing Tailwind's `focus-visible` utility classes provides clear visual feedback specifically for keyboard users without displaying persistent outlines for mouse clicks, striking a balance between aesthetics and accessibility.
+**Action:** Always add `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-peach-soft` alongside `role="button"`, `tabIndex={0}`, and `onKeyDown` handlers.
